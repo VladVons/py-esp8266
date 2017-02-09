@@ -10,6 +10,7 @@ import gc
 from button import *
 from led import *
 from net import *
+from timer import *
 
 
 #micropython.alloc_emergency_exception_buf(128)
@@ -22,6 +23,13 @@ class TApp:
 
         TButton(cPioBtnPush,  self.OnButtonPush)
         TButton(cPioBtnFlash, self.OnButtonFlash)
+        #TTimer(0, self.OnTimer, 2000)
+
+    def OnTimer(self, aObj):
+        print('TApp.OnTimer');
+
+        self.Leds.Toggle()
+        #self.Leds[0].Toggle()
 
     def OnButtonPush(self, aObj):
         print()
@@ -83,6 +91,20 @@ class TApp:
             print('Cant connect WiFI')
 
 
+    def TestPwm(self):
+        pwm0 = machine.PWM(machine.Pin(5))
+
+        print('--1a', pwm0.freq())
+        pwm0.freq(100)
+        print('--1b', pwm0.freq())
+
+        print('--2a', pwm0.duty())
+        pwm0.duty(20)
+        print('--2b', pwm0.duty())
+
+        pwm0.deinit()
+
+
     def TestLeds(self, aCount):
         print('TApp.TestLeds', aCount)
 
@@ -108,8 +130,9 @@ def Main():
     #print("Mem free a1", gc.mem_free())
 
     App = TApp()
-    App.TestLeds(1*4)
-    App.Connect()
+    #App.TestLeds(1*4)
+    App.TestPwm()
+    #App.Connect()
     #App.SleepAlways()
 
     # Here while pressing button raise error: MemoryError

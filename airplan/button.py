@@ -1,3 +1,8 @@
+#---VladVons@gmail.com
+# 06.02.17
+#---
+
+
 import machine
 
 cPioBtnFlash = 0
