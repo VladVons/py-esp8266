@@ -2,6 +2,10 @@
 # 04.02.17
 #---
 
+#http://www.schatenseite.de/en/2016/04/22/esp8266-witty-cloud-module/
+#https://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html
+
+
 import time
 import machine
 import gc
