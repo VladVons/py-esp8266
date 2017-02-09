@@ -42,10 +42,13 @@ class TApp:
     def OnButtonFlash(self, aObj):
         print('TApp.OnButtonFlash')
 
-        if (self.Server):
-            self.Server.Close()
+        #if (self.Server):
+        #    self.Server.Close()
 
         #machine.reset()
+
+        adc = machine.ADC(0)
+        print('ADC', adc.read())
 
     def OnHttpGet(self, aCaller, aUrl):
         Path = aUrl.get('_path')
@@ -130,9 +133,9 @@ def Main():
     #print("Mem free a1", gc.mem_free())
 
     App = TApp()
-    #App.TestLeds(1*4)
-    App.TestPwm()
-    #App.Connect()
+    App.TestLeds(1*4)
+    #App.TestPwm()
+    App.Connect()
     #App.SleepAlways()
 
     # Here while pressing button raise error: MemoryError
