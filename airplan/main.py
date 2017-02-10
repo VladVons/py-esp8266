@@ -81,6 +81,17 @@ class TApp:
         elif (Dir == '/exit'):
             Result = 'OK'
             aCaller.Active = False
+        elif (Dir == '/pwm'):
+            pin   = int(aUrl.get('pin', '5')) 
+            freq  = int(aUrl.get('freq', '50')) 
+            duty  = int(aUrl.get('duty', '100')) 
+
+            pwm = machine.PWM(machine.Pin(pin))
+            pwm.freq(freq)
+            pwm.duty(duty)
+            #pwm.deinit()
+
+            Result = 'PWM pin:{}, freq:{}, duty:{}' % (pin, freq, duty)
 
         return Result
 
