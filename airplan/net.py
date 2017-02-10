@@ -1,5 +1,6 @@
 #---VladVons@gmail.com
 # 05.02.17
+# micropython. ESP8266
 #---
 
 #import machine
@@ -74,15 +75,20 @@ class TServer:
                     Result['_dir']  = ure.search("(.*?)(\?|$)", Url).group(1) 
 
                     while True:
-                        Obj = ure.search("(\w+)=(\w+)", Url)
+                        #Obj = ure.search("(\w+)=([\w\.]+)", Url)
+                        Obj = ure.search("(\w+)=([a-z0-9.]+)", Url)
                         if (Obj):
-                            Result[Obj.group(1)] = Obj.group(2)
+                            Key   = Obj.group(1)
+                            Value = Obj.group(2)
+                            #Log('---2', Obj.group(0), Key, Value)
+                            Result[Key] = Value
                             Url = Url.replace(Obj.group(0), '')
                         else:
                             break
         return Result
 
     def Responce(self, aStr):
+        aStr = aStr.replace('\n', '<br>')
         return '''HTTP/1.0 200 OK\r\nContent-type: text/html\r\nContent-length: %d\r\n\r\n%s''' % (len(aStr), aStr)
 
     def Close(self):
