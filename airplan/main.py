@@ -92,6 +92,7 @@ class TApp:
             #pwm.deinit()
 
             Result = 'PWM pin:{}, freq:{}, duty:{}' % (pin, freq, duty)
+            Log(Result)
 
         return Result
 
