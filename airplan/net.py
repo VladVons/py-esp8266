@@ -2,16 +2,18 @@
 # 05.02.17
 #---
 
-import machine
+#import machine
 import socket
 import network
 import ure
 import time
 
+from common import *
+
 #------------------------------------------
 class TWLan:
     def Scan(self):
-        print('TWLan.Scan')
+        Log('TWLan.Scan')
         Result = []
 
         #wlan = network.WLAN(mode = network.WLAN.STA)
@@ -26,7 +28,7 @@ class TWLan:
         return wlan.ifconfig()
 
     def Connect(self, aESSID, aPassw, aTimeOut = 10000):
-        print('Connect', aESSID, aPassw)
+        Log('Connect', aESSID, aPassw)
 
         wlan = network.WLAN(network.STA_IF)
         Result = wlan.isconnected()
@@ -36,7 +38,7 @@ class TWLan:
 
             TimeEnd = time.ticks_ms() + aTimeOut
             while (True):
-                machine.idle()
+                #machine.idle()
                 time.sleep_ms(100)
 
                 Result = wlan.isconnected()
@@ -63,7 +65,7 @@ class TServer:
     def Parse(self, aRequest):
         Result = {}
         for Line in aRequest:
-            print(Line)
+            #print(Line)
             if ('GET ' in Line) and ('favicon.ico' not in Line):
                 Obj = ure.search("GET (.*?) HTTP\/1\.1", Line)
                 if (Obj):
@@ -92,15 +94,15 @@ class TServer:
             self.Active = False
 
     def Run(self):
-        print('TServer.Run')
+        Log('TServer.Run')
 
         self.Active = True
         while (self.Active):
-            print('ready for connect')
+            Log('ready for connect')
             Conn, Addr = self.Sock.accept()
 
             if (self.Active):
-                print('client connected from', Addr)
+                Log('client connected from', Addr)
 
                 cl_file = Conn.makefile('rwb', 0)
                 Lines = []
@@ -111,6 +113,7 @@ class TServer:
                         break
                     else:
                         Lines.append(Line)
+                        #break
 
                 Data = 'Answer'
                 Url = self.Parse(Lines)

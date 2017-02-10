@@ -4,6 +4,8 @@
 
 
 import machine
+from common import *
+
 
 cPioBtnFlash = 0
 cPioBtnPush  = 4
@@ -11,7 +13,7 @@ cPioBtnPush  = 4
 
 class TButton:
     def __init__(self, aPin, aOnPress):
-        print('TButton.init', aPin);
+        Log('TButton.init', aPin);
 
         self.Pin     = aPin
         self.OnPress = aOnPress

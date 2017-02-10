@@ -15,7 +15,7 @@ from button import *
 from led import *
 from net import *
 from timer import *
-
+from common import *
 
 #micropython.alloc_emergency_exception_buf(128)
 
@@ -30,21 +30,21 @@ class TApp:
         #TTimer(0, self.OnTimer, 2000)
 
     def OnTimer(self, aObj):
-        print('TApp.OnTimer');
+        Log('TApp.OnTimer');
 
         self.Leds.Toggle()
         #self.Leds[0].Toggle()
 
     def OnButtonPush(self, aObj):
-        print()
-        print('TApp.OnButtonPush', aObj, self.Leds.Idx);
+        Log()
+        Log('TApp.OnButtonPush', aObj, self.Leds.Idx);
 
         self.Leds.Toggle()
         if (self.Leds.Idx == self.Leds.GetCount()):
             self.Leds.Set(True)
 
     def OnButtonFlash(self, aObj):
-        print('TApp.OnButtonFlash')
+        Log('TApp.OnButtonFlash')
 
         #if (self.Server):
         #    self.Server.Close()
@@ -57,7 +57,7 @@ class TApp:
     def OnHttpGet(self, aCaller, aUrl):
         Path = aUrl.get('_path')
         Dir  = aUrl.get('_dir')
-        print('TButton.OnHttpGet', Path, Dir)
+        Log('TButton.OnHttpGet', Path, Dir)
 
         Result = ''
         if (Dir == '/led'):
@@ -113,7 +113,7 @@ class TApp:
 
 
     def TestLeds(self, aCount):
-        print('TApp.TestLeds', aCount)
+        Log('TApp.TestLeds', aCount)
 
         for i in range(aCount):
             self.Leds.Toggle()

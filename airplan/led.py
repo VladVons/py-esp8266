@@ -4,19 +4,19 @@
 
 import time
 import machine
-
+from common import *
 
 #------------------------------------------
 class TLed:
     def __init__(self, aPin, aAlias = ''):
-        print('TLed.init', aPin, aAlias);
+        Log('TLed.init', aPin, aAlias);
 
         self.Pin   = aPin
         self.Alias = aAlias
         self.Obj   = machine.Pin(aPin, machine.Pin.OUT)
 
     def Set(self, aOn):
-        print("TLed.Set", aOn, self.Alias, self.Pin)
+        Log("TLed.Set", aOn, self.Alias, self.Pin)
 
         self.Obj.value(aOn)
 
@@ -24,12 +24,12 @@ class TLed:
         return self.Obj.value()
 
     def Toggle(self):
-        print("TLed.Toggle")
+        Log("TLed.Toggle")
 
         self.Set(not self.Get())
 
     def Flash(self, aCount = 1, aDelay = 100):
-        print("TLed.Flash", aCount, aDelay)
+        Log("TLed.Flash", aCount, aDelay)
 
         for i in range(0, aCount):
             self.Set(True)
@@ -41,7 +41,7 @@ class TLed:
 #------------------------------------------
 class TLeds:
     def __init__(self):
-        print('TLeds.init');
+        Log('TLeds.init');
 
         self.Idx  = 0
 
@@ -55,7 +55,7 @@ class TLeds:
         return len(self.Leds)
 
     def Toggle(self):
-        print("TLeds.Toggle")
+        Log("TLeds.Toggle")
  
         Led = self.Leds[self.Idx]
         Led.Flash(1)
@@ -65,7 +65,7 @@ class TLeds:
             self.Idx = 0 
 
     def SetNo(self, aIdx, aOn):
-        print('TLeds.SetNo', aIdx, aOn);
+        Log('TLeds.SetNo', aIdx, aOn);
 
         if (aIdx < len(self.Leds)):
             self.Leds[aIdx].Set(aOn)
@@ -73,7 +73,7 @@ class TLeds:
             print('index out of range', aIdx)
 
     def Set(self, aOn):
-        print('TLeds.Set-2', aOn);
+        Log('TLeds.Set-2', aOn);
 
         # here is error: MemoryError
         for Led in self.Leds:
