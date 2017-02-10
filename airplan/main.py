@@ -1,10 +1,11 @@
 #---VladVons@gmail.com
 # 04.02.17
-# micropython.OD ESP8266
+# micropython ESP8266
 #---
 
 # http://micropython.org/download#esp8266
 # http://www.schatenseite.de/en/2016/04/22/esp8266-witty-cloud-module/
+# https://esp8266.ru/esp8266-gpio-registers/
 # https://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html
 
 import os
@@ -50,11 +51,6 @@ class TApp:
 
         #if (self.Server):
         #    self.Server.Close()
-
-        #machine.reset()
-
-        adc = machine.ADC(0)
-        print('ADC', adc.read())
 
     def OnHttpGet(self, aCaller, aUrl):
         Path = aUrl.get('_path')
@@ -147,6 +143,8 @@ class TApp:
         #Conn = WLan.Connect('L90_VladVons', '19710000')
         #Conn = WLan.Connect('ASUS', '55886209')
         if (Conn):
+            self.Leds.GetObj('green').Set(1)
+
             print('Network', WLan.GetInfo())
             self.Server = TServer()
             self.Server.CallBack = self.OnHttpGet

@@ -1,6 +1,6 @@
 #---VladVons@gmail.com
 # 05.02.17
-# micropython. ESP8266
+# micropython ESP8266
 #---
 
 #import machine
@@ -114,12 +114,11 @@ class TServer:
                 Lines = []
                 while (True):
                     Line = cl_file.readline()
-                    #print(Line)
+                    Log(Line)
                     if (not Line or Line == b'\r\n'):
                         break
                     else:
                         Lines.append(Line)
-                        #break
 
                 Data = 'Answer'
                 Url = self.Parse(Lines)

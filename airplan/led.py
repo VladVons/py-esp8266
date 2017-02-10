@@ -1,6 +1,6 @@
 #---VladVons@gmail.com
 # 04.02.17
-# micropython. ESP8266
+# micropython ESP8266
 #---
 
 import time
@@ -47,17 +47,29 @@ class TLeds:
         self.Idx  = 0
 
         self.Leds = []
-        self.Leds.append(TLed(2,  "Sys"))
-        self.Leds.append(TLed(15, "Red"))
-        self.Leds.append(TLed(12, "Green"))
-        self.Leds.append(TLed(13, "Blue"))
+        self.Leds.append(TLed(2,  "sys"))
+        self.Leds.append(TLed(15, "red"))
+        self.Leds.append(TLed(12, "green"))
+        self.Leds.append(TLed(13, "blue"))
 
     def GetCount(self):
         return len(self.Leds)
 
+    def GetIdx(self, aName):
+        for i in range(len(self.Leds)):
+            if (self.Leds[i].Alias == aName):
+                return i
+        return -1
+
+    def GetObj(self, aName):
+        for Led in self.Leds:
+            if (Led.Alias == aName):
+                return Led
+        return None
+
     def Toggle(self):
         Log("TLeds.Toggle")
- 
+
         Led = self.Leds[self.Idx]
         Led.Flash(1)
 
