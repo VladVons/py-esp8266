@@ -5,8 +5,8 @@
 
 import time
 
-#cLogSHow = True
-cLogSHow = False
+cLogSHow = True
+#cLogSHow = False
 
 
 def Log(*aParam):

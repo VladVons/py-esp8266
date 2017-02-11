@@ -132,6 +132,7 @@ class TApp:
         WLan = TWLan()
         Conn = WLan.Connect('R3-0976646510', '19710000')
         #Conn = WLan.Connect('L90_VladVons', '19710000')
+        Conn = WLan.Connect('oster', '123456789012345')
         #Conn = WLan.Connect('ASUS', '55886209')
         if (Conn):
             self.Leds.GetObj('green').Set(1)
