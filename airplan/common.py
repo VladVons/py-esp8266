@@ -3,6 +3,8 @@
 # micropython ESP8266
 #---
 
+import time
+
 cLogSHow = True
 #cLogSHow = False
 
@@ -10,3 +12,9 @@ cLogSHow = True
 def Log(*aParam):
     if (cLogSHow):
         print("Log: %s" % list(aParam))
+
+def SleepAlways():
+    while True:
+        # dont burn CPU
+        time.sleep_ms(100)
+

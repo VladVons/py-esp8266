@@ -124,6 +124,7 @@ class TServer:
                     if (self.CallBack):
                         Data = self.CallBack(self, Url)
 
+                Log(Data)
                 Conn.send(self.Responce(Data))
                 Conn.close()
 

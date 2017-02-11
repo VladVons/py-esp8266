@@ -33,15 +33,15 @@ class TApp:
         #self.Leds[0].Toggle()
 
     def OnButtonPush(self, aObj):
-        Log()
-        Log('TApp.OnButtonPush', aObj, self.Leds.Idx);
+        Log('TApp.OnButtonPush', aObj);
 
         self.Leds.Toggle()
         if (self.Leds.Idx == self.Leds.GetCount()):
             self.Leds.Set(True)
 
     def OnButtonFlash(self, aObj):
-        Log('TApp.OnButtonFlash')
+        print('TApp.OnButtonFlash.OK')
+        Log('TApp.OnButtonFlash.MemoryError')
 
         #if (self.Server):
         #    self.Server.Close()
@@ -54,9 +54,6 @@ class TApp:
         Result = 'unknown'
         if (Dir == '/help'):
             Result = (
-                'Ussage:\n'
-                '/help (this help)\n'
-                '\n'
                 'pins:\n'
                 '00 - button flush\n'
                 '02 - led    sys\n'
@@ -80,6 +77,7 @@ class TApp:
                 '\n'
                 '/server?cmd=close\n'
                 '/server?cmd=reset\n'
+                '/server?cmd=mem\n'
                     )
 
         elif (Dir == '/led'):
@@ -112,7 +110,6 @@ class TApp:
             elif (Cmd == 'mem'):
                 gc.collect()
                 Result = str(gc.mem_free())
-                Log(Result)
 
         elif (Dir == '/pwm'):
             pin   = int(aUrl.get('pin', '5'))
@@ -123,14 +120,11 @@ class TApp:
             pwm.freq(freq)
             pwm.duty(duty)
             #pwm.deinit()
-
             Result = '/pwm pin:%d, freq:%d, duty:%d' % (pin, pwm.freq(), pwm.duty())
-            Log(Result)
 
         elif (Dir == '/adc'):
             adc = machine.ADC(0)
             Result = '/adc: %d' % (adc.read())
-            Log(Result)
 
         return Result
 
@@ -148,6 +142,7 @@ class TApp:
             self.Server.Run()
         else:
             print('Cant connect WiFI')
+            SleepAlways()
 
     def TestLeds(self, aCount):
         Log('TApp.TestLeds', aCount)
@@ -159,13 +154,6 @@ class TApp:
                 time.sleep_ms(1000)
                 self.Leds.Set(False)
 
-
-    def SleepAlways():
-        while True:
-            # dont burn CPU
-            time.sleep_ms(100)
-
-
 def Main():
     #time.sleep_ms(5000)
 
@@ -173,13 +161,15 @@ def Main():
     print("Mem free a1", gc.mem_free())
 
     App = TApp()
+    #SleepAlways()
     App.TestLeds(1*4)
     App.Connect()
-    #App.SleepAlways()
+    #SleepAlways()
 
     # Here while pressing button raise error: MemoryError
 
     #gc.collect()
     #print("Mem free b", gc.mem_free())
+
 
 Main()
