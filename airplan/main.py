@@ -3,11 +3,6 @@
 # micropython ESP8266
 #---
 
-# http://micropython.org/download#esp8266
-# http://www.schatenseite.de/en/2016/04/22/esp8266-witty-cloud-module/
-# https://esp8266.ru/esp8266-gpio-registers/
-# https://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html
-
 import os
 import time
 import machine
@@ -22,7 +17,6 @@ from common import *
 
 #micropython.alloc_emergency_exception_buf(128)
 
-#------------------------------------------
 class TApp:
     def __init__(self):
         self.Server = None
@@ -77,7 +71,7 @@ class TApp:
                 '/led?num=x&on=x (set led num 0-3, on 0-1)\n'
                 '/led?on=x (set all leds on 0-1)\n'
                 '\n'
-                '/pwm?pin=x&freq=x&duty=x (set pin 0,2,4,5,12,13,14,15,16 freq 0-1023)\n'
+                '/pwm?pin=x&freq=x&duty=x (set pin freq 0-1023)\n'
                 '\n'
                 '/adc (get adc LDR value 0-1023)\n'
                 '\n'
@@ -86,9 +80,8 @@ class TApp:
                 '\n'
                 '/server?cmd=close\n'
                 '/server?cmd=reset\n'
-                '\n'
-                '/led?num=x&on=x\n'
                     )
+
         elif (Dir == '/led'):
             Result = 'OK'
             On  = int(aUrl.get('on', '1')) 
@@ -116,6 +109,10 @@ class TApp:
                 aCaller.Close()
             elif (Cmd == 'reset'):
                 machine.reset()
+            elif (Cmd == 'mem'):
+                gc.collect()
+                Result = str(gc.mem_free())
+                Log(Result)
 
         elif (Dir == '/pwm'):
             pin   = int(aUrl.get('pin', '5'))
@@ -169,7 +166,6 @@ class TApp:
             time.sleep_ms(100)
 
 
-#------------------------------------------
 def Main():
     #time.sleep_ms(5000)
 

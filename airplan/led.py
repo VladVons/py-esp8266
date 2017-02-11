@@ -7,7 +7,6 @@ import time
 import machine
 from common import *
 
-#------------------------------------------
 class TLed:
     def __init__(self, aPin, aAlias = ''):
         Log('TLed.init', aPin, aAlias);
@@ -39,7 +38,6 @@ class TLed:
             time.sleep_ms(aDelay)
 
 
-#------------------------------------------
 class TLeds:
     def __init__(self):
         Log('TLeds.init');

@@ -11,7 +11,6 @@ import time
 
 from common import *
 
-#------------------------------------------
 class TWLan:
     def Scan(self):
         Log('TWLan.Scan')
@@ -48,7 +47,6 @@ class TWLan:
 
         return Result
 
-#------------------------------------------
 #https://www.davidgouveia.net/2016/07/controlling-relays-using-micropython-and-an-esp8266/
 #https://esp8266.ru/forum/threads/micropython-http-server.1492/
 class TServer:
@@ -115,7 +113,7 @@ class TServer:
                 while (True):
                     Line = cl_file.readline()
                     Log(Line)
-                    if (not Line or Line == b'\r\n'):
+                    if (Line in (b'\r\n', b'\n', b'')):
                         break
                     else:
                         Lines.append(Line)
