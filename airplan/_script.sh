@@ -12,10 +12,27 @@ ExecM()
   eval "$aExec"
 }
 
+Install()
+{
+  echo "$0->$FUNCNAME"
+ 
+  usermod -a -G dialout linux
+
+  apt-get install git
+  #git clone https://github.com/VladVons/py-esp8266.git
+
+  apt-get install python-pip
+  pip install esptool
+  pip install adafruit-ampy
+  pip install picocom
+}
 
 DeployCore()
 {
   echo "$0->$FUNCNAME"
+
+  # images
+  # http://micropython.org/download#esp8266
 
   File="esp8266-20170108-v1.8.7.bin"
   ExecM "esptool.py --port $Dev erase_flash"
@@ -59,6 +76,7 @@ Purge()
 
 
 clear
+#Install
 #DeployCore
 DeploySrc
 #Purge
