@@ -187,8 +187,8 @@ class TApp:
 def Main():
     time.sleep_ms(1000)
 
-    #gc.collect()
-    #print("Mem free a1", gc.mem_free())
+    gc.collect()
+    print("Mem free a1", gc.mem_free())
 
     App = TApp()
     App.TestLeds(1*4)

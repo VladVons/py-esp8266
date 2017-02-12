@@ -138,7 +138,7 @@ class TServerHttp(TServerBase):
             if (self.Active):
                 Log('client connected from', Addr)
 
-                Data = 'Answer'
+                Data = 'Answr'
                 Url = self.Parse(self.Receive())
                 if (Url.get('_path')):
                     if (self.CallBack):

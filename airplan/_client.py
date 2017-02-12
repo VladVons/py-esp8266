@@ -1,3 +1,9 @@
+#---VladVons@gmail.com
+# 12.02.17
+# python for PC 
+#---
+
+
 import urllib2
 import time
 import socket
@@ -72,4 +78,4 @@ def TestSpeed(aCount):
 
 
 
-TestSpeed(10000)
+TestSpeed(1000)
