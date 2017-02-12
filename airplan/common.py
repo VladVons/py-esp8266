@@ -4,9 +4,9 @@
 #---
 
 import time
+import uos
 
 cLogSHow = True
-#cLogSHow = False
 
 
 def Log(*aParam):
@@ -18,3 +18,6 @@ def SleepAlways():
         # dont burn CPU
         time.sleep_ms(100)
 
+def FileExists(aFile):
+    Files = uos.listdir()
+    return (aFile in Files)

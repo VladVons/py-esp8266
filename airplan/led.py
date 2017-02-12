@@ -5,38 +5,9 @@
 
 import time
 import machine
-from common import *
-
-class TLed:
-    def __init__(self, aPin, aAlias = ''):
-        Log('TLed.init', aPin, aAlias);
-
-        self.Pin   = aPin
-        self.Alias = aAlias
-        self.Obj   = machine.Pin(aPin, machine.Pin.OUT)
-
-    def Set(self, aOn):
-        Log("TLed.Set", aOn, self.Alias, self.Pin)
-
-        self.Obj.value(aOn)
-
-    def Get(self):
-        return self.Obj.value()
-
-    def Toggle(self):
-        Log("TLed.Toggle")
-
-        self.Set(not self.Get())
-
-    def Flash(self, aCount = 1, aDelay = 100):
-        Log("TLed.Flash", aCount, aDelay)
-
-        for i in range(0, aCount):
-            self.Set(True)
-            time.sleep_ms(aDelay)
-            self.Set(False)
-            time.sleep_ms(aDelay)
-
+#
+from common import Log
+from control import TPinOut
 
 class TLeds:
     def __init__(self):
@@ -45,10 +16,10 @@ class TLeds:
         self.Idx  = 0
 
         self.Leds = []
-        self.Leds.append(TLed(2,  "sys"))
-        self.Leds.append(TLed(15, "red"))
-        self.Leds.append(TLed(12, "green"))
-        self.Leds.append(TLed(13, "blue"))
+        self.Leds.append(TPinOut(2,  "sys"))
+        self.Leds.append(TPinOut(15, "red"))
+        self.Leds.append(TPinOut(12, "green"))
+        self.Leds.append(TPinOut(13, "blue"))
 
     def GetCount(self):
         return len(self.Leds)

@@ -1,0 +1,15 @@
+{
+    "Ver":"1.0",
+    "App":{
+        "Debug":false
+    },
+    "WLan":{
+        "Connect":true,
+        "ESSID":"R3-0976646510" ,
+        "Password":"19710000"
+    },
+    "Server":{
+        "Port":80,
+        "Bind":"0.0.0.0"
+    }
+}

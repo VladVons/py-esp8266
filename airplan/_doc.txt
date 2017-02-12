@@ -1,0 +1,15 @@
+http://micropython.org/download#esp8266
+http://www.schatenseite.de/en/2016/04/22/esp8266-witty-cloud-module/
+https://esp8266.ru/esp8266-gpio-registers/
+https://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html
+
+Socket
+https://www.davidgouveia.net/2016/07/controlling-relays-using-micropython-and-an-esp8266/
+https://esp8266.ru/forum/threads/micropython-http-server.1492/
+
+
+.
+('R3-0976646510', '19710000')
+('L90_VladVons', '19710000')
+('OSTER', '123456789012345')
+('ASUS', '55886209')

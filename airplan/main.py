@@ -4,16 +4,18 @@
 #---
 
 import os
-import time
 import machine
 import gc
 #
 
-from button import *
+from control import TPinIn
 from led import *
 from net import *
-from timer import *
 from common import *
+from config import *
+
+cPinBtnFlash = 0
+cPinBtnPush  = 4
 
 #micropython.alloc_emergency_exception_buf(128)
 
@@ -21,9 +23,15 @@ class TApp:
     def __init__(self):
         self.Server = None
         self.Leds   = TLeds()
+        self.Cnt    = 0
 
-        TButton(cPioBtnPush,  self.OnButtonPush)
-        TButton(cPioBtnFlash, self.OnButtonFlash)
+        Config = TConfig()
+        Config.LoadFile()
+        self.Conf = Config.GetItems()
+        #common.cLogSHow = self.Conf['/App/Debug']
+
+        TPinIn(cPinBtnPush,  self.OnButtonPush, 'push')
+        TPinIn(cPinBtnFlash, self.OnButtonFlash, 'flash')
         #TTimer(0, self.OnTimer, 2000)
 
     def OnTimer(self, aObj):
@@ -46,7 +54,15 @@ class TApp:
         #if (self.Server):
         #    self.Server.Close()
 
-    def OnHttpGet(self, aCaller, aUrl):
+    def OnSocketJson(self, aCaller, aData):
+        self.Cnt += 1
+        Val = int(self.Cnt % 2)
+
+        #self.Leds.GetObj('red').Set(Val)
+        self.Leds.Set(Val)
+        return 'answer: ' + aData.get('data')
+
+    def OnSocketHttp(self, aCaller, aUrl):
         Path = aUrl.get('_path')
         Dir  = aUrl.get('_dir')
         Log('TButton.OnHttpGet', Path, Dir)
@@ -129,48 +145,54 @@ class TApp:
         return Result
 
     def Connect(self):
-        WLan = TWLan()
-        #Conn = WLan.Connect('R3-0976646510', '19710000')
-        #Conn = WLan.Connect('L90_VladVons', '19710000')
-        Conn = WLan.Connect('OSTER', '123456789012345')
-        #Conn = WLan.Connect('ASUS', '55886209')
-        if (Conn):
-            self.Leds.GetObj('green').Set(1)
-
-            print('Network', WLan.GetInfo())
-            self.Server = TServer()
-            self.Server.CallBack = self.OnHttpGet
-            self.Server.Run()
+        Result = self.Conf['/WLan/Connect']
+        if (Result):
+            WLan = TWLan()
+            Result = WLan.Connect(self.Conf['/WLan/ESSID'], self.Conf['/WLan/Password'])
+            if (Result):
+                self.Leds.GetObj('green').Set(1)
+                print('Network', WLan.GetInfo())
+            else:
+                print('Cant connect WiFi')
         else:
-            print('Cant connect WiFI')
-            #SleepAlways()
+            Result = True
+        return Result
+
+    def Listen(self):
+        if (self.Connect()):
+            self.Server = TServerJson(self.Conf['/Server/Bind'], self.Conf['/Server/Port'])
+            self.Server.CallBack = self.OnSocketJson
+            self.Server.Run()
 
     def TestLeds(self, aCount):
         Log('TApp.TestLeds', aCount)
-
         for i in range(aCount):
             self.Leds.Toggle()
-            if (self.Leds.Idx == 0):
-                self.Leds.Set(True)
-                time.sleep_ms(1000)
-                self.Leds.Set(False)
+
+    def TestSpeed(self, aCount):
+        import ujson
+        import time
+
+        TimeStart = time.ticks_ms()
+        for i in range(aCount):
+            #DataIn  = ujson.dumps( {'data': i} )
+            #DataOut = ujson.loads(DataIn)
+
+            Val = int(i % 2)
+            self.Leds.Set(Val)
+
+        print('MSec', time.ticks_ms() - TimeStart)
+
 
 def Main():
-    #time.sleep_ms(5000)
-
-    gc.collect()
-    print("Mem free a1", gc.mem_free())
-
-    App = TApp()
-    #SleepAlways()
-    App.TestLeds(1*4)
-    App.Connect()
-    #SleepAlways()
-
-    # Here while pressing button raise error: MemoryError
+    time.sleep_ms(1000)
 
     #gc.collect()
-    #print("Mem free b", gc.mem_free())
+    #print("Mem free a1", gc.mem_free())
 
+    App = TApp()
+    App.TestLeds(1*4)
+    #App.TestSpeed(1000)
+    App.Listen()
 
 Main()
