@@ -15,16 +15,24 @@ ExecM()
 Install()
 {
   echo "$0->$FUNCNAME"
- 
-  usermod -a -G dialout linux
 
   apt-get install git
-  #git clone https://github.com/VladVons/py-esp8266.git
+  # git clone https://github.com/VladVons/py-esp8266.git
 
   apt-get install python-pip
+
   pip install esptool
   pip install adafruit-ampy
   pip install picocom
+
+  pip install pyserial --upgrade
+  pip install adafruit-ampy --upgrade
+
+  usermod -a -G dialout linux
+  # logout
+
+  # byte code cross compiler
+  # https://github.com/micropython/micropython/tree/master/mpy-cross
 }
 
 DeployCore()
@@ -76,7 +84,9 @@ Purge()
 
 
 clear
-#Install
-#DeployCore
-DeploySrc
-#Purge
+case $1 in
+    Purge|p)        Purge     "$2"  ;;
+    Install)        "$1"      "$2"  ;;
+    DeployCore)     "$1"      "$2"  ;;
+    DeploySrc|*)    DeploySrc "$3" ;;
+esac

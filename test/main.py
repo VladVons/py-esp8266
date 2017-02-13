@@ -1,6 +1,7 @@
 import gc
 import ujson
 import ubinascii
+import ulog
 
 #------------------------------------------
 def MemFree():

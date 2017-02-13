@@ -155,6 +155,7 @@ class TApp:
             else:
                 print('Cant connect WiFi')
         else:
+            print('connect to me via AP. Password: micropythoN')
             Result = True
         return Result
 
@@ -187,8 +188,9 @@ class TApp:
 def Main():
     time.sleep_ms(1000)
 
-    gc.collect()
-    print("Mem free a1", gc.mem_free())
+    #gc.collect()
+    #print("Mem free a1", gc.mem_free())
+    #print(dir(machine))
 
     App = TApp()
     App.TestLeds(1*4)

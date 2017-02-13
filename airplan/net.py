@@ -57,18 +57,81 @@ class TServerBase:
         self.Port     = aPort
         self.CallBack = None
 
+    def __del__(self):
+        self.Close()
+
+    def Open(self):
+        Log('TserverBase.Open')
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.Sock.bind( (aBind, aPort) )
+        self.Sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        #self.Sock = socket.socket()
+        self.Sock.bind( (self.Bind, self.Port) )
         #self.Sock.settimeout(10)
         self.Sock.listen(1)
-        Log('Listening on', aBind, aPort)
+        Log('Listening on', self.Bind, self.Port)
 
     def Close(self):
         Log('TServerBase.Close')
         if (self.Sock):
             self.Sock.close()
-            self.Sock   = None
-            self.Active = False
+            self.Sock = None
+
+
+class TServerJson(TServerBase):
+    def __init__(self, aBind, aPort):
+        TServerBase.__init__(self, aBind, aPort)
+        self.BufSize = 512
+
+    def Receive(self):
+        Data = self.Conn.recv(self.BufSize)
+        Log('TServerJson.Receive', Data)
+        if (Data):
+            return ujson.loads(Data)
+        else:
+            return {}
+
+    def Send(self, aData):
+        Log('TServerJson.Send', aData)
+        Data = ujson.dumps( {'data': aData} )
+        self.Conn.send(Data)
+
+    def _Run(self):
+        Log('TServerJson.Run')
+
+        self.Conn, Addr = self.Sock.accept()
+        Log('Client connected from', Addr)
+
+        while (True):
+            #self.Conn, Addr = self.Sock.accept()
+            #Log('Client connected from', Addr)
+
+            if (self.Active):
+                DataIn = self.Receive()
+                if (DataIn.get('data')):
+                    if (self.CallBack):
+                        DataOut = self.CallBack(self, DataIn)
+                    else:
+                        DataOut = 'unhandled'
+                else:
+                    self.Send('stop')
+                    break
+
+                self.Send(DataOut)
+            else:
+                break
+
+            #self.Conn.close()
+        self.Conn.close()
+
+
+    def Run(self): 
+        self.Open()
+
+        self.Active = True
+        while (self.Active):
+            self._Run()
+
+        self.Close()
 
 
 class TServerHttp(TServerBase):
@@ -150,50 +213,3 @@ class TServerHttp(TServerBase):
         self.Close()
 
 
-class TServerJson(TServerBase):
-    def __init__(self, aBind, aPort):
-        TServerBase.__init__(self, aBind, aPort)
-        self.BufSize = 256
-
-    def Receive(self):
-        Data = self.Conn.recv(self.BufSize)
-        Log('TServerJson.Receive', Data)
-        if (Data):
-            return ujson.loads(Data)
-        else:
-            return {}
-
-    def Send(self, aData):
-        Log('TServerJson.Send', aData)
-        Data = ujson.dumps( {'data': aData} )
-        self.Conn.send(Data)
-
-    def _Run(self):
-        Log('TServerJson.Run')
-
-        self.Conn, Addr = self.Sock.accept()
-        Log('Client connected from', Addr)
-
-        while (True):
-            if (self.Active):
-                DataIn = self.Receive()
-                if (DataIn.get('data')):
-                    if (self.CallBack):
-                        DataOut = self.CallBack(self, DataIn)
-                    else:
-                        DataOut = 'unhandled'
-                else:
-                    self.Send('stop')
-                    break
-
-                self.Send(DataOut)
-            else:
-                break
-
-        self.Conn.close()
-        self.Close()
-
-    def Run(self): 
-        self.Active = True
-        while (self.Active):
-            self._Run()
