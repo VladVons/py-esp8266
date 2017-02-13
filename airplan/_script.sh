@@ -12,6 +12,17 @@ ExecM()
   eval "$aExec"
 }
 
+
+Upgrade()
+{
+  echo "$0->$FUNCNAME"
+
+  pip install esptool       --upgrade
+  pip install adafruit-ampy --upgrade 
+  pip install picocom       --upgrade
+}
+
+
 Install()
 {
   echo "$0->$FUNCNAME"
@@ -25,17 +36,16 @@ Install()
   pip install adafruit-ampy
   pip install picocom
 
-  pip install pyserial --upgrade
-  pip install adafruit-ampy --upgrade
+  Upgrade
 
   usermod -a -G dialout linux
   # logout
 
-  # byte code cross compiler
+  # byte code cross compiler. py to mpy
   # https://github.com/micropython/micropython/tree/master/mpy-cross
 }
 
-DeployCore()
+EspFirmw()
 {
   echo "$0->$FUNCNAME"
 
@@ -48,7 +58,7 @@ DeployCore()
 }
 
 
-DeploySrc()
+EspSrc()
 {
   echo "$0->$FUNCNAME"
 
@@ -72,7 +82,8 @@ DeploySrc()
   done
 }
 
-Purge()
+
+EspDel()
 {
   ampy --port $Dev --baud 115200 ls | grep -v "boot.py" |\
   while read File; do
@@ -85,8 +96,9 @@ Purge()
 
 clear
 case $1 in
-    Purge|p)        Purge     "$2"  ;;
-    Install)        "$1"      "$2"  ;;
-    DeployCore)     "$1"      "$2"  ;;
-    DeploySrc|*)    DeploySrc "$3" ;;
+    Install)     "$1"   "$2"  ;;
+    Upgrade)     "$1"   "$2"  ;;
+    EspFirmw)    "$1"   "$2"  ;;
+    EspDel|d)    EspDel "$2"  ;;
+    EspSrc|*)    EspSrc "$3"  ;;
 esac

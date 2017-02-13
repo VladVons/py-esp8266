@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 #---VladVons@gmail.com
 # 12.02.17
 # python for PC 
@@ -51,7 +53,7 @@ class TSockClient():
             self.Sock = None
 
 
-def TestSpeed(aCount):
+def TestSpeed1(aCount):
     #SockClient = TSockClient('192.168.4.1',   80)
     SockClient = TSockClient('192.168.2.144', 80)
     SockClient.Open()
@@ -67,5 +69,22 @@ def TestSpeed(aCount):
         #SockClient.Close()
         #time.sleep(0.1)
 
+def Client_TestSpeed(aHost, aPort = 80, aCount = 1000):
+    import socket
 
-TestSpeed(100)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    Start = time.time()
+    for i in range(1, aCount):
+        DataOut = 'Packet %d ' % (i)
+        sock.sendto(DataOut, (aHost, aPort))
+        print("Sent", DataOut)
+        DataIn = sock.recvfrom(256)
+        print("DataIn", DataIn)
+
+        Duration = round((time.time() - Start), 2) 
+        print("Sec", Duration, "Tick", round(Duration / i, 2))
+        #time.sleep(0.1)
+
+Client_TestSpeed('192.168.2.144', 80, 1000)

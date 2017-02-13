@@ -3,10 +3,15 @@ http://www.schatenseite.de/en/2016/04/22/esp8266-witty-cloud-module/
 https://esp8266.ru/esp8266-gpio-registers/
 https://docs.micropython.org/en/latest/esp8266/esp8266/quickref.html
 
+Tutorial
+http://docs.micropython.org/en/v1.8.7/esp8266/esp8266/tutorial/index.html
+
 Socket
 https://www.davidgouveia.net/2016/07/controlling-relays-using-micropython-and-an-esp8266/
 https://esp8266.ru/forum/threads/micropython-http-server.1492/
 
+UDP
+https://github.com/micropython/micropython/issues/2198
 
 .
 ('R3-0976646510', '19710000')

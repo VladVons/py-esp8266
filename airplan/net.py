@@ -62,9 +62,8 @@ class TServerBase:
 
     def Open(self):
         Log('TserverBase.Open')
-        self.Sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.Sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        #self.Sock = socket.socket()
+        self.Sock = socket.socket()
+        #self.Sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.Sock.bind( (self.Bind, self.Port) )
         #self.Sock.settimeout(10)
         self.Sock.listen(1)
@@ -80,7 +79,7 @@ class TServerBase:
 class TServerJson(TServerBase):
     def __init__(self, aBind, aPort):
         TServerBase.__init__(self, aBind, aPort)
-        self.BufSize = 512
+        self.BufSize = 64
 
     def Receive(self):
         Data = self.Conn.recv(self.BufSize)
@@ -213,3 +212,16 @@ class TServerHttp(TServerBase):
         self.Close()
 
 
+def ServerRun(aBind = '0.0.0.0', aPort = 80):
+    import socket
+
+    Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    Sock.bind( (aBind, aPort) )
+
+    while (True):
+        print("waiting for data...")
+
+        DataIn, Addr = Sock.recvfrom(256)
+        DataOut = b'Server: ' + DataIn 
+        SendRes = Sock.sendto(DataOut, Addr)
+        print('DataIn:', DataIn, 'DataOut:', DataOut, 'SendRes:', SendRes, 'Addr:', Addr)
