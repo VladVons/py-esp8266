@@ -18,6 +18,21 @@ def SleepAlways():
         # dont burn CPU
         time.sleep_ms(100)
 
-def FileExists(aFile):
-    Files = uos.listdir()
-    return (aFile in Files)
+#---
+class TFile():
+    @staticmethod
+    def List():
+        return uos.listdir()
+
+    @staticmethod
+    def Exists(aFile):
+        Files = TFile.List()
+        return (aFile in Files)
+
+    @staticmethod
+    def Load(aName):
+        File = open(aName)
+        Result = File.read()
+        File.close()
+        return Result
+ 

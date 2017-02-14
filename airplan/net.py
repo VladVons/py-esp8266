@@ -9,11 +9,13 @@ import network
 import ure
 import time
 import ujson
+import ubinascii
 
 from common import Log
 
 class TWLan:
-    def Scan(self):
+    @staticmethod
+    def Scan():
         Log('TWLan.Scan')
         Result = []
 
@@ -24,11 +26,25 @@ class TWLan:
 
         return Result
 
-    def GetInfo(self):
+    @staticmethod
+    def GetMac():
+        ap_if = network.WLAN(network.AP_IF)
+        mac = ap_if.config("mac")
+        return ubinascii.hexlify(mac).decode("utf-8")
+
+    @staticmethod
+    def SetEssd(aName, aPassw):
+        essid = "%s-%s" % (aName, TWLan.GetMac()[-4:])
+        ap_if = network.WLAN(network.AP_IF)
+        ap_if.config(essid = essid, authmode = network.AUTH_WPA_WPA2_PSK, password = aPassw)
+
+    @staticmethod
+    def GetInfo():
         wlan = network.WLAN(network.STA_IF)
         return wlan.ifconfig()
 
-    def Connect(self, aESSID, aPassw, aTimeOut = 10000):
+    @staticmethod
+    def Connect(aESSID, aPassw, aTimeOut = 10000):
         Log('Connect', aESSID, aPassw)
 
         wlan = network.WLAN(network.STA_IF)
@@ -171,7 +187,7 @@ class TServerHttp(TServerBase):
             '%s'
             ) % (len(aStr), aStr)
         return Result
-
+    
     def Receive(self):
         Result = []
 
@@ -189,7 +205,7 @@ class TServerHttp(TServerBase):
         #Log('TServerHttp.Send', aData)
         self.Conn.send(self.Responce(aData))
 
-    def Run(self):
+    def _Run(self):
         Log('TServer.Run')
 
         self.Active = True
@@ -209,19 +225,25 @@ class TServerHttp(TServerBase):
                 self.Send(Data)
                 self.Conn.close()
 
+    def Run(self):
+        self.Open()
+        self._Run()
         self.Close()
-
 
 def ServerRun(aBind = '0.0.0.0', aPort = 80):
     import socket
+    print('Bind', aBind, 'Port', aPort)
 
     Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     Sock.bind( (aBind, aPort) )
+    #Sock.settimeout(5)
 
     while (True):
         print("waiting for data...")
-
-        DataIn, Addr = Sock.recvfrom(256)
-        DataOut = b'Server: ' + DataIn 
-        SendRes = Sock.sendto(DataOut, Addr)
-        print('DataIn:', DataIn, 'DataOut:', DataOut, 'SendRes:', SendRes, 'Addr:', Addr)
+        try:
+            DataIn, Addr = Sock.recvfrom(128)
+            DataOut = b'Server: ' + DataIn 
+            SendRes = Sock.sendto(DataOut, Addr)
+            #print('DataIn:', DataIn, 'DataOut:', DataOut, 'SendRes:', SendRes, 'Addr:', Addr)
+        except:
+            pass

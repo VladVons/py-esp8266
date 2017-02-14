@@ -18,3 +18,15 @@ https://github.com/micropython/micropython/issues/2198
 ('L90_VladVons', '19710000')
 ('OSTER', '123456789012345')
 ('ASUS', '55886209')
+
+'pins:\n'
+'00 - button flush\n'
+'02 - led    sys\n'
+'04 - button push\n'
+'05 - unused\n'
+'12 - led    green\n'
+'13 - led    blue\n'
+'14 - unused\n'
+'15 - led    red \n'
+'16 - unused\n'
+ 

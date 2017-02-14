@@ -6,7 +6,7 @@
 import uos
 import ujson
 #
-from common import FileExists
+from common import TFile
 
 class TConfig():
     def __init__(self):
@@ -23,7 +23,7 @@ class TConfig():
         return aNode
 
     def LoadFile(self, aFile = 'config.json'):
-        Result = FileExists(aFile)
+        Result = TFile.Exists(aFile)
         if (Result):
             with open(aFile) as File:
                 self.Data = ujson.load(File)

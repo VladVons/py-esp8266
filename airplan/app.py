@@ -19,6 +19,38 @@ cPinBtnPush  = 4
 
 #micropython.alloc_emergency_exception_buf(128)
 
+class TApi:
+    @staticmethod
+    def FileLoad(aName):
+        return TFile.Load(Name)
+
+    @staticmethod
+    def FileList():
+        return '\n'.join(TFile.List())
+
+    @staticmethod
+    def SetEssd(aName, aPassw):
+        TWlan.SetEssd('vando-' + aName, aPassw)
+
+    @staticmethod
+    def Help():
+        Result = (
+            '/led?num=x&on=x (set led num 0-3, on 0-1)\n'
+            '/led?on=x (set all leds on 0-1)\n'
+            '\n'
+            '/pwm?pin=x&freq=x&duty=x (set pin freq 0-1023)\n'
+            '\n'
+            '/adc (get adc LDR value 0-1023)\n'
+            '\n'
+            '/file?cmd=show&name=xxx (show file xxx)\n'
+            '/file?cmd=ls (list files) \n'
+            '\n'
+            '/server?cmd=close\n'
+            '/server?cmd=reset\n'
+            '/server?cmd=mem\n'
+        )
+        return Result
+
 class TApp:
     def __init__(self):
         self.Server = None
@@ -69,32 +101,7 @@ class TApp:
 
         Result = 'unknown'
         if (Dir == '/help'):
-            Result = (
-                'pins:\n'
-                '00 - button flush\n'
-                '02 - led    sys\n'
-                '04 - button push\n'
-                '05 - unused\n'
-                '12 - led    green\n'
-                '13 - led    blue\n'
-                '14 - unused\n'
-                '15 - led    red \n'
-                '16 - unused\n'
-                '\n'
-                '/led?num=x&on=x (set led num 0-3, on 0-1)\n'
-                '/led?on=x (set all leds on 0-1)\n'
-                '\n'
-                '/pwm?pin=x&freq=x&duty=x (set pin freq 0-1023)\n'
-                '\n'
-                '/adc (get adc LDR value 0-1023)\n'
-                '\n'
-                '/file?cmd=show&name=xxx (show file xxx)\n'
-                '/file?cmd=ls (list files) \n'
-                '\n'
-                '/server?cmd=close\n'
-                '/server?cmd=reset\n'
-                '/server?cmd=mem\n'
-                    )
+            Result = TApi.Help()
 
         elif (Dir == '/led'):
             Result = 'OK'
@@ -161,8 +168,8 @@ class TApp:
 
     def Listen(self):
         if (self.Connect()):
-            self.Server = TServerUdp(self.Conf['/Server/Bind'], self.Conf['/Server/Port'])
-            self.Server.CallBack = self.OnSocketJson
+            self.Server = TServerHttp(self.Conf['/Server/Bind'], self.Conf['/Server/Port'])
+            self.Server.CallBack = self.OnSocketHttp
             self.Server.Run()
 
     def TestLeds(self, aCount):
