@@ -22,7 +22,7 @@ cPinBtnPush  = 4
 class TApi:
     @staticmethod
     def FileLoad(aName):
-        return TFile.Load(Name)
+        return TFile.Load(aName)
 
     @staticmethod
     def FileList():
@@ -31,6 +31,35 @@ class TApi:
     @staticmethod
     def SetEssd(aName, aPassw):
         TWlan.SetEssd('vando-' + aName, aPassw)
+
+    @staticmethod
+    def SetLed(aLeds, aNum, aOn):
+        if (aNum == -1):
+            aLeds.Set(aOn)
+        else:
+            aLeds.SetNo(aNum, aOn)
+
+    @staticmethod
+    def SetPwm(aPin, aFreq, aDuty):
+        pwm = machine.PWM(machine.Pin(aPin))
+        pwm.freq(aFreq)
+        pwm.duty(aDuty)
+        #pwm.deinit()
+        Result = '/pwm pin:%d, freq:%d, duty:%d' % (aPin, pwm.freq(), pwm.duty())
+
+    @staticmethod
+    def GetAdc():
+        adc = machine.ADC(0)
+        return adc.read()
+
+    @staticmethod
+    def GetMemFree():
+        gc.collect()
+        return gc.mem_free()
+
+    @staticmethod
+    def Reset():
+        machine.reset()
 
     @staticmethod
     def Help():
@@ -45,10 +74,51 @@ class TApi:
             '/file?cmd=show&name=xxx (show file xxx)\n'
             '/file?cmd=ls (list files) \n'
             '\n'
-            '/server?cmd=close\n'
-            '/server?cmd=reset\n'
-            '/server?cmd=mem\n'
+            '/machine?cmd=reset\n'
+            '/machine?cmd=mem\n'
         )
+        return Result
+
+    @staticmethod
+    def HttpEntry(aCaller, aUrl):
+        Path = aUrl.get('_path')
+        Dir  = aUrl.get('_dir')
+        Log('TButton.OnHttpGet', Path, Dir)
+
+        Result = 'unknown'
+        if (Dir == '/help'):
+            Result = TApi.Help()
+
+        elif (Dir == '/led'):
+            On  = int(aUrl.get('on', '0')) 
+            Num = aUrl.get('num', '-1')
+            TApi.SetLed(Num, On)
+            Result = 'OK'
+
+        elif (Dir == '/file'):
+            Cmd  = aUrl.get('cmd') 
+            if (Cmd == 'show'):
+                Name  = aUrl.get('name') 
+                Result = TApi.FileLoad(Name)
+            elif (Cmd == 'ls'):
+                Result = TApi.FileList()
+
+        elif (Dir == '/machine'):
+            Cmd  = aUrl.get('cmd') 
+            if (Cmd == 'reset'):
+                TApi.Reset()
+            elif (Cmd == 'mem'):
+                Result = str(TApi.GetMemFree())
+
+        elif (Dir == '/pwm'):
+            pin   = int(aUrl.get('pin', '5'))
+            freq  = int(aUrl.get('freq', '50'))
+            duty  = int(aUrl.get('duty', '100'))
+            Result = TApi.SetPwm(pin, freq, duty)
+
+        elif (Dir == '/adc'):
+            Result = str(TApi.GetAdc())
+
         return Result
 
 class TApp:
@@ -94,68 +164,13 @@ class TApp:
         self.Leds.Set(Val)
         return 'answer: ' + aData.get('data')
 
-    def OnSocketHttp(self, aCaller, aUrl):
-        Path = aUrl.get('_path')
-        Dir  = aUrl.get('_dir')
-        Log('TButton.OnHttpGet', Path, Dir)
-
-        Result = 'unknown'
-        if (Dir == '/help'):
-            Result = TApi.Help()
-
-        elif (Dir == '/led'):
-            Result = 'OK'
-            On  = int(aUrl.get('on', '1')) 
-            Num = aUrl.get('num')
-            if (Num):
-                self.Leds.SetNo(int(Num), On)
-            else:
-                self.Leds.Set(On)
-
-        elif (Dir == '/file'):
-            Result = 'OK'
-            Cmd  = aUrl.get('cmd') 
-            if (Cmd == 'show'):
-                Name  = aUrl.get('name', 'boot.py') 
-                f = open(Name)
-                Result = f.read()
-                f.close()
-            elif (Cmd == 'ls'):
-                Result = '\n'.join(os.listdir())
-
-        elif (Dir == '/server'):
-            Result = 'OK'
-            Cmd  = aUrl.get('cmd')
-            if (Cmd == 'close'):
-                aCaller.Close()
-            elif (Cmd == 'reset'):
-                machine.reset()
-            elif (Cmd == 'mem'):
-                gc.collect()
-                Result = str(gc.mem_free())
-
-        elif (Dir == '/pwm'):
-            pin   = int(aUrl.get('pin', '5'))
-            freq  = int(aUrl.get('freq', '50'))
-            duty  = int(aUrl.get('duty', '100'))
-
-            pwm = machine.PWM(machine.Pin(pin))
-            pwm.freq(freq)
-            pwm.duty(duty)
-            #pwm.deinit()
-            Result = '/pwm pin:%d, freq:%d, duty:%d' % (pin, pwm.freq(), pwm.duty())
-
-        elif (Dir == '/adc'):
-            adc = machine.ADC(0)
-            Result = '/adc: %d' % (adc.read())
-
-        return Result
 
     def Connect(self):
         Result = self.Conf['/WLan/Connect']
         if (Result):
             WLan = TWLan()
             Result = WLan.Connect(self.Conf['/WLan/ESSID'], self.Conf['/WLan/Password'])
+            #Result = WLan.Connect('ASUS', '55886209')
             if (Result):
                 self.Leds.GetObj('green').Set(1)
                 print('Network', WLan.GetInfo())
@@ -169,7 +184,7 @@ class TApp:
     def Listen(self):
         if (self.Connect()):
             self.Server = TServerHttp(self.Conf['/Server/Bind'], self.Conf['/Server/Port'])
-            self.Server.CallBack = self.OnSocketHttp
+            self.Server.CallBack = TApi.HttpEntry
             self.Server.Run()
 
     def TestLeds(self, aCount):
