@@ -8,31 +8,26 @@ import uos
 
 cLogSHow = True
 
-
 def Log(*aParam):
     if (cLogSHow):
         print("Log: %s" % list(aParam))
 
+'''
 def SleepAlways():
     while True:
         # dont burn CPU
         time.sleep_ms(100)
 
-#---
-class TFile():
-    @staticmethod
-    def List():
-        return uos.listdir()
+def TestSpeed(self, aCount):
+    import ujson
+    import time
 
-    @staticmethod
-    def Exists(aFile):
-        Files = TFile.List()
-        return (aFile in Files)
+    TimeStart = time.ticks_ms()
+    for i in range(aCount):
+        #DataIn  = ujson.dumps( {'data': i} )
+        #DataOut = ujson.loads(DataIn)
+        Val = int(i % 2)
+        self.Leds.Set(Val)
 
-    @staticmethod
-    def Load(aName):
-        File = open(aName)
-        Result = File.read()
-        File.close()
-        return Result
- 
+    print('MSec', time.ticks_ms() - TimeStart)
+'''

@@ -3,16 +3,12 @@
 # micropython ESP8266
 #---
 
-import os
-import machine
-import gc
-#
-
-from control import TPinIn
+import wlan
+from server_udp import TServerUdpJson
+from config     import TConfig
+from control    import TPinIn
+from common import Log
 from led import *
-from net import *
-from common import *
-from config import *
 
 cPinBtnFlash = 0
 cPinBtnPush  = 4
@@ -22,15 +18,15 @@ cPinBtnPush  = 4
 class TApi:
     @staticmethod
     def FileLoad(aName):
-        return TFile.Load(aName)
+        return fs.FileLoad(aName)
 
     @staticmethod
     def FileList():
-        return '\n'.join(TFile.List())
+        return '\n'.join(fs.FileList())
 
     @staticmethod
     def SetEssd(aName, aPassw):
-        TWlan.SetEssd('vando-' + aName, aPassw)
+        wlan.SetEssd('vando-' + aName, aPassw)
 
     @staticmethod
     def SetLed(aLeds, aNum, aOn):
@@ -45,7 +41,7 @@ class TApi:
         pwm.freq(aFreq)
         pwm.duty(aDuty)
         #pwm.deinit()
-        Result = '/pwm pin:%d, freq:%d, duty:%d' % (aPin, pwm.freq(), pwm.duty())
+        return (pwm.freq(), pwm.duty())
 
     @staticmethod
     def GetAdc():
@@ -61,65 +57,6 @@ class TApi:
     def Reset():
         machine.reset()
 
-    @staticmethod
-    def Help():
-        Result = (
-            '/led?num=x&on=x (set led num 0-3, on 0-1)\n'
-            '/led?on=x (set all leds on 0-1)\n'
-            '\n'
-            '/pwm?pin=x&freq=x&duty=x (set pin freq 0-1023)\n'
-            '\n'
-            '/adc (get adc LDR value 0-1023)\n'
-            '\n'
-            '/file?cmd=show&name=xxx (show file xxx)\n'
-            '/file?cmd=ls (list files) \n'
-            '\n'
-            '/machine?cmd=reset\n'
-            '/machine?cmd=mem\n'
-        )
-        return Result
-
-    @staticmethod
-    def HttpEntry(aCaller, aUrl):
-        Path = aUrl.get('_path')
-        Dir  = aUrl.get('_dir')
-        Log('TButton.OnHttpGet', Path, Dir)
-
-        Result = 'unknown'
-        if (Dir == '/help'):
-            Result = TApi.Help()
-
-        elif (Dir == '/led'):
-            On  = int(aUrl.get('on', '0')) 
-            Num = aUrl.get('num', '-1')
-            TApi.SetLed(Num, On)
-            Result = 'OK'
-
-        elif (Dir == '/file'):
-            Cmd  = aUrl.get('cmd') 
-            if (Cmd == 'show'):
-                Name  = aUrl.get('name') 
-                Result = TApi.FileLoad(Name)
-            elif (Cmd == 'ls'):
-                Result = TApi.FileList()
-
-        elif (Dir == '/machine'):
-            Cmd  = aUrl.get('cmd') 
-            if (Cmd == 'reset'):
-                TApi.Reset()
-            elif (Cmd == 'mem'):
-                Result = str(TApi.GetMemFree())
-
-        elif (Dir == '/pwm'):
-            pin   = int(aUrl.get('pin', '5'))
-            freq  = int(aUrl.get('freq', '50'))
-            duty  = int(aUrl.get('duty', '100'))
-            Result = TApi.SetPwm(pin, freq, duty)
-
-        elif (Dir == '/adc'):
-            Result = str(TApi.GetAdc())
-
-        return Result
 
 class TApp:
     def __init__(self):
@@ -128,21 +65,17 @@ class TApp:
         self.Cnt    = 0
 
         Config = TConfig()
-        Config.LoadFile()
+        Config.FileLoad()
         self.Conf = Config.GetItems()
-        #common.cLogSHow = self.Conf['/App/Debug']
+
+        global cLogSHow
+        cLogSHow = self.Conf['/App/Debug']
 
         TPinIn(cPinBtnPush,  self.OnButtonPush, 'push')
-        TPinIn(cPinBtnFlash, self.OnButtonFlash, 'flash')
+        #TPinIn(cPinBtnFlash, self.OnButtonFlash, 'flash')
         #TTimer(0, self.OnTimer, 2000)
 
-    def OnTimer(self, aObj):
-        Log('TApp.OnTimer');
-
-        self.Leds.Toggle()
-        #self.Leds[0].Toggle()
-
-    def OnButtonPush(self, aObj):
+    async def OnButtonPush(self, aObj):
         Log('TApp.OnButtonPush', aObj);
 
         self.Leds.Toggle()
@@ -165,12 +98,10 @@ class TApp:
         return 'answer: ' + aData.get('data')
 
 
-    def Connect(self):
-        Result = self.Conf['/WLan/Connect']
+    def ConnectWiFi(self):
+        Result = self.Conf.get('/WLan/Connect', true)
         if (Result):
-            WLan = TWLan()
-            Result = WLan.Connect(self.Conf['/WLan/ESSID'], self.Conf['/WLan/Password'])
-            #Result = WLan.Connect('ASUS', '55886209')
+            Result = wlan.Connect(self.Conf.get('/WLan/ESSID'), self.Conf.get('/WLan/Password'))
             if (Result):
                 self.Leds.GetObj('green').Set(1)
                 print('Network', WLan.GetInfo())
@@ -183,25 +114,11 @@ class TApp:
 
     def Listen(self):
         if (self.Connect()):
-            self.Server = TServerHttp(self.Conf['/Server/Bind'], self.Conf['/Server/Port'])
-            self.Server.CallBack = TApi.HttpEntry
+            self.Server = TServerHttp(self.Conf.get('/Server/Bind', '0.0.0.0'), self.Conf.get('/Server/Port', 80))
+            self.Server.Handler = TApi.HttpEntry
             self.Server.Run()
 
     def TestLeds(self, aCount):
         Log('TApp.TestLeds', aCount)
         for i in range(aCount):
             self.Leds.Toggle()
-
-    def TestSpeed(self, aCount):
-        import ujson
-        import time
-
-        TimeStart = time.ticks_ms()
-        for i in range(aCount):
-            #DataIn  = ujson.dumps( {'data': i} )
-            #DataOut = ujson.loads(DataIn)
-
-            Val = int(i % 2)
-            self.Leds.Set(Val)
-
-        print('MSec', time.ticks_ms() - TimeStart)

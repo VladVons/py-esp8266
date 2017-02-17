@@ -94,4 +94,4 @@ def Client_TestSpeed(aHost, aPort = 80, aCount = 1000):
 
         #time.sleep(0.1)
 
-Client_TestSpeed('192.168.2.144', 80, 1000)
+#Client_TestSpeed('192.168.2.144', 80, 1000)

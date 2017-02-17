@@ -29,4 +29,7 @@ https://github.com/micropython/micropython/issues/2198
 '14 - unused\n'
 '15 - led    red \n'
 '16 - unused\n'
+
+
+total mem: 36288, used: 7680, free: 28608
  

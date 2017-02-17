@@ -1,18 +1,56 @@
-import gc
-import ujson
-import ubinascii
-import ulog
+#---VladVons@gmail.com
+# 04.02.17
+# micropython ESP8266
+#---
 
-#------------------------------------------
-def MemFree():
+#from wlan2 import TWLan
+#import wlan
+import wlan
+#from server_udp import TServerUdpJson
+from server_tcp import TServerTcpHttp
+
+#import net
+
+#from app import TApp
+#
+#import urequests
+#import urllib
+#import micropython
+
+
+def Main():
+    #time.sleep_ms(3000)
+
     #gc.collect()
-    print("Mem free a1", gc.mem_free()) # 28768
+    print("Mem free", gc.mem_free())
+    #print("Mem info", micropython.mem_info())
 
-def Json():
-    Data = b'{"data2":"hello"}'
-    #Data = ubinascii.b2a_base64(Data)
-    print('--1', Data)
-    print('--2', ujson.loads(Data))
+    #print(dir(machine))
+    #print("urllib", dir(urllib))
+    #print("urequests", dir(urequests))
 
-#MemFree()
-Json()
+    #App = TApp()
+    #App.TestLeds(1*4)
+    #App.TestSpeed(1000)
+    #App.Listen()
+
+    #wlan.SetEssd('PinkFloyd', '19790000')
+    print(wlan.Scan())
+
+    Con = wlan.Connect('R3-0976646510', '19710000')
+    if (Con):
+        print('Network1', wlan.GetInfo())
+        #Server = TServerUdpJson('0.0.0.0', 80)
+        Server = TServerTcpHttp('0.0.0.0', 80)
+        Server.Handler = Http
+        Server.Run()
+        #print('Network', net.TWLan.GetInfo())
+        ##App.Leds.GetObj('green').Set(1)
+        #net.ServerRun('0.0.0.0', 80)
+    else:
+        print("cant connect Wi-Fi")
+
+    print("Mem free", gc.mem_free())
+
+
+Main()

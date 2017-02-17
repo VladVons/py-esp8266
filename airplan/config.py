@@ -3,10 +3,9 @@
 # micropython ESP8266
 #---
 
-import uos
 import ujson
 #
-from common import TFile
+import fs
 
 class TConfig():
     def __init__(self):
@@ -22,8 +21,8 @@ class TConfig():
                     aNode = Value
         return aNode
 
-    def LoadFile(self, aFile = 'config.json'):
-        Result = TFile.Exists(aFile)
+    def FileLoad(self, aFile = 'config.json'):
+        Result = fs.FileExists(aFile)
         if (Result):
             with open(aFile) as File:
                 self.Data = ujson.load(File)
