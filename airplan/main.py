@@ -3,24 +3,12 @@
 # micropython ESP8266
 #---
 
-#from wlan2 import TWLan
-#import wlan
 import wlan
-#from server_udp import TServerUdpJson
 from server_tcp import TServerTcpHttp
-
-#import net
-
-#from app import TApp
-#
-#import urequests
-#import urllib
-#import micropython
+from app import TApp
 
 
 def Main():
-    #gc.collect()
-    print("Mem free", gc.mem_free())
     #print("Mem info", micropython.mem_info())
 
     #print(dir(machine))
