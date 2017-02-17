@@ -102,7 +102,7 @@ ST = TSpeedTest()
 #ST.Test('List_1')
 #ST.Test('List_2')
 
-ST.Count = 100
+ST.Count = 10
 ST.Test('UDP_2')
 #threads 1 ('TimeOuts', 69, 'Packet', 9999, 'Sec', 78.93, 'Tick', 0.008)
 #threads 2 'TimeOuts', 85, 'Packet', 9999, 'Sec', 111.68, 'Tick', 0.011)

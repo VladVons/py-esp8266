@@ -83,7 +83,7 @@ EspSrcCopy()
   EspFileList
 
   # deploy
-  find -type f | grep -v ".\_" | sort | \
+  GetSrc |\
   while read File; do
     FileSize=$(wc -c $File | awk '{ print $1 }')
     echo "File: $File, Size: $FileSize"

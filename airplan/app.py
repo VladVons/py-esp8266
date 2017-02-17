@@ -7,7 +7,7 @@ import wlan
 from server_udp import TServerUdpJson
 from config     import TConfig
 from control    import TPinIn
-from common import Log
+from common import Log, cLogSHow 
 from led import *
 
 cPinBtnFlash = 0
@@ -69,42 +69,46 @@ class TApp:
         self.Conf = Config.GetItems()
 
         global cLogSHow
-        cLogSHow = self.Conf['/App/Debug']
+        cLogSHow = self.Conf.get('/App/Debug')
+        print(cLogSHow)
 
         TPinIn(cPinBtnPush,  self.OnButtonPush, 'push')
         #TPinIn(cPinBtnFlash, self.OnButtonFlash, 'flash')
         #TTimer(0, self.OnTimer, 2000)
 
-    async def OnButtonPush(self, aObj):
+    def OnButtonPush(self, aObj):
         Log('TApp.OnButtonPush', aObj);
 
-        self.Leds.Toggle()
-        if (self.Leds.Idx == self.Leds.GetCount()):
-            self.Leds.Set(True)
+        #self.Leds.Toggle()
+        #if (self.Leds.Idx == self.Leds.GetCount()):
+        #    self.Leds.Set(True)
 
-    def OnButtonFlash(self, aObj):
-        print('TApp.OnButtonFlash.OK')
-        Log('TApp.OnButtonFlash.MemoryError')
+    #def OnButtonFlash(self, aObj):
+    #    print('TApp.OnButtonFlash.OK')
+    #    Log('TApp.OnButtonFlash.MemoryError')
 
         #if (self.Server):
         #    self.Server.Close()
 
-    def OnSocketJson(self, aCaller, aData):
+    def HandlerJson(self, aCaller, aData):
+        Log('Tapp.HandlerJson')
+
         self.Cnt += 1
         Val = int(self.Cnt % 2)
 
         #self.Leds.GetObj('red').Set(Val)
-        self.Leds.Set(Val)
+        #self.Leds.Set(Val)
+        self.Leds.SetNo(1, Val)
         return 'answer: ' + aData.get('data')
 
 
-    def ConnectWiFi(self):
-        Result = self.Conf.get('/WLan/Connect', true)
+    def ConnectWlan(self):
+        Result = self.Conf.get('/WLan/Connect', True)
         if (Result):
             Result = wlan.Connect(self.Conf.get('/WLan/ESSID'), self.Conf.get('/WLan/Password'))
             if (Result):
                 self.Leds.GetObj('green').Set(1)
-                print('Network', WLan.GetInfo())
+                print('Network', wlan.GetInfo())
             else:
                 print('Cant connect WiFi')
         else:
@@ -113,9 +117,9 @@ class TApp:
         return Result
 
     def Listen(self):
-        if (self.Connect()):
-            self.Server = TServerHttp(self.Conf.get('/Server/Bind', '0.0.0.0'), self.Conf.get('/Server/Port', 80))
-            self.Server.Handler = TApi.HttpEntry
+        if (self.ConnectWlan()):
+            self.Server = TServerUdpJson(self.Conf.get('/Server/Bind', '0.0.0.0'), self.Conf.get('/Server/Port', 80))
+            self.Server.Handler = self.HandlerJson
             self.Server.Run()
 
     def TestLeds(self, aCount):
