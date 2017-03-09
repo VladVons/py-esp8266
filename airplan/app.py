@@ -65,7 +65,7 @@ class TApp:
         self.Cnt    = 0
 
         Config = TConfig()
-        Config.FileLoad()
+        Config.FileLoad('config2.json')
         self.Conf = Config.GetItems()
 
         global cLogSHow
@@ -118,7 +118,7 @@ class TApp:
 
     def Listen(self):
         if (self.ConnectWlan()):
-            self.Server = TServerUdpJson(self.Conf.get('/Server/Bind', '0.0.0.0'), self.Conf.get('/Server/Port', 80))
+            self.Server = TServerUdpJson(self.Conf.get('/Server/Bind', '0.0.0.0'), self.Conf.get('/Server/Port', 51015))
             self.Server.Handler = self.HandlerJson
             self.Server.Run()
 

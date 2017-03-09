@@ -32,9 +32,18 @@ Upgrade()
 }
 
 
+Make_mpy_cross()
+{
+  https://github.com/micropython/micropython.git
+  #https://github.com/micropython/micropython/tree/master/mpy-cross
+}
+
+
 Install()
 {
   echo "$0->$FUNCNAME"
+
+  sudo su
 
   apt-get install git
   # git clone https://github.com/VladVons/py-esp8266.git
@@ -50,6 +59,8 @@ Install()
   usermod -a -G dialout linux
   # logout
 
+  #Make_mpy_cross
+
   # byte code cross compiler. py to mpy
   # https://github.com/micropython/micropython/tree/master/mpy-cross
 }
@@ -62,7 +73,10 @@ EspFirmware()
   # images
   # http://micropython.org/download#esp8266
 
-  File="esp8266-20170108-v1.8.7.bin"
+  Dir="/mnt/hdd/data1/Python"
+  File="$Dir/esp8266-20170108-v1.8.7.bin"
+  #File="$Dir/esp8266-ota-20170309-v1.8.7-376-ga0cbc10.bin"
+
   ExecM "esptool.py --port $Dev erase_flash"
   ExecM "esptool.py --port $Dev --baud 460800 write_flash --flash_size=detect 0 $File"
 }
@@ -76,6 +90,16 @@ EspFileList()
   ExecM "ampy --port $Dev --baud $Speed ls"
 }
 
+
+EspSrcFile()
+{
+  aFile="$1"
+
+  FileSize=$(wc -c $aFile | awk '{ print $1 }')
+  echo "File: $aFile, Size: $FileSize"
+  ExecM "ampy --port $Dev --baud $Speed put $aFile"
+}
+
 EspSrcCopy()
 {
   echo "$0->$FUNCNAME"
@@ -85,10 +109,7 @@ EspSrcCopy()
   # deploy
   GetSrc |\
   while read File; do
-    FileSize=$(wc -c $File | awk '{ print $1 }')
-    echo "File: $File, Size: $FileSize"
-
-    ExecM "ampy --port $Dev --baud $Speed put $File"
+    EspSrcFile $File
     sleep 1
   done
 }
@@ -140,10 +161,12 @@ EspRelease()
 
 clear
 case $1 in
-    Install)        "$1"       ;;
-    Upgrade)        "$1"       ;;
-    EspFirmware)    "$1"       ;;
-    EspRelease)     "$1"       ;;
-    EspSrcDel|d)    EspSrcDel  ;;
-    EspSrcCopy|*)   EspSrcCopy ;;
+    Install)        "$1"        ;;
+    Upgrade)        "$1"        ;;
+    EspFirmware)    "$1"        ;;
+    EspRelease)     "$1"        ;;
+    EspFileList|l)  EspFileList ;;
+    EspSrcDel|d)    EspSrcDel   ;;
+    EspSrcFile|f)   EspSrcFile  $2 ;;
+    EspSrcCopy|c)   EspSrcCopy  ;;
 esac

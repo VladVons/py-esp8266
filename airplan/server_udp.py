@@ -34,7 +34,7 @@ class TServerUdpBase():
 
     def Receive(self):
         return self._Receive()
-        
+
     def Send(self, aData):
         self._Send()
 

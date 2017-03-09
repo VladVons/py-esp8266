@@ -31,5 +31,6 @@ https://github.com/micropython/micropython/issues/2198
 '16 - unused\n'
 
 
+Pure MicroPyhon:
 total mem: 36288, used: 7680, free: 28608
  

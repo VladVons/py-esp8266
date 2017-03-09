@@ -5,8 +5,8 @@
     },
     "WLan":{
         "Connect":true,
-        "ESSID":"R3-0976646510",
-        "Password":"19710000"
+        "ESSID":"OSTER",
+        "Password":"123456789012345"
     },
     "Server":{
         "Port":51015,
