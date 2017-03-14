@@ -46,29 +46,11 @@ class TSpeedTest():
             Result = "".join(Items)
         return Result
 
-    def UDP_1(self):
-        Host = '192.168.2.144'
-        Port = 80
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        sock.settimeout(0.2)
+    def Client_UDP_1(self):
+        #Host = '192.168.2.144'
+        Host = '127.0.0.1'
+        Port = 51015
 
-        TimeOuts = 0
-        for i in range(1, self.Count):
-            DataOut = 'Packet %d ' % (i)
-            sock.sendto(DataOut, (Host, Port))
-            try:
-                DataIn = sock.recvfrom(128)
-                Duration = round((time.time() - self.Start), 2)
-                print('TimeOuts', TimeOuts, "Packet", i, "Sec", Duration, "Tick", round(Duration / i, 3))
-            except:
-                print('Timeout')
-                TimeOuts += 1
-
-
-    def UDP_2(self):
-        Host = '192.168.2.144'
-        Port = 80
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(0.2)
 
@@ -91,8 +73,7 @@ class TSpeedTest():
                 Data = ''
 
             Duration = round((time.time() - self.Start), 2)
-            print('TimeOuts', TimeOuts, "Packet", i, "Sec", Duration, "Tick", round(Duration / i, 3))
-
+            print('TimeOuts', TimeOuts, "Packet", i, "Sec", Duration, "Tick", round(Duration / i, 3), 'Data', Data)
 
 ST = TSpeedTest()
 
@@ -103,6 +84,7 @@ ST = TSpeedTest()
 #ST.Test('List_2')
 
 ST.Count = 10
-ST.Test('UDP_2')
+ST.Test('Client_UDP_1')
 #threads 1 ('TimeOuts', 69, 'Packet', 9999, 'Sec', 78.93, 'Tick', 0.008)
 #threads 2 'TimeOuts', 85, 'Packet', 9999, 'Sec', 111.68, 'Tick', 0.011)
+

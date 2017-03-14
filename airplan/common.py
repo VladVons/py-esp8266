@@ -6,7 +6,7 @@
 import time
 import uos
 
-cLogSHow = True
+cLogSHow = not True
 
 def Log(*aParam):
     if (cLogSHow):
