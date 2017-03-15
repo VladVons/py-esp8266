@@ -3,13 +3,12 @@
 # micropython ESP8266
 #---
 
-import gc
+import api
 from app import TApp
 
 def Main():
     App = TApp()
-    #App.TestLeds(1*4)
-    print("Mem free", gc.mem_free())
+    print("Mem free", api.GetMemFree())
     App.Listen()
 
 

@@ -47,8 +47,8 @@ class TSpeedTest():
         return Result
 
     def Client_UDP_1(self):
-        #Host = '192.168.2.144'
-        Host = '127.0.0.1'
+        Host = '192.168.2.144'
+        #Host = '127.0.0.1'
         Port = 51015
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

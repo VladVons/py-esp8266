@@ -4,110 +4,51 @@
 #---
 
 import wlan
+import api
 from server_udp import TServerUdpJson
 from config     import TConfig
-from control    import TPinIn
 from common import Log, cLogSHow 
-from led import *
-
-cPinBtnFlash = 0
-cPinBtnPush  = 4
-
-#micropython.alloc_emergency_exception_buf(128)
-
-class TApi:
-    @staticmethod
-    def FileLoad(aName):
-        return fs.FileLoad(aName)
-
-    @staticmethod
-    def FileList():
-        return '\n'.join(fs.FileList())
-
-    @staticmethod
-    def SetEssd(aName, aPassw):
-        wlan.SetEssd('vando-' + aName, aPassw)
-
-    @staticmethod
-    def SetLed(aLeds, aNum, aOn):
-        if (aNum == -1):
-            aLeds.Set(aOn)
-        else:
-            aLeds.SetNo(aNum, aOn)
-
-    @staticmethod
-    def SetPwm(aPin, aFreq, aDuty):
-        pwm = machine.PWM(machine.Pin(aPin))
-        pwm.freq(aFreq)
-        pwm.duty(aDuty)
-        #pwm.deinit()
-        return (pwm.freq(), pwm.duty())
-
-    @staticmethod
-    def GetAdc():
-        adc = machine.ADC(0)
-        return adc.read()
-
-    @staticmethod
-    def GetMemFree():
-        gc.collect()
-        return gc.mem_free()
-
-    @staticmethod
-    def Reset():
-        machine.reset()
 
 
 class TApp:
     def __init__(self):
         self.Server = None
-        self.Leds   = TLeds()
-        self.Cnt    = 0
 
         Config = TConfig()
-        Config.FileLoad('config2.json')
+        Config.FileLoad('config.json')
         self.Conf = Config.GetItems()
 
-        global cLogSHow
-        cLogSHow = self.Conf.get('/App/Debug')
-        print(cLogSHow)
-
-        TPinIn(cPinBtnPush,  self.OnButtonPush, 'push')
-        #TPinIn(cPinBtnFlash, self.OnButtonFlash, 'flash')
-        #TTimer(0, self.OnTimer, 2000)
+        api.SetButton(api.cPinBtnPush,  self.OnButtonPush)
 
     def OnButtonPush(self, aObj):
         Log('TApp.OnButtonPush', aObj);
 
-        #self.Leds.Toggle()
-        #if (self.Leds.Idx == self.Leds.GetCount()):
-        #    self.Leds.Set(True)
-
-    #def OnButtonFlash(self, aObj):
-    #    print('TApp.OnButtonFlash.OK')
-    #    Log('TApp.OnButtonFlash.MemoryError')
-
-        #if (self.Server):
-        #    self.Server.Close()
+        api.SetLed(api.cPinLedSys, not api.GetLed(api.cPinLedSys))
 
     def HandlerJson(self, aCaller, aData):
-        Log('Tapp.HandlerJson')
+        Log('Tapp.HandlerJson', aData)
 
-        self.Cnt += 1
-        Val = int(self.Cnt % 2)
+        Name  = aData.get('Name')
+        No    = aData.get('No')
+        Value = aData.get('Value')
+        print(Name, No, Value)        
 
-        #self.Leds.GetObj('red').Set(Val)
-        #self.Leds.Set(Val)
-        self.Leds.SetNo(1, Val)
-        return 'answer: ' + aData.get('data')
+        if (Name == "Lamp"):
+            api.SetLed(No, Value)            
+        elif (Name == "MotorDC"):
+            api.SetPwm(No, Value, 10)            
 
+        return 'OK'
 
     def ConnectWlan(self):
         Result = self.Conf.get('/WLan/Connect', True)
         if (Result):
-            Result = wlan.Connect(self.Conf.get('/WLan/ESSID'), self.Conf.get('/WLan/Password'))
+            ESSD   = self.Conf.get('/WLan/ESSID')
+            Paswd  = self.Conf.get('/WLan/Password')
+            print("ConnectWlan", ESSD, Paswd)
+            Result = wlan.Connect(ESSD,  Paswd)
             if (Result):
-                self.Leds.GetObj('green').Set(1)
+                api.SetLed(api.cPinLedGreen, 1)
                 print('Network', wlan.GetInfo())
             else:
                 print('Cant connect WiFi')
@@ -121,8 +62,3 @@ class TApp:
             self.Server = TServerUdpJson(self.Conf.get('/Server/Bind', '0.0.0.0'), self.Conf.get('/Server/Port', 51015))
             self.Server.Handler = self.HandlerJson
             self.Server.Run()
-
-    def TestLeds(self, aCount):
-        Log('TApp.TestLeds', aCount)
-        for i in range(aCount):
-            self.Leds.Toggle()

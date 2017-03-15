@@ -6,7 +6,7 @@ import datetime
 
 def SocketServerUDP_1():
     Host = '0.0.0.0'
-    Port = 51015
+    Port = 51016
 
     Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     Sock.bind( (Host, Port) )

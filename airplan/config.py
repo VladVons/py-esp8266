@@ -7,6 +7,7 @@ import ujson
 #
 import fs
 
+
 class TConfig():
     def __init__(self):
         self.Data = {}

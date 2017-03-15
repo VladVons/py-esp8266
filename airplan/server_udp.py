@@ -43,6 +43,7 @@ class TServerUdpBase():
         while (self.Active):
             if (self.Active):
                 Data = self.Receive()
+                #print('TServerUdpBase', Data)
                 if (self.Handler):
                     Data = self.Handler(self, Data)
                 self.Send(Data)
@@ -53,11 +54,16 @@ class TServerUdpJson(TServerUdpBase):
         TServerUdpBase.__init__(self, aBind, aPort)
 
     def Receive(self):
+        Result = {}
+
         Data = self._Receive()
         if (Data):
-            return ujson.loads(Data.decode("utf-8"))
-        else:
-            return {}
+            try:
+                Result = ujson.loads(Data.decode("utf-8"))
+            except:
+                pass
+
+        return Result
 
     def Send(self, aData):
         Data = ujson.dumps(aData)
