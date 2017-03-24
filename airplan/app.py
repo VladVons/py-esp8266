@@ -23,22 +23,29 @@ class TApp:
     def OnButtonPush(self, aObj):
         Log('TApp.OnButtonPush', aObj);
 
-        api.SetLed(api.cPinLedSys, not api.GetLed(api.cPinLedSys))
+        api.SetPin(api.cPinLedSys, not api.GetPin(api.cPinLedSys))
 
     def HandlerJson(self, aCaller, aData):
-        Log('Tapp.HandlerJson', aData)
-
         Name  = aData.get('Name')
         No    = aData.get('No')
         Value = aData.get('Value')
-        print(Name, No, Value)        
+        print('HandlerJson', Name, No, Value)        
 
-        if (Name == "Lamp"):
-            api.SetLed(No, Value)            
-        elif (Name == "MotorDC"):
-            api.SetPwm(No, Value, 10)            
+        if   (Name == "GetAdc"):
+            Result = api.GetAdc()            
+        elif (Name == "GetPin"):
+            Result = api.GetPin(No)            
+        elif (Name == "SetPin"):
+            Result = api.SetPin(No, Value)            
+        elif (Name == "GetPwm"):
+            Result = api.GetPwm(No)
+        elif (Name == "SetPwm"):
+            Duty = aData.get('Duty')
+            Result = api.SetPwm(No, Value, Duty)
+        else:
+            Result = 'Unhandl[ed'
 
-        return 'OK'
+        return Result  
 
     def ConnectWlan(self):
         Result = self.Conf.get('/WLan/Connect', True)
@@ -48,8 +55,9 @@ class TApp:
             print("ConnectWlan", ESSD, Paswd)
             Result = wlan.Connect(ESSD,  Paswd)
             if (Result):
-                api.SetLed(api.cPinLedGreen, 1)
                 print('Network', wlan.GetInfo())
+                api.SetPins([api.cPinLedSys, api.cPinLedGreen, api.cPinLedBlue], 0)
+                api.SetPin(api.cPinLedRed, 1)
             else:
                 print('Cant connect WiFi')
         else:

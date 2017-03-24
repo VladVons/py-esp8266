@@ -12,42 +12,41 @@ import ubinascii
 def Scan():
     Result = []
 
-    wlan = network.WLAN(network.STA_IF)
-    nets = wlan.scan()
+    Obj = network.WLAN(network.STA_IF)
+    nets = Obj.scan()
     for net in nets:
         Result.append(net[0].decode("utf-8"))
 
     return Result
 
 def GetMac():
-    ap_if = network.WLAN(network.AP_IF)
-    mac = ap_if.config("mac")
+    Obj = network.WLAN(network.AP_IF)
+    mac = Obj.config("mac")
     return ubinascii.hexlify(mac).decode("utf-8")
 
 def SetEssd(aName, aPassw):
     essid = "%s-%s" % (aName, GetMac()[-4:])
-    ap_if = network.WLAN(network.AP_IF)
-    ap_if.config(essid = essid, authmode = network.AUTH_WPA_WPA2_PSK, password = aPassw)
+    Obj = network.WLAN(network.AP_IF)
+    Obj.config(essid = essid, authmode = network.AUTH_WPA_WPA2_PSK, password = aPassw)
 
 def GetInfo():
-    wlan = network.WLAN(network.STA_IF)
-    return wlan.ifconfig()
+    Obj = network.WLAN(network.STA_IF)
+    return Obj.ifconfig()
 
 def Connect(aESSID, aPassw, aTimeOut = 10000):
-    wlan = network.WLAN(network.STA_IF)
-    Result = wlan.isconnected()
+    Obj = network.WLAN(network.STA_IF)
+    Result = Obj.isconnected()
     if (not Result):
-        wlan.active(True)
-        wlan.connect(aESSID, aPassw)
+        Obj.active(True)
+        Obj.connect(aESSID, aPassw)
 
         TimeEnd = time.ticks_ms() + aTimeOut
         while (True):
             #machine.idle()
             time.sleep_ms(250)
 
-            Result = wlan.isconnected()
+            Result = Obj.isconnected()
             if (Result or time.ticks_ms() > TimeEnd):
                 break
 
     return Result
-

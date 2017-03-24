@@ -50,6 +50,8 @@ class TSpeedTest():
         Host = '192.168.2.144'
         #Host = '127.0.0.1'
         Port = 51015
+        cMotorDC1 = 12 
+        cMotorDC2 = 14
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(0.2)
@@ -57,7 +59,8 @@ class TSpeedTest():
         TimeOuts = 0
         for i in range(1, self.Count):
             Data = 'Packet %d ' % (i)
-            DataOut = json.dumps( {"data": Data} )
+            DataOut = json.dumps( {"data": Data, "Name":"MotorDC", "No":cMotorDC1, "Value":500} )
+            DataOut = json.dumps( {"data": Data, "Name":"MotorDC", "No":cMotorDC2, "Value":700} )
             sock.sendto(DataOut, (Host, Port))
 
             try:
@@ -83,7 +86,7 @@ ST = TSpeedTest()
 #ST.Test('List_1')
 #ST.Test('List_2')
 
-ST.Count = 10
+ST.Count = 2
 ST.Test('Client_UDP_1')
 #threads 1 ('TimeOuts', 69, 'Packet', 9999, 'Sec', 78.93, 'Tick', 0.008)
 #threads 2 'TimeOuts', 85, 'Packet', 9999, 'Sec', 111.68, 'Tick', 0.011)

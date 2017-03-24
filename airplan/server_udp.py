@@ -66,5 +66,9 @@ class TServerUdpJson(TServerUdpBase):
         return Result
 
     def Send(self, aData):
-        Data = ujson.dumps(aData)
+        try:
+            Data = ujson.dumps(aData)
+        except:
+            Data = '{"exception":"json"}'
+
         self._Send(Data)
