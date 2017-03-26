@@ -26,9 +26,9 @@ Upgrade()
 {
   echo "$0->$FUNCNAME"
 
-  pip install esptool       --upgrade
-  pip install adafruit-ampy --upgrade 
-  pip install picocom       --upgrade
+  sudo pip install esptool       --upgrade
+  sudo pip install adafruit-ampy --upgrade 
+  #sudo pip install picocom       --upgrade
 }
 
 
@@ -73,12 +73,14 @@ EspFirmware()
   # images
   # http://micropython.org/download#esp8266
 
-  Dir="/mnt/hdd/data1/Python"
-  File="$Dir/esp8266-20170108-v1.8.7.bin"
-  #File="$Dir/esp8266-ota-20170309-v1.8.7-376-ga0cbc10.bin"
+  Dir="/mnt/hdd/ntfs/Python/image"
+  #File="esp8266-20170108-v1.8.7.bin"
+  File="esp8266-ota-20170324-v1.8.7-482-g64a4f11.bin"
 
   ExecM "esptool.py --port $Dev erase_flash"
-  ExecM "esptool.py --port $Dev --baud 460800 write_flash --flash_size=detect 0 $File"
+  ExecM "esptool.py --port $Dev --baud 460800 write_flash --flash_size=detect 0 $Dir/$File"
+
+  EspFileList
 }
 
 

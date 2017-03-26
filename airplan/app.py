@@ -12,7 +12,8 @@ from common import Log, cLogSHow
 
 class TApp:
     def __init__(self):
-        self.Server = None
+        self.Server  = None
+        self.CntCall = 0
 
         Config = TConfig()
         Config.FileLoad('config.json')
@@ -20,32 +21,57 @@ class TApp:
 
         api.SetButton(api.cPinBtnPush,  self.OnButtonPush)
 
+        #api.WatchDog(5000)
+        api.TimerCallback(3000, self.DefHandler)
+
     def OnButtonPush(self, aObj):
         Log('TApp.OnButtonPush', aObj);
-
         api.SetPin(api.cPinLedSys, not api.GetPin(api.cPinLedSys))
 
-    def HandlerJson(self, aCaller, aData):
+    def DefHandler(self, aObj):
+        print ("DefHandler", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
+        api.SetPinInv(api.cPinLedSys)
+        return None
+
+    def Parse(self, aData):
+        self.CntCall += 1 
+
         Name  = aData.get('Name')
-        No    = aData.get('No')
+        Item  = aData.get('Item')
         Value = aData.get('Value')
-        print('HandlerJson', Name, No, Value)        
+        print('Parse', self.CntCall, Name, Item, Value)        
 
-        if   (Name == "GetAdc"):
-            Result = api.GetAdc()            
-        elif (Name == "GetPin"):
-            Result = api.GetPin(No)            
-        elif (Name == "SetPin"):
-            Result = api.SetPin(No, Value)            
-        elif (Name == "GetPwm"):
-            Result = api.GetPwm(No)
-        elif (Name == "SetPwm"):
-            Duty = aData.get('Duty')
-            Result = api.SetPwm(No, Value, Duty)
+        if (Name):
+            try:
+                Obj = getattr(api, Name)
+            except:
+                Obj = None
+            
+            if (Obj):
+                if (Item != None and Value != None):
+                    Result = Obj(Item, Value)            
+                elif (Item != None):
+                    Result = Obj(Item)            
+                elif (Value != None):
+                    Result = Obj(Value)
+                else:
+                    Result = Obj()
+            else:
+                Result = 'Error: Unknown Name'
+                print(Result) 
         else:
-            Result = 'Unhandl[ed'
+            Result = self.DefHandler(None)
+        return {"Name": Name, "Result": Result}
 
-        return Result  
+    def HandlerJson(self, aCaller, aData):
+        # array of requests
+        if (isinstance(aData, list)):
+            Result = []
+            for Data in aData:
+                Result.append(self.Parse(Data))
+        else:
+            Result = self.Parse(aData)
+        return Result        
 
     def ConnectWlan(self):
         Result = self.Conf.get('/WLan/Connect', True)
@@ -67,6 +93,11 @@ class TApp:
 
     def Listen(self):
         if (self.ConnectWlan()):
-            self.Server = TServerUdpJson(self.Conf.get('/Server/Bind', '0.0.0.0'), self.Conf.get('/Server/Port', 51015))
+            Bind    = self.Conf.get('/Server/Bind', '0.0.0.0')
+            Port    = self.Conf.get('/Server/Port', 51015)
+            TimeOut = self.Conf.get('/Server/TimeOut', -1)
+
+            self.Server = TServerUdpJson(Bind, Port, TimeOut)
+            self.Server.BufSize = self.Conf.get('/Server/BufSize', 512)
             self.Server.Handler = self.HandlerJson
             self.Server.Run()

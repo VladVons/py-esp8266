@@ -5,7 +5,9 @@
 
 import machine
 import gc
-#
+import time
+import os
+##
 import wlan
 import fs
 
@@ -19,6 +21,12 @@ cPinBtnFlush = 0
 cPinBtnPush  = 4
 
 
+def GetInfo():
+    return {"Ver": "1.01", "Date": "2017.03.25"}
+
+def Print(aValue):
+    print(aValue)
+
 def FileLoad(aName):
     return fs.FileLoad(aName)
 
@@ -27,6 +35,32 @@ def FileList():
 
 def SetEssd(aName, aPassw):
     wlan.SetEssd('vando-' + aName, aPassw)
+
+def GetMemFree():
+    gc.collect()
+    return gc.mem_free()
+
+def Sleep(aDelay):
+    time.sleep_ms(aDelay)
+
+def GetTicks():
+    return time.ticks_ms()
+
+def GetMachineId():
+    return machine.unique_id()
+
+#def WatchDog(aTimeOut):
+#    obj = machine.WDT()
+#    obj.feed()
+
+def TimerCallback(aTimeOut, aHandler):
+    obj = machine.Timer(-1)
+    obj.init(period = aTimeOut, mode = machine.Timer.PERIODIC, callback = aHandler)
+
+def Reset():
+    machine.reset()
+
+#---
 
 def SetButton(aPin, aHandler):
     Obj = machine.Pin(aPin, machine.Pin.IN)
@@ -37,6 +71,11 @@ def SetPin(aPin, aOn):
     Obj.value(aOn)
     return Obj.value()
 
+def SetPinInv(aPin):
+    Obj = machine.Pin(aPin, machine.Pin.OUT)
+    Obj.value(not Obj.value())
+    return Obj.value()
+
 def GetPin(aPin):
     try:
         Obj = machine.Pin(aPin, machine.Pin.OUT)
@@ -45,16 +84,20 @@ def GetPin(aPin):
         Result = -1
     return Result
 
-def SetPins(aPins, aOn):
-    for Pin in aPins:
-        SetPin(Pin, aOn)
-    return None
-
-def SetPwm(aPin, aFreq, aDuty):
+def SetPwmFreq(aPin, aValue):
     Obj = machine.PWM(machine.Pin(aPin))
-    Obj.freq(aFreq)
-    Obj.duty(aDuty)
-    return (Obj.freq(), Obj.duty())
+    Obj.freq(aValue)
+    return Obj.freq()
+
+def SetPwmDuty(aPin, aValue):
+    Obj = machine.PWM(machine.Pin(aPin))
+    Obj.duty(aValue)
+    return Obj.duty()
+
+def SetPwmOff(aPin):
+    Obj = machine.PWM(machine.Pin(aPin))
+    Obj.deinit()
+    return None
 
 def GetPwm(aPin):
     try:
@@ -64,18 +107,37 @@ def GetPwm(aPin):
         Result = (-1, -1)        
     return Result
 
-def StopPwm(aPin):
-    Obj = machine.PWM(machine.Pin(aPin))
-    Obj.deinit()
-    return 0
-
-def GetAdc():
-    Obj = machine.ADC(0)
+def GetAdc(aPin = 0):
+    Obj = machine.ADC(aPin)
     return Obj.read()
 
-def GetMemFree():
-    gc.collect()
-    return gc.mem_free()
+#---
 
-def Reset():
-    machine.reset()
+def GetPins(aPins):
+    Result = []
+    for Pin in aPins:
+        Result.append(GetPin(Pin))
+    return Result
+
+def SetPins(aPins, aOn):
+    Result = []
+    for Pin in aPins:
+        Result.append(SetPin(Pin, aOn))
+    return Result
+
+def SetPinsInv(aPins):
+    Result = []
+    for Pin in aPins:
+        Result.append(SetPinInv(Pin))
+    return Result
+
+def GetPwms(aPins):
+    Result = []
+    for Pin in aPins:
+        Result.append(GetPwm(Pin))
+    return Result
+
+def SetPwmsOff(aPins):
+    for Pin in aPins:
+        SetPwmOff(Pin)
+    return None

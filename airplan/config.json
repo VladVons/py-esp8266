@@ -10,6 +10,8 @@
     },
     "Server":{
         "Port":51015,
-        "Bind":"0.0.0.0"
+        "Bind":"0.0.0.0",
+        "BufSize":768,
+        "TimeOut":-1
     }
 }

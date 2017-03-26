@@ -7,9 +7,14 @@ import api
 from app import TApp
 
 def Main():
+    print("Version", api.GetInfo(), "Mem free", api.GetMemFree(), "Ticks", api.GetTicks(), "ID", api.GetMachineId())
+
     App = TApp()
-    print("Mem free", api.GetMemFree())
     App.Listen()
 
 
 Main()
+
+#import os, sys
+#print('uname', os.uname())
+#print('version', sys.version())

@@ -10,11 +10,13 @@ import ubinascii
 #from common import Log
 
 class TServerUdpBase():
-    def __init__(self, aBind, aPort):
+    def __init__(self, aBind, aPort, aTimeOut = -1):
         self.Handler = None
-        self.BufSize = 128
+        self.BufSize = 512
 
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        if (aTimeOut != -1):
+            self.Sock.settimeout(aTimeOut)
         self.Sock.bind( (aBind, aPort) )
 
     def __del__(self):
@@ -26,11 +28,16 @@ class TServerUdpBase():
             self.Sock = None
 
     def _Receive(self):
-        Result, self.Addr = self.Sock.recvfrom(self.BufSize)
+        try:
+            Result, self.Addr = self.Sock.recvfrom(self.BufSize)
+        except OSError:
+            self.Addr = None
+            Result    = None
         return Result
 
     def _Send(self, aData):
-        self.Sock.sendto(aData, self.Addr)
+        if (self.Addr):
+            self.Sock.sendto(aData, self.Addr)
 
     def Receive(self):
         return self._Receive()
@@ -43,15 +50,14 @@ class TServerUdpBase():
         while (self.Active):
             if (self.Active):
                 Data = self.Receive()
-                #print('TServerUdpBase', Data)
                 if (self.Handler):
                     Data = self.Handler(self, Data)
                 self.Send(Data)
 
 
 class TServerUdpJson(TServerUdpBase):
-    def __init__(self, aBind, aPort):
-        TServerUdpBase.__init__(self, aBind, aPort)
+    def __init__(self, aBind, aPort, aTimeOut -1):
+        TServerUdpBase.__init__(self, aBind, aPort, aTimeOut)
 
     def Receive(self):
         Result = {}
@@ -61,7 +67,7 @@ class TServerUdpJson(TServerUdpBase):
             try:
                 Result = ujson.loads(Data.decode("utf-8"))
             except:
-                pass
+                Data = '{"exception":"json"}'
 
         return Result
 
