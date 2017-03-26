@@ -104,7 +104,7 @@ def GetPwm(aPin):
         Obj = machine.PWM(machine.Pin(aPin))
         Result = (Obj.freq(), Obj.duty())
     except:
-        Result = (-1, -1)        
+        Result = (-1, -1)
     return Result
 
 def GetAdc(aPin = 0):

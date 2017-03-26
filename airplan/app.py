@@ -12,7 +12,6 @@ from common import Log, cLogSHow
 
 class TApp:
     def __init__(self):
-        self.Server   = None
         self.CntCall  = 0
         self.LastCall = 0
 
@@ -42,24 +41,24 @@ class TApp:
 
     def Parse(self, aData):
         self.CntCall += 1 
-        self.LastCall = api.GetTicks() 
+        self.LastCall = api.GetTicks()
 
         Name  = aData.get('Name')
         Item  = aData.get('Item')
         Value = aData.get('Value')
-        print('Parse', self.CntCall, Name, Item, Value)        
+        print('Parse', self.CntCall, Name, Item, Value)
 
         if (Name):
             try:
                 Obj = getattr(api, Name)
             except:
                 Obj = None
-            
+
             if (Obj):
                 if (Item != None and Value != None):
-                    Result = Obj(Item, Value)            
+                    Result = Obj(Item, Value)
                 elif (Item != None):
-                    Result = Obj(Item)            
+                    Result = Obj(Item)
                 elif (Value != None):
                     Result = Obj(Value)
                 else:
@@ -79,7 +78,7 @@ class TApp:
                 Result.append(self.Parse(Data))
         else:
             Result = self.Parse(aData)
-        return Result        
+        return Result
 
     def ConnectWlan(self):
         Result = self.Conf.get('/WLan/Connect', True)
@@ -95,7 +94,7 @@ class TApp:
             else:
                 print('Cant connect WiFi')
         else:
-            print('connect to me via AP. Password: micropythoN')
+            print('connect AP. Password: micropythoN')
             Result = True
         return Result
 
@@ -105,7 +104,7 @@ class TApp:
             Port    = self.Conf.get('/Server/Port', 51015)
             TimeOut = self.Conf.get('/Server/TimeOut', -1)
 
-            self.Server = TServerUdpJson(Bind, Port, TimeOut)
-            self.Server.BufSize = self.Conf.get('/Server/BufSize', 512)
-            self.Server.Handler = self.HandlerJson
-            self.Server.Run()
+            Server = TServerUdpJson(Bind, Port, TimeOut)
+            Server.BufSize = self.Conf.get('/Server/BufSize', 512)
+            Server.Handler = self.HandlerJson
+            Server.Run()
