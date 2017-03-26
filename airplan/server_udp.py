@@ -56,7 +56,7 @@ class TServerUdpBase():
 
 
 class TServerUdpJson(TServerUdpBase):
-    def __init__(self, aBind, aPort, aTimeOut -1):
+    def __init__(self, aBind, aPort, aTimeOut = -1):
         TServerUdpBase.__init__(self, aBind, aPort, aTimeOut)
 
     def Receive(self):

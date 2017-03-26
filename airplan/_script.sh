@@ -74,13 +74,18 @@ EspFirmware()
   # http://micropython.org/download#esp8266
 
   Dir="/mnt/hdd/ntfs/Python/image"
-  #File="esp8266-20170108-v1.8.7.bin"
-  File="esp8266-ota-20170324-v1.8.7-482-g64a4f11.bin"
+  #FileName="esp8266-20170108-v1.8.7.bin"
+  FileName="esp8266-ota-20170326-v1.8.7-491-g3f810da.bin" 
 
-  ExecM "esptool.py --port $Dev erase_flash"
-  ExecM "esptool.py --port $Dev --baud 460800 write_flash --flash_size=detect 0 $Dir/$File"
+  File=$Dir/$FileName
+  if [ -f $File ] ; then
+    ExecM "esptool.py --port $Dev erase_flash"
+    ExecM "esptool.py --port $Dev --baud 460800 write_flash --flash_size=detect 0 $File"
 
-  EspFileList
+    EspFileList
+  else
+    echo "File not found $File"  
+  fi;
 }
 
 

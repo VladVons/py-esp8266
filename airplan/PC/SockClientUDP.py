@@ -66,6 +66,10 @@ class TSockClientUDP():
             Result = {}
         return Result
 
+
+    def Show(self):
+        print(self.Data)
+
     def Print(self, aValue):
         self.Add({"Name": "Print", "Value": aValue})
 
@@ -91,7 +95,7 @@ class TSockClientUDP():
     def SetLeds(self, aValue):
         self.SetPins([cLed_Sys, cLed_Red, cLed_Green, cLed_Blue],  aValue)
 
-    def Motorslear(self):
+    def MotorsClear(self):
         self.SetPins([cMotor_Nor1_Fwd, cMotor_Nor1_Rev, cMotor_Nor2_Fwd, cMotor_Nor2_Rev], 0)
 
     def GetAdc(self):
@@ -119,60 +123,34 @@ class TSockClientUDP():
 def TestLed():
     SC = TSockClientUDP(cHost, cPort)
     for i in range(100):
-        #SC.SetPins([cLed_Red, cLed_Green, cLed_Blue], 1)
         SC.SetPinsInv([cLed_Red, cLed_Green, cLed_Blue])
-        #SC.Add({"Name": "Sleep", "Value": 300})
-        #SC.Add({"Name": "GetTicks"})
-
-        #SC.SetPins([cLed_Red, cLed_Green, cLed_Blue], 0)
-        #SC.Add({"Name": "Sleep", "Value": 300})
-
-        #SC.Add({"Name": "GetMemFree"})
+        #SC.Add({"Name": "Sleep", "Value": 200})
+        SC.Add({"Name": "GetTicks"})
+        SC.Add({"Name": "GetMemFree"})
 
         SC.Send(1)
 
-def TestMotor():
+def TestMotor(aPins, aForward, aSpeed):
     SC = TSockClientUDP(cHost, cPort)
 
-    #SC.GetAdc()
-    #SC.GetPins(ArrPin)
-    #SC.GetPwms(ArrPwm)
-    #SC.SetPins(ArrPin, 0)
+    PinA = aPins[int(aForward)]
+    PinB = aPins[int(not aForward)]
 
-    SC.Motorslear()
-    SC.SetPin(cMotor_Nor1_Fwd, 0)
-    SC.SetPin(cMotor_Nor1_Rev, 0)
+    if (aSpeed > 0):
+        SC.SetPwmOff(PinB)
+        SC.SetPwm(PinA, 300, aSpeed)
+        SC.SetPin(PinB, 0)
+        SC.SetPin(PinA, 1)
+    else:
+        SC.SetPwmOff(PinA)
+        SC.SetPwmOff(PinB)
+        SC.SetPin(PinA, 1)
+        SC.SetPin(PinB, 1)
 
-    SC.SetPwm(cMotor_Nor1_Fwd, 1023, 100)
-    SC.Send(1)
-
-def Test1():
-    SC = TSockClientUDP(cHost, cPort)
-
-    #SC.SetPins(ArrPin, 0)
-    #SC.SetPins([cLed_Green], 0)
-    #SC.SetPwms([12], 200, 300)
-    #SC.Add({"Name": "GetMemFree"})
-
-    #for Pin in ArrPwm:
-    #    SC.SetPin(Pin, 0)
-    #    SC.SetPwm(Pin, 30, 1000)
-    #    SC.Send()
- 
-    #SC.SetPin(12, 0)
-    #SC.SetPwm(12, 500, 900)
-    #SC.SetPwmOff(12)
-    #SC.Send()
-
-    SC.SetPwmsOff(ArrPwm)
-    SC.SetPins(ArrPwm, 0)
-
-    SC.GetPwms(ArrPwm)
+    #SC.Show()
     SC.Send()
 
 
-
-#TestMotor()
-TestLed()
-#Test1()
+TestMotor([cMotor_Nor1_Fwd, cMotor_Nor1_Rev], True, 0)
+#TestLed()
  

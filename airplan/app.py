@@ -12,8 +12,9 @@ from common import Log, cLogSHow
 
 class TApp:
     def __init__(self):
-        self.Server  = None
-        self.CntCall = 0
+        self.Server   = None
+        self.CntCall  = 0
+        self.LastCall = 0
 
         Config = TConfig()
         Config.FileLoad('config.json')
@@ -22,19 +23,26 @@ class TApp:
         api.SetButton(api.cPinBtnPush,  self.OnButtonPush)
 
         #api.WatchDog(5000)
-        api.TimerCallback(3000, self.DefHandler)
+        api.TimerCallback(3000, self.OnTimer)
 
     def OnButtonPush(self, aObj):
         Log('TApp.OnButtonPush', aObj);
         api.SetPin(api.cPinLedSys, not api.GetPin(api.cPinLedSys))
 
-    def DefHandler(self, aObj):
+    def OnTimer(self, aObj):
+        Ticks = api.GetTicks()
+        if (Ticks - self.LastCall > 10000):
+            self.LastCall = Ticks 
+            api.SetPinInv(api.cPinLedSys)
+            self.DefHandler()
+
+    def DefHandler(self):
         print ("DefHandler", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
-        api.SetPinInv(api.cPinLedSys)
         return None
 
     def Parse(self, aData):
         self.CntCall += 1 
+        self.LastCall = api.GetTicks() 
 
         Name  = aData.get('Name')
         Item  = aData.get('Item')
@@ -60,7 +68,7 @@ class TApp:
                 Result = 'Error: Unknown Name'
                 print(Result) 
         else:
-            Result = self.DefHandler(None)
+            Result = self.DefHandler()
         return {"Name": Name, "Result": Result}
 
     def HandlerJson(self, aCaller, aData):

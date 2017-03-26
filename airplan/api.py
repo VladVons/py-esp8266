@@ -57,14 +57,14 @@ def TimerCallback(aTimeOut, aHandler):
     obj = machine.Timer(-1)
     obj.init(period = aTimeOut, mode = machine.Timer.PERIODIC, callback = aHandler)
 
+def SetButton(aPin, aHandler):
+    Obj = machine.Pin(aPin, machine.Pin.IN)
+    Obj.irq(trigger = machine.Pin.IRQ_FALLING, handler = aHandler)
+
 def Reset():
     machine.reset()
 
 #---
-
-def SetButton(aPin, aHandler):
-    Obj = machine.Pin(aPin, machine.Pin.IN)
-    Obj.irq(trigger = machine.Pin.IRQ_FALLING, handler = aHandler)
 
 def SetPin(aPin, aOn):
     Obj = machine.Pin(aPin, machine.Pin.OUT)
