@@ -32,6 +32,16 @@ def GetInfo():
             "Date":     "2017.03.25", 
             "Support" : "VladVons@gmail.com"}
 
+def Exec(aValue = "Result = (2+3)*2"):
+    Vars = {}
+    try:
+        exec(aValue, globals(), Vars)
+        Result = Vars.get('Result')
+    except Exception as E:
+        print(E)
+        Result = E
+    return Result
+
 def Print(aValue):
     print(aValue)
 
@@ -57,9 +67,9 @@ def GetTicks():
 def GetMachineId():
     return machine.unique_id()
 
-def WatchDog(aTimeOut = 0):
-    obj = machine.WDT()
-    obj.feed()
+#def WatchDog(aTimeOut = 0):
+#    obj = machine.WDT()
+#    obj.feed()
 
 def TimerCallback(aTimeOut, aHandler):
     obj = machine.Timer(-1)

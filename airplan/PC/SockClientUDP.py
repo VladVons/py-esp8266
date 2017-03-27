@@ -28,12 +28,19 @@ class TSockClientUDP():
         self.Host  = aHost
         self.Port  = aPort
 
-        self.Start = time.time()
-        self.SendCnt = 0
+        self.Start    = time.time()
+        self.SendCnt  = 0
+        self.TimeOut  = 0
+        self.MaxTries = 3
         self.Clear()
 
     def __del__(self):
-        print("Total sec", round(time.time() - self.Start, 2))
+        TotalSec = round(time.time() - self.Start, 2)
+        if (self.SendCnt > 0):
+            print("TotalSec", TotalSec, 
+              "Avg", round(TotalSec /  self.SendCnt, 3),
+              "SendCnt", self.SendCnt, 
+              "TimeOut", self.TimeOut)
 
     def Clear(self):
         self.Data = []
@@ -49,16 +56,21 @@ class TSockClientUDP():
         self.Clear()
         print("DataOut Len", len(DataOut),  DataOut)
 
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.settimeout(aTimeOut)
-        sock.sendto(DataOut, (self.Host, self.Port))
-        try:
-            DataIn = sock.recvfrom(1024)
-            print("")
-            print("DataIn len", len(DataIn[0]), DataIn)
-        except:
-            print('Timeout')
-            DataIn = None
+        Tries  = self.MaxTries
+        DataIn = None
+        while (DataIn == None and Tries > 0):
+            Tries  -= 1
+
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.settimeout(aTimeOut)
+            sock.sendto(DataOut, (self.Host, self.Port))
+            try:
+                DataIn = sock.recvfrom(1024)
+                print("")
+                print("DataIn len", len(DataIn[0]), DataIn)
+            except:
+                self.TimeOut += 1
+                print('Timeout', self.TimeOut, "Tries", Tries)
 
         if (DataIn):
             Result = json.loads(DataIn[0])
@@ -72,6 +84,9 @@ class TSockClientUDP():
 
     def Print(self, aValue):
         self.Add({"Name": "Print", "Value": aValue})
+
+    def Exec(self, aValue):
+        self.Add({"Name": "Exec", "Value": aValue})
 
     #--- Pin functions
 
@@ -136,9 +151,9 @@ class TEsp():
     def LedFlash(self, aCnt):
         self.SC.Clear()
         for i in range(aCnt):
-            self.SC.SetPinsInv(ArrLed)
-            self.SC.Add({"Name": "Sleep", "Value": 200})
-            self.SC.Send(1)
+            self.SC.SetPinsInv([cLed_Red, cLed_Green, cLed_Blue])
+            #self.SC.Add({"Name": "Sleep", "Value": 50})
+            self.SC.Send(0.2)
 
     def MotorStop(self, aPins):
         self.SC.Clear()
@@ -167,13 +182,27 @@ class TEsp():
             self.SC.SetPin(PinA, 1)
             self.SC.Send()
 
+    def Exec(self, aScript):
+        self.SC.Exec(aScript)
+        self.SC.Send()
+
 #-----------
 
-Esp = TEsp("192.168.2.144", 51015)
+def Test1():
+    Esp = TEsp("192.168.2.144", 51015)
 
-Esp.GetInfo()
+    Esp.GetInfo()
 
-Esp.MotorStop(ArrMotor1)
-Esp.LedFlash(10)
+    Esp.MotorStop(ArrMotor1)
+    Esp.LedFlash(1000)
 
-Esp.Motor(ArrMotor1, -200)
+    Esp.Motor(ArrMotor1, -200)
+
+def Test2():
+    Esp = TEsp("192.168.2.144", 51015)
+    Esp.Exec("Result = SetPinInv(15)")
+    Esp.GetInfo()
+
+
+#Test1()
+Test2()

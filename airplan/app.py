@@ -22,7 +22,7 @@ class TApp:
         api.SetButton(api.cPinBtnPush,  self.OnButtonPush)
 
         #api.WatchDog(5000)
-        api.TimerCallback(3000, self.OnTimer)
+        #api.TimerCallback(3000, self.OnTimer)
 
     def OnButtonPush(self, aObj):
         Log('TApp.OnButtonPush', aObj);
@@ -46,7 +46,7 @@ class TApp:
         Name  = aData.get('Name')
         Item  = aData.get('Item')
         Value = aData.get('Value')
-        print('Parse', self.CntCall, Name, Item, Value)
+        print('Parse Cnt:', self.CntCall, "Name:", Name, "Item;", Item, "Value:", Value)
 
         if (Name):
             try:
