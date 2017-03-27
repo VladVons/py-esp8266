@@ -19,10 +19,18 @@ cPinLedSys   = 02
 #
 cPinBtnFlush = 0
 cPinBtnPush  = 4
+#
+#ArrPwm    = [0, 2, 4, 5, 12, 13, 14, 15]
+#ArrPin    = [0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 16]
+#ArrLed    = [cPinLedSys, cPinLedRed, cPinLedGreen, cPinLedBlue]
+#ArrMotor1 = [13, 12]
+#ArrMotor2 = [14, 16]
 
 
 def GetInfo():
-    return {"Ver": "1.01", "Date": "2017.03.25"}
+    return {"Version":  "1.01", 
+            "Date":     "2017.03.25", 
+            "Support" : "VladVons@gmail.com"}
 
 def Print(aValue):
     print(aValue)
@@ -49,9 +57,9 @@ def GetTicks():
 def GetMachineId():
     return machine.unique_id()
 
-#def WatchDog(aTimeOut):
-#    obj = machine.WDT()
-#    obj.feed()
+def WatchDog(aTimeOut = 0):
+    obj = machine.WDT()
+    obj.feed()
 
 def TimerCallback(aTimeOut, aHandler):
     obj = machine.Timer(-1)
@@ -64,7 +72,7 @@ def SetButton(aPin, aHandler):
 def Reset():
     machine.reset()
 
-#---
+#--- Pin support
 
 def SetPin(aPin, aOn):
     Obj = machine.Pin(aPin, machine.Pin.OUT)
@@ -111,7 +119,7 @@ def GetAdc(aPin = 0):
     Obj = machine.ADC(aPin)
     return Obj.read()
 
-#---
+#--- Pin array support
 
 def GetPins(aPins):
     Result = []

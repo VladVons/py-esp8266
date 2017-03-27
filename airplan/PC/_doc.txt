@@ -9,6 +9,7 @@ http://docs.micropython.org/en/v1.8.7/esp8266/esp8266/tutorial/index.html
 Socket
 https://www.davidgouveia.net/2016/07/controlling-relays-using-micropython-and-an-esp8266/
 https://esp8266.ru/forum/threads/micropython-http-server.1492/
+https://github.com/fadushin/esp8266/blob/0.2/micropython/uhttpd/uhttpd.py#L406
 
 UDP
 https://github.com/micropython/micropython/issues/2198

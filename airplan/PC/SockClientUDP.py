@@ -1,26 +1,27 @@
 #!/usr/bin/python
+#--------------------
+# VladVons@gmail.com
+# 2017.03.25
+# Ver 1.01
+#--------------------
 
 import time
 import socket
 import json
 
 
-cHost = "192.168.2.144"
-cPort = 51015
-
-ArrPwm = [0,2,4,5,12,13,14,15]
-ArrPin = [0,1,2,3,4,5,12,13,14,15,16]
-
-cMotor_Nor1_Fwd = 13
-cMotor_Nor1_Rev = 12
-cMotor_Nor2_Fwd = 14
-cMotor_Nor2_Rev = 16
-
 cLed_Sys   = 2
 cLed_Red   = 15
 cLed_Green = 12
 cLed_Blue  = 13
 
+ArrPwm    = [0,2,4,5,12,13,14,15]
+ArrPin    = [0,1,2,3,4,5,12,13,14,15,16]
+ArrLed    = [cLed_Sys, cLed_Red, cLed_Green, cLed_Blue]
+ArrMotor1 = [13, 12]
+ArrMotor2 = [14, 16]
+
+#-----------
 
 class TSockClientUDP():
     def __init__(self, aHost, aPort):
@@ -28,12 +29,11 @@ class TSockClientUDP():
         self.Port  = aPort
 
         self.Start = time.time()
-        self.Count = 0
-        self.Delay = 0.1
+        self.SendCnt = 0
         self.Clear()
 
-    #def __del__(self):
-    #    print("Total sec", round(time.time() - self.Start, 2))
+    def __del__(self):
+        print("Total sec", round(time.time() - self.Start, 2))
 
     def Clear(self):
         self.Data = []
@@ -42,8 +42,8 @@ class TSockClientUDP():
         self.Data.append(aData)
 
     def Send(self, aTimeOut = 0.2):
-        self.Count += 1
-        self.Print("--- " +  str(self.Count))
+        self.SendCnt += 1
+        self.Print("--- " +  str(self.SendCnt))
 
         DataOut = json.dumps(self.Data) 
         self.Clear()
@@ -73,6 +73,8 @@ class TSockClientUDP():
     def Print(self, aValue):
         self.Add({"Name": "Print", "Value": aValue})
 
+    #--- Pin functions
+
     def GetPin(self, aPin):
         self.Add({"Name": "GetPin", "Item": aPin})
 
@@ -95,13 +97,10 @@ class TSockClientUDP():
     def SetLeds(self, aValue):
         self.SetPins([cLed_Sys, cLed_Red, cLed_Green, cLed_Blue],  aValue)
 
-    def MotorsClear(self):
-        self.SetPins([cMotor_Nor1_Fwd, cMotor_Nor1_Rev, cMotor_Nor2_Fwd, cMotor_Nor2_Rev], 0)
-
     def GetAdc(self):
         self.Add({"Name":"GetAdc"})
 
-    #---
+    #--- Pin array functions
 
     def GetPins(self, aPins):
         self.Add({"Name": "GetPins", "Item": aPins})
@@ -118,39 +117,63 @@ class TSockClientUDP():
     def SetPwmsOff(self, aPins):
         self.Add({"Name": "SetPwmsOff", "Item": aPins})
 
+#-----------
 
+class TEsp():
+    def __init__(self, aHost, aPort):
+        self.SC = TSockClientUDP(aHost, aPort)
 
-def TestLed():
-    SC = TSockClientUDP(cHost, cPort)
-    for i in range(100):
-        SC.SetPinsInv([cLed_Red, cLed_Green, cLed_Blue])
-        #SC.Add({"Name": "Sleep", "Value": 200})
-        SC.Add({"Name": "GetTicks"})
-        SC.Add({"Name": "GetMemFree"})
+    def GetInfo(self):
+        self.SC.Clear()
+        self.SC.Add({"Name": "GetInfo"})
+        self.SC.Add({"Name": "GetTicks"})
+        self.SC.Add({"Name": "GetMemFree"})
+        #self.SC.Add({"Name": "GetMachineId"})
 
-        SC.Send(1)
+        #self.SC.Show()
+        self.SC.Send()
 
-def TestMotor(aPins, aForward, aSpeed):
-    SC = TSockClientUDP(cHost, cPort)
+    def LedFlash(self, aCnt):
+        self.SC.Clear()
+        for i in range(aCnt):
+            self.SC.SetPinsInv(ArrLed)
+            self.SC.Add({"Name": "Sleep", "Value": 200})
+            self.SC.Send(1)
 
-    PinA = aPins[int(aForward)]
-    PinB = aPins[int(not aForward)]
+    def MotorStop(self, aPins):
+        self.SC.Clear()
+        self.SC.SetPwmsOff(aPins)
+        self.SC.SetPins(aPins, 1)
+        self.SC.Send()
 
-    if (aSpeed > 0):
-        SC.SetPwmOff(PinB)
-        SC.SetPwm(PinA, 300, aSpeed)
-        SC.SetPin(PinB, 0)
-        SC.SetPin(PinA, 1)
-    else:
-        SC.SetPwmOff(PinA)
-        SC.SetPwmOff(PinB)
-        SC.SetPin(PinA, 1)
-        SC.SetPin(PinB, 1)
+    def Motor(self, aPins, aSpeed):
+        self.SC.Clear()
 
-    #SC.Show()
-    SC.Send()
+        Forward = aSpeed > 0
+        PinA = aPins[int(Forward)]
+        PinB = aPins[int(not Forward)]
 
+        if (aSpeed == 0):
+             self.MotorStop(Pins)
+             self.SC.Send()
+        else:
+            Speed = abs(aSpeed)
+            if (Speed > 1000):
+                Speed = 1000
 
-TestMotor([cMotor_Nor1_Fwd, cMotor_Nor1_Rev], True, 0)
-#TestLed()
- 
+            self.SC.SetPwmOff(PinB)
+            self.SC.SetPwm(PinA, 100, Speed)
+            self.SC.SetPin(PinB, 0)
+            self.SC.SetPin(PinA, 1)
+            self.SC.Send()
+
+#-----------
+
+Esp = TEsp("192.168.2.144", 51015)
+
+Esp.GetInfo()
+
+Esp.MotorStop(ArrMotor1)
+Esp.LedFlash(10)
+
+Esp.Motor(ArrMotor1, -200)
