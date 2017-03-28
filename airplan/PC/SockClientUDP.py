@@ -182,9 +182,9 @@ class TEsp():
             self.SC.SetPin(PinA, 1)
             self.SC.Send()
 
-    def Exec(self, aScript):
+    def Exec(self, aScript, aTimeOut = 0.2):
         self.SC.Exec(aScript)
-        self.SC.Send()
+        self.SC.Send(aTimeOut)
 
 #-----------
 
@@ -200,8 +200,8 @@ def Test1():
 
 def Test2():
     Esp = TEsp("192.168.2.144", 51015)
-    Esp.Exec("Result = SetPinInv(15)")
-    Esp.GetInfo()
+    Esp.Exec("Result = SetPinInv(15);Sleep(1000);SetPinInv(15)", 5)
+    #Esp.GetInfo()
 
 
 #Test1()

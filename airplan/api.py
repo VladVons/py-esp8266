@@ -28,8 +28,8 @@ cPinBtnPush  = 4
 
 
 def GetInfo():
-    return {"Version":  "1.01", 
-            "Date":     "2017.03.25", 
+    return {"Version":  "1.02", 
+            "Date":     "2017.03.28", 
             "Support" : "VladVons@gmail.com"}
 
 def Exec(aValue = "Result = (2+3)*2"):
