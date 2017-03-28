@@ -33,7 +33,8 @@ def GetInfo():
             "Support" : "VladVons@gmail.com"}
 
 def Exec(aValue = "Result = (2+3)*2"):
-    Vars = {}
+    Result = None
+    Vars   = {}
     try:
         exec(aValue, globals(), Vars)
         Result = Vars.get('Result')

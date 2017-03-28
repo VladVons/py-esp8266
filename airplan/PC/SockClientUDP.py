@@ -82,55 +82,58 @@ class TSockClientUDP():
     def Show(self):
         print(self.Data)
 
+    def AddFunc(self, aName, aArgs = []):
+        self.Add({"Func": aName, "Args": aArgs})
+
     def Print(self, aValue):
-        self.Add({"Name": "Print", "Value": aValue})
+        self.AddFunc("Print", [aValue])
 
     def Exec(self, aValue):
-        self.Add({"Name": "Exec", "Value": aValue})
+        self.AddFunc("Exec", ["Result = " + aValue])
 
     #--- Pin functions
 
     def GetPin(self, aPin):
-        self.Add({"Name": "GetPin", "Item": aPin})
+        self.AddFunc("GetPin", [aPin])
 
     def SetPin(self, aPin, aValue):
-        self.Add({"Name": "SetPin", "Item": aPin, "Value": aValue})
+        self.AddFunc("SetPin", [aPin, aValue])
 
     def SetPinInv(self, aPin):
-        self.Add({"Name": "SetPinInv", "Item": aPin})
+        self.AddFunc("SetPinInv", [aPin])
 
     def GetPwm(self, aPin):
-        self.Add({"Name": "GetPwm", "Item": aPin})
+        self.AddFunc("GetPwm", [aPin])
 
     def SetPwm(self, aPin, aFreq, aDuty):
-        self.Add({"Name": "SetPwmFreq", "Item": aPin, "Value": aFreq})
-        self.Add({"Name": "SetPwmDuty", "Item": aPin, "Value": aDuty})
+        self.AddFunc("SetPwmFreq", [aPin, aFreq])
+        self.AddFunc("SetPwmDuty", [aPin, aDuty])
 
     def SetPwmOff(self, aPin):
-        self.Add({"Name": "SetPwmOff", "Item": aPin})
+        self.AddFunc("SetPwmOff", [aPin])
 
     def SetLeds(self, aValue):
         self.SetPins([cLed_Sys, cLed_Red, cLed_Green, cLed_Blue],  aValue)
 
     def GetAdc(self):
-        self.Add({"Name":"GetAdc"})
+        self.AddFunc("GetAdc")
 
     #--- Pin array functions
 
     def GetPins(self, aPins):
-        self.Add({"Name": "GetPins", "Item": aPins})
+        self.AddFunc("GetPins", [aPins])
 
     def SetPins(self, aPins, aValue):
-        self.Add({"Name": "SetPins", "Item": aPins, "Value": aValue})
+        self.AddFunc("SetPins", [aPins, aValue])
 
     def SetPinsInv(self, aPins):
-        self.Add({"Name": "SetPinsInv", "Item": aPins})
+        self.AddFunc("SetPinsInv", [aPins])
 
     def GetPwms(self, aPins):
-        self.Add({"Name": "GetPwms", "Item": aPins})
+        self.AddFunc("GetPwms", [aPins])
 
     def SetPwmsOff(self, aPins):
-        self.Add({"Name": "SetPwmsOff", "Item": aPins})
+        self.AddFunc("SetPwmsOff", [aPins])
 
 #-----------
 
@@ -140,10 +143,10 @@ class TEsp():
 
     def GetInfo(self):
         self.SC.Clear()
-        self.SC.Add({"Name": "GetInfo"})
-        self.SC.Add({"Name": "GetTicks"})
-        self.SC.Add({"Name": "GetMemFree"})
-        #self.SC.Add({"Name": "GetMachineId"})
+        self.SC.AddFunc("GetInfo")
+        self.SC.AddFunc("GetTicks")
+        self.SC.AddFunc("GetMemFree")
+        #self.SC.AddFunc("GetMachineId")
 
         #self.SC.Show()
         self.SC.Send()
@@ -152,7 +155,7 @@ class TEsp():
         self.SC.Clear()
         for i in range(aCnt):
             self.SC.SetPinsInv([cLed_Red, cLed_Green, cLed_Blue])
-            #self.SC.Add({"Name": "Sleep", "Value": 50})
+            #self.SC.AddFunc("Sleep", [50])
             self.SC.Send(0.2)
 
     def MotorStop(self, aPins):
@@ -188,21 +191,23 @@ class TEsp():
 
 #-----------
 
-def Test1():
+def TestMotor(aSpeed):
     Esp = TEsp("192.168.2.144", 51015)
+    Esp.GetInfo()
+    Esp.Motor(ArrMotor1, aSpeed)
 
+def TestLamp(aCnt):
+    Esp = TEsp("192.168.2.144", 51015)
+    Esp.MotorStop(ArrMotor1)
+    Esp.LedFlash(aCnt)
+
+
+def TestExec():
+    Esp = TEsp("192.168.2.144", 51015)
+    Esp.Exec("SetPinInv(15);Sleep(200);SetPinInv(15);Sleep(200);SetPinInv(15)", 3)
     Esp.GetInfo()
 
-    Esp.MotorStop(ArrMotor1)
-    Esp.LedFlash(1000)
+#TestLamp(10)
+TestMotor(-200)
+#TestExec()
 
-    Esp.Motor(ArrMotor1, -200)
-
-def Test2():
-    Esp = TEsp("192.168.2.144", 51015)
-    Esp.Exec("Result = SetPinInv(15);Sleep(1000);SetPinInv(15)", 5)
-    #Esp.GetInfo()
-
-
-#Test1()
-Test2()

@@ -33,9 +33,9 @@ class TApp:
         if (Ticks - self.LastCall > 10000):
             self.LastCall = Ticks 
             api.SetPinInv(api.cPinLedSys)
-            self.DefHandler()
+            self.DefHandler("OnTimer")
 
-    def DefHandler(self):
+    def DefHandler(self, aData):
         print ("DefHandler", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
         return None
 
@@ -43,32 +43,35 @@ class TApp:
         self.CntCall += 1 
         self.LastCall = api.GetTicks()
 
-        Name  = aData.get('Name')
-        Item  = aData.get('Item')
-        Value = aData.get('Value')
-        print('Parse Cnt:', self.CntCall, "Name:", Name, "Item;", Item, "Value:", Value)
+        Func  = aData.get('Func', None)
+        Args  = aData.get('Args', None)
+        print('Parse Cnt:', self.CntCall, "Func:", Func, "Args;", Args)
 
-        if (Name):
+        if (Func):
             try:
-                Obj = getattr(api, Name)
+                Obj = getattr(api, Func)
             except:
                 Obj = None
 
             if (Obj):
-                if (Item != None and Value != None):
-                    Result = Obj(Item, Value)
-                elif (Item != None):
-                    Result = Obj(Item)
-                elif (Value != None):
-                    Result = Obj(Value)
+                if (Args):
+                    ArgCnt = len(Args)
+                    if   (ArgCnt == 1):
+                        Result = Obj(Args[0])
+                    elif (ArgCnt == 2):
+                        Result = Obj(Args[0], Args[1])
+                    elif (ArgCnt == 3):
+                        Result = Obj(Args[0], Args[1], Args[2])
+                    else:
+                        Result = Obj()
                 else:
                     Result = Obj()
             else:
-                Result = 'Error: Unknown Name'
+                Result = 'Error: Unknown Func ' + Func
                 print(Result) 
         else:
-            Result = self.DefHandler()
-        return {"Name": Name, "Result": Result}
+            Result = self.DefHandler(aData)
+        return {"Name": Func, "Result": Result}
 
     def HandlerJson(self, aCaller, aData):
         # array of requests

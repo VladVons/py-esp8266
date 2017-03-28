@@ -6,6 +6,10 @@ Dev=$(ls /dev/ttyUSB*)
 Speed=115200
 #Speed=460800
 
+#Root=""
+Root="/flash"
+
+
 ExecM()
 {
   aExec="$1"; aMsg="$2";
@@ -36,6 +40,8 @@ Make_mpy_cross()
 {
   https://github.com/micropython/micropython.git
   #https://github.com/micropython/micropython/tree/master/mpy-cross
+  cd micropython/mpy-cross
+  make
 }
 
 
@@ -88,13 +94,18 @@ EspFirmware()
   fi;
 }
 
+_EspFileList()
+{
+  ampy --port $Dev --baud $Speed ls $Root
+}
+
 
 EspFileList()
 {
   echo "$0->$FUNCNAME"
   
   echo "List files in ESP"
-  ExecM "ampy --port $Dev --baud $Speed ls"
+  ExecM "_EspFileList"
 }
 
 
@@ -128,7 +139,7 @@ EspSrcDel()
 
   echo "Delete files in ESP"
 
-  ampy --port $Dev --baud $Speed ls | grep -v "boot.py" |\
+  _EspFileList | grep -v "boot.py" |\
   while read File; do
     ExecM "ampy --port $Dev --baud $Speed rm $File"
   done
