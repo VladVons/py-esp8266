@@ -8,6 +8,8 @@
 import time
 import socket
 import json
+#
+import Test
 
 
 cLed_Sys   = 2
@@ -120,20 +122,20 @@ class TSockClientUDP():
 
     #--- Pin array functions
 
-    def GetPins(self, aPins):
-        self.AddFunc("GetPins", [aPins])
+    def GetPinArr(self, aPins):
+        self.AddFunc("GetPinArr", [aPins])
 
-    def SetPins(self, aPins, aValue):
-        self.AddFunc("SetPins", [aPins, aValue])
+    def SetPinArr(self, aPins, aValue):
+        self.AddFunc("SetPinArr", [aPins, aValue])
 
-    def SetPinsInv(self, aPins):
-        self.AddFunc("SetPinsInv", [aPins])
+    def SetPinInvArr(self, aPins):
+        self.AddFunc("SetPinInvArr", [aPins])
 
-    def GetPwms(self, aPins):
-        self.AddFunc("GetPwms", [aPins])
+    def GetPwmArr(self, aPins):
+        self.AddFunc("GetPwmArr", [aPins])
 
-    def SetPwmsOff(self, aPins):
-        self.AddFunc("SetPwmsOff", [aPins])
+    def SetPwmOffArr(self, aPins):
+        self.AddFunc("SetPwmOffArr", [aPins])
 
 #-----------
 
@@ -154,14 +156,14 @@ class TEsp():
     def LedFlash(self, aCnt):
         self.SC.Clear()
         for i in range(aCnt):
-            self.SC.SetPinsInv([cLed_Red, cLed_Green, cLed_Blue])
+            self.SC.SetPinInvArr([cLed_Red, cLed_Green, cLed_Blue])
             #self.SC.AddFunc("Sleep", [50])
             self.SC.Send(0.2)
 
     def MotorStop(self, aPins):
         self.SC.Clear()
-        self.SC.SetPwmsOff(aPins)
-        self.SC.SetPins(aPins, 1)
+        self.SC.SetPwmOffArr(aPins)
+        self.SC.SetPinArr(aPins, 1)
         self.SC.Send()
 
     def Motor(self, aPins, aSpeed):
@@ -207,7 +209,6 @@ def TestExec():
     Esp.Exec("SetPinInv(15);Sleep(200);SetPinInv(15);Sleep(200);SetPinInv(15)", 3)
     Esp.GetInfo()
 
-#TestLamp(10)
+TestLamp(3)
 TestMotor(-200)
-#TestExec()
-
+TestExec()

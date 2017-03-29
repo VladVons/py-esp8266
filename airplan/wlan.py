@@ -6,8 +6,7 @@
 import network
 import time
 import ubinascii
-#
-#from common import Log
+
 
 def Scan():
     Result = []

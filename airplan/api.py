@@ -11,7 +11,6 @@ import os
 import wlan
 import fs
 
-
 cPinLedRed   = 15
 cPinLedGreen = 12
 cPinLedBlue  = 13
@@ -22,14 +21,14 @@ cPinBtnPush  = 4
 #
 #ArrPwm    = [0, 2, 4, 5, 12, 13, 14, 15]
 #ArrPin    = [0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 16]
-#ArrLed    = [cPinLedSys, cPinLedRed, cPinLedGreen, cPinLedBlue]
-#ArrMotor1 = [13, 12]
-#ArrMotor2 = [14, 16]
+ArrLed    = [cPinLedSys, cPinLedRed, cPinLedGreen, cPinLedBlue]
+ArrMotor1 = [13, 12]
+ArrMotor2 = [14, 15]
 
 
 def GetInfo():
-    return {"Version":  "1.02", 
-            "Date":     "2017.03.28", 
+    return {"Version":  "1.03", 
+            "Date":     "2017.03.29", 
             "Support" : "VladVons@gmail.com"}
 
 def Exec(aValue = "Result = (2+3)*2"):
@@ -132,31 +131,36 @@ def GetAdc(aPin = 0):
 
 #--- Pin array support
 
-def GetPins(aPins):
+def CallArr(aFunc, aItems, aArgs = []):
     Result = []
-    for Pin in aPins:
-        Result.append(GetPin(Pin))
+    for Item in aItems:
+        ArgCnt = len(aArgs)
+        if (ArgCnt == 1):
+            Result.append(aFunc(Item, aArgs[0]))
+        elif (ArgCnt == 2):
+            Result.append(aFunc(Item, aArgs[0], aArgs[1]))
+        else:
+            Result.append(aFunc(Item))
     return Result
 
-def SetPins(aPins, aOn):
-    Result = []
-    for Pin in aPins:
-        Result.append(SetPin(Pin, aOn))
-    return Result
+def GetPinArr(aPins):
+    return CallArr(GetPin, aPins)
 
-def SetPinsInv(aPins):
-    Result = []
-    for Pin in aPins:
-        Result.append(SetPinInv(Pin))
-    return Result
+def GetPwmArr(aPins):
+    return CallArr(GetPwm, aPins)
 
-def GetPwms(aPins):
-    Result = []
-    for Pin in aPins:
-        Result.append(GetPwm(Pin))
-    return Result
+def SetPinInvArr(aPins):
+    return CallArr(SetPinInv, aPins)
 
-def SetPwmsOff(aPins):
-    for Pin in aPins:
-        SetPwmOff(Pin)
-    return None
+def SetPwmOffArr(aPins):
+    return CallArr(SetPwmOff, aPins)
+
+
+def SetPinArr(aPins, aValue):
+    return CallArr(SetPin, aPins, [aValue])
+
+def SetPwmFreqArr(aPins, aValue):
+    return CallArr(SetPwmFreq, aPins, [aValue])
+
+def SetPwmDutyArr(aPins, aValue):
+    return CallArr(SetPwmDuty, aPins, [aValue])

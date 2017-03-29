@@ -3,11 +3,11 @@
 # micropython ESP8266
 #---
 
+import log
 import wlan
 import api
+import config
 from server_udp import TServerUdpJson
-from config     import TConfig
-from common import Log, cLogSHow 
 
 
 class TApp:
@@ -15,9 +15,11 @@ class TApp:
         self.CntCall  = 0
         self.LastCall = 0
 
-        Config = TConfig()
+        Config = config.TConfig()
         Config.FileLoad('config.json')
         self.Conf = Config.GetItems()
+
+        log.LogLevel = self.Conf.get('/App/LogLevel', 1);        
 
         api.SetButton(api.cPinBtnPush,  self.OnButtonPush)
 
@@ -25,7 +27,7 @@ class TApp:
         #api.TimerCallback(3000, self.OnTimer)
 
     def OnButtonPush(self, aObj):
-        Log('TApp.OnButtonPush', aObj);
+        log.Log(2, 'TApp.OnButtonPush', aObj);
         api.SetPin(api.cPinLedSys, not api.GetPin(api.cPinLedSys))
 
     def OnTimer(self, aObj):
@@ -36,7 +38,7 @@ class TApp:
             self.DefHandler("OnTimer")
 
     def DefHandler(self, aData):
-        print ("DefHandler", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
+        log.Log(1, "DefHandler", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
         return None
 
     def Parse(self, aData):
@@ -45,7 +47,7 @@ class TApp:
 
         Func  = aData.get('Func', None)
         Args  = aData.get('Args', None)
-        print('Parse Cnt:', self.CntCall, "Func:", Func, "Args;", Args)
+        log.Log(1, 'Parse Cnt:', self.CntCall, "Func:", Func, "Args;", Args)
 
         if (Func):
             try:
@@ -83,6 +85,11 @@ class TApp:
             Result = self.Parse(aData)
         return Result
 
+    def PinsInit(self):
+        api.SetPinArr(api.ArrLed , 0)
+        api.SetPwmOffArr(api.ArrMotor1)
+        api.SetPwmOffArr(api.ArrMotor2)
+
     def ConnectWlan(self):
         Result = self.Conf.get('/WLan/Connect', True)
         if (Result):
@@ -92,8 +99,6 @@ class TApp:
             Result = wlan.Connect(ESSD,  Paswd)
             if (Result):
                 print('Network', wlan.GetInfo())
-                api.SetPins([api.cPinLedSys, api.cPinLedGreen, api.cPinLedBlue], 0)
-                api.SetPin(api.cPinLedRed, 1)
             else:
                 print('Cant connect WiFi')
         else:
@@ -103,6 +108,8 @@ class TApp:
 
     def Listen(self):
         if (self.ConnectWlan()):
+            self.PinsInit()
+
             Bind    = self.Conf.get('/Server/Bind', '0.0.0.0')
             Port    = self.Conf.get('/Server/Port', 51015)
             TimeOut = self.Conf.get('/Server/TimeOut', -1)

@@ -3,8 +3,8 @@
 # micropython ESP8266
 #---
 
-import time
-import uos
+#import time
+#import uos
 
 cLogSHow = not True
 
