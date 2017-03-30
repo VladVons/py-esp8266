@@ -11,6 +11,8 @@
 import gc
 #import webrepl
 #webrepl.start()
-gc.collect()
 
-print("Hello from ESP8266 !")
+gc.collect()
+print("MemFree", gc.mem_free(), "MemAlloc", gc.mem_alloc())
+
+print("Hello from ESP8266 MicroPython")
