@@ -12,8 +12,9 @@ from server_udp import TServerUdpJson
 
 class TApp:
     def __init__(self):
-        self.CntCall  = 0
-        self.LastCall = 0
+        self.CntCall    = 0
+        self.CntPacket  = 0
+        self.LastPacket = 0
 
         Config = config.TConfig()
         Config.FileLoad('config.json')
@@ -32,8 +33,8 @@ class TApp:
 
     def OnTimer(self, aObj):
         Ticks = api.GetTicks()
-        if (Ticks - self.LastCall > 10000):
-            self.LastCall = Ticks 
+        if (Ticks - self.LastPacket > 10000):
+            self.LastPacket = Ticks 
             api.SetPinInv(api.cPinLedSys)
             self.DefHandler("OnTimer")
 
@@ -43,11 +44,10 @@ class TApp:
 
     def Parse(self, aData):
         self.CntCall += 1 
-        self.LastCall = api.GetTicks()
 
         Func  = aData.get('Func', None)
         Args  = aData.get('Args', None)
-        log.Log(1, 'Parse Cnt:', self.CntCall, "Func:", Func, "Args;", Args)
+        log.Log(1, "Packets", self.CntPacket,  'Calls:', self.CntCall, "Func:", Func, "Args;", Args)
 
         if (Func):
             try:
@@ -73,9 +73,12 @@ class TApp:
                 print(Result) 
         else:
             Result = self.DefHandler(aData)
-        return {"Name": Func, "Result": Result}
+        return {"Name": Func, "Args": Args, "Result": Result}
 
     def HandlerJson(self, aCaller, aData):
+        self.CntPacket += 1;
+        self.LastPacket = api.GetTicks()
+
         # array of requests
         if (isinstance(aData, list)):
             Result = []
@@ -93,10 +96,10 @@ class TApp:
     def ConnectWlan(self):
         Result = self.Conf.get('/WLan/Connect', True)
         if (Result):
-            ESSD   = self.Conf.get('/WLan/ESSID')
+            ESSID  = self.Conf.get('/WLan/ESSID')
             Paswd  = self.Conf.get('/WLan/Password')
-            print("ConnectWlan", ESSD, Paswd)
-            Result = wlan.Connect(ESSD,  Paswd)
+            print("ConnectWlan", ESSID, Paswd)
+            Result = wlan.Connect(ESSID,  Paswd)
             if (Result):
                 print('Network', wlan.GetInfo())
             else:
@@ -110,11 +113,11 @@ class TApp:
         if (self.ConnectWlan()):
             self.PinsInit()
 
-            Bind    = self.Conf.get('/Server/Bind', '0.0.0.0')
-            Port    = self.Conf.get('/Server/Port', 51015)
-            TimeOut = self.Conf.get('/Server/TimeOut', -1)
+            ConfBind    = self.Conf.get('/Server/Bind', '0.0.0.0')
+            ConfPort    = self.Conf.get('/Server/Port', 51015)
+            ConfTimeOut = self.Conf.get('/Server/TimeOut', -1)
 
-            Server = TServerUdpJson(Bind, Port, TimeOut)
+            Server = TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
             Server.BufSize = self.Conf.get('/Server/BufSize', 512)
             Server.Handler = self.HandlerJson
             Server.Run()

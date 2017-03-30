@@ -42,7 +42,7 @@ def Exec(aValue = "Result = (2+3)*2"):
         Result = E
     return Result
 
-def Print(aValue):
+def Print(aValue = ""):
     print(aValue)
 
 def FileLoad(aName):

@@ -10,10 +10,10 @@ from app import TApp
 def Main():
     #https://github.com/micropython/micropython/blob/master/esp8266/scripts/ntptime.py
     #ntptime.settime()
-
-    print("Version", api.GetInfo(), "Mem free", api.GetMemFree(), "Ticks", api.GetTicks(), "ID", api.GetMachineId())
-
+ 
     App = TApp()
+    print("GetInfo", api.GetInfo())
+    print("Mem free", api.GetMemFree(), "Ticks", api.GetTicks(), "ID", api.GetMachineId())
     App.Listen()
 
 
