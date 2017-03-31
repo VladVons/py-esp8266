@@ -73,7 +73,7 @@ class TApp:
                 print(Result) 
         else:
             Result = self.DefHandler(aData)
-        return {"Name": Func, "Args": Args, "Result": Result}
+        return {"Func": Func, "Args": Args, "Result": Result}
 
     def HandlerJson(self, aCaller, aData):
         self.CntPacket += 1;
