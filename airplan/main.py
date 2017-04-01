@@ -13,7 +13,8 @@ def Main():
  
     App = TApp()
     print("GetInfo", api.GetInfo())
-    print("Mem free", api.GetMemFree(), "Ticks", api.GetTicks(), "ID", api.GetMachineId())
+    print("Mem free", api.GetMemFree(), "Ticks", api.GetTicks())
+    print("Mac", api.GetMac(), "ID")
     App.Listen()
 
 

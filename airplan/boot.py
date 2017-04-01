@@ -14,5 +14,4 @@ import gc
 
 gc.collect()
 print("MemFree", gc.mem_free(), "MemAlloc", gc.mem_alloc())
-
 print("Hello from ESP8266 MicroPython")

@@ -55,6 +55,9 @@ def FileList():
 def SetEssd(aName, aPassw):
     wlan.SetEssd('vando-' + aName, aPassw)
 
+def GetMac():
+    return wlan.GetMac()
+
 def GetMemFree():
     gc.collect()
     return gc.mem_free()
@@ -65,8 +68,8 @@ def Sleep(aDelay):
 def GetTicks():
     return time.ticks_ms()
 
-def GetMachineId():
-    return machine.unique_id()
+#def GetMachineId():
+#    return machine.unique_id().decode("utf-8")
 
 #def WatchDog(aTimeOut = 0):
 #    obj = machine.WDT()
