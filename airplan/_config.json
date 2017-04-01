@@ -3,9 +3,9 @@
         "LogLevel":2
     },
     "WLan":{
-        "Connect":true,
-        "ESSID":"Oster",
-        "Password":"123456789012345"
+        "Connect":false,
+        "ESSID":"R3-0976646510",
+        "Password":"197119822007"
     },
     "Server":{
         "Port":51015,

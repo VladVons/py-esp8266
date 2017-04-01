@@ -1,7 +1,8 @@
-#---VladVons@gmail.com
-# 04.02.17
-# micropython ESP8266
-#---
+'''
+VladVons@gmail.com
+04.02.17
+micropython ESP8266
+'''
 
 import machine
 import gc
@@ -27,8 +28,8 @@ ArrMotor2 = [14, 15]
 
 
 def GetInfo():
-    return {"Version":  "1.03", 
-            "Date":     "2017.03.29", 
+    return {"Version":  "1.04", 
+            "Date":     "2017.04.01", 
             "Support" : "VladVons@gmail.com"}
 
 def Exec(aValue = "Result = (2+3)*2"):
@@ -117,12 +118,20 @@ def SetPwmOff(aPin):
     Obj.deinit()
     return None
 
-def GetPwm(aPin):
+def GetPwmDuty(aPin):
     try:
         Obj = machine.PWM(machine.Pin(aPin))
-        Result = (Obj.freq(), Obj.duty())
+        Result = (Obj.duty())
     except:
-        Result = (-1, -1)
+        Result = -1
+    return Result
+
+def GetPwmFreq(aPin):
+    try:
+        Obj = machine.PWM(machine.Pin(aPin))
+        Result = (Obj.freq())
+    except:
+        Result = -1
     return Result
 
 def GetAdc(aPin = 0):
@@ -146,8 +155,11 @@ def CallArr(aFunc, aItems, aArgs = []):
 def GetPinArr(aPins):
     return CallArr(GetPin, aPins)
 
-def GetPwmArr(aPins):
-    return CallArr(GetPwm, aPins)
+def GetPwmDutyArr(aPins):
+    return CallArr(GetPwmDuty, aPins)
+
+def GetPwmFreqArr(aPins):
+    return CallArr(GetPwmFreq, aPins)
 
 def SetPinInvArr(aPins):
     return CallArr(SetPinInv, aPins)

@@ -20,7 +20,7 @@ class TApp:
         Config.FileLoad('config.json')
         self.Conf = Config.GetItems()
 
-        log.LogLevel = self.Conf.get('/App/LogLevel', 1);        
+        log.LogLevel = self.Conf.get('/App/LogLevel', 1);
 
         api.SetButton(api.cPinBtnPush,  self.OnButtonPush)
 

@@ -1,4 +1,6 @@
 #!/bin/bash
+
+#/usr/lib/python3.5 
 #--- VladVons@gmail.com
 
 Dev=$(ls /dev/ttyUSB*)
@@ -79,9 +81,9 @@ EspFirmware()
   # images
   # http://micropython.org/download#esp8266
 
-  Dir="/mnt/hdd/ntfs/Python/image"
+  Dir="/mnt/hdd/data1/Python/image"
   #FileName="esp8266-20170108-v1.8.7.bin"
-  FileName="esp8266-ota-20170330-v1.8.7-534-g4b75351.bin" 
+  FileName="esp8266-ota-20170401-v1.8.7-544-g64d0051.bin"
 
   File=$Dir/$FileName
   if [ -f $File ] ; then
