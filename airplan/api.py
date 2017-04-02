@@ -9,6 +9,7 @@ import gc
 import time
 import os
 ##
+import log
 import wlan
 import fs
 
@@ -29,7 +30,7 @@ ArrMotor2 = [14, 15]
 
 def GetInfo():
     return {"Version":  "1.04", 
-            "Date":     "2017.04.01", 
+            "Date":     "2017.04.02", 
             "Support" : "VladVons@gmail.com"}
 
 def Exec(aValue = "Result = (2+3)*2"):
@@ -88,9 +89,11 @@ def Reset():
 
 #--- Pin support
 
-def SetPin(aPin, aOn):
+def SetPin(aPin, aValue):
+    log.Log(3, "SetPin", "Pin", aPin, 'Value', aValue)
+
     Obj = machine.Pin(aPin, machine.Pin.OUT)
-    Obj.value(aOn)
+    Obj.value(aValue)
     return Obj.value()
 
 def SetPinInv(aPin):
@@ -107,16 +110,22 @@ def GetPin(aPin):
     return Result
 
 def SetPwmFreq(aPin, aValue):
+    log.Log(3, "SetPwmFreq", "Pin", aPin, 'Value', aValue)
+
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.freq(aValue)
     return Obj.freq()
 
 def SetPwmDuty(aPin, aValue):
+    log.Log(3, "SetPwmDuty", "Pin", aPin, 'Value', aValue)
+
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.duty(aValue)
     return Obj.duty()
 
 def SetPwmOff(aPin):
+    log.Log(3, "SetPwmOff", "Pin", aPin)
+
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.deinit()
     return None

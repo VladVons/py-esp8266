@@ -39,15 +39,15 @@ class TApp:
             self.DefHandler("OnTimer")
 
     def DefHandler(self, aData):
-        log.Log(1, "DefHandler", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
+        log.Log(1, "DefHandler()", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
         return None
 
     def Parse(self, aData):
-        self.CntCall += 1 
-
         Func  = aData.get('Func', None)
         Args  = aData.get('Args', None)
-        log.Log(1, "Packets", self.CntPacket,  'Calls:', self.CntCall, "Func:", Func, "Args;", Args)
+
+        self.CntCall += 1 
+        log.Log(2, 'Parse()', 'CntCall', self.CntCall, 'Func', Func, 'Args', Args)
 
         if (Func):
             try:
@@ -78,6 +78,7 @@ class TApp:
     def HandlerJson(self, aCaller, aData):
         self.CntPacket += 1;
         self.LastPacket = api.GetTicks()
+        log.Log(1, "HandlerJson()", "CntPacket", self.CntPacket,  'LastPacket', self.LastPacket)
 
         # array of requests
         if (isinstance(aData, list)):
