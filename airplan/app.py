@@ -27,6 +27,11 @@ class TApp:
         #api.WatchDog(5000)
         #api.TimerCallback(3000, self.OnTimer)
 
+    def GetInfo(self):
+        Result = "CntPacket %d, CntCall %d" % (self.CntPacket, self.CntCall)
+        print(Result)
+        return Result
+
     def OnButtonPush(self, aObj):
         log.Log(2, 'TApp.OnButtonPush', aObj);
         api.SetPin(api.cPinLedSys, not api.GetPin(api.cPinLedSys))
@@ -43,37 +48,42 @@ class TApp:
         return None
 
     def Parse(self, aData):
-        Func  = aData.get('Func', None)
-        Args  = aData.get('Args', None)
+        aClass = aData.get('Class', None)
+        aFunc  = aData.get('Func',  None)
+        aArgs  = aData.get('Args',  None)
 
         self.CntCall += 1 
-        log.Log(2, 'Parse()', 'CntCall', self.CntCall, 'Func', Func, 'Args', Args)
+        log.Log(2, 'Parse()', 'CntCall', self.CntCall, 'Func', aFunc, 'Args', aArgs)
 
-        if (Func):
+        if (aFunc):
             try:
-                Obj = getattr(api, Func)
+                if (aClass):
+                    Class = globals()[aClass]()
+                else:
+                    Class = api
+                Obj = getattr(Class, aFunc)
             except:
                 Obj = None
 
             if (Obj):
-                if (Args):
-                    ArgCnt = len(Args)
+                if (aArgs):
+                    ArgCnt = len(aArgs)
                     if   (ArgCnt == 1):
-                        Result = Obj(Args[0])
+                        Result = Obj(aArgs[0])
                     elif (ArgCnt == 2):
-                        Result = Obj(Args[0], Args[1])
+                        Result = Obj(aArgs[0], aArgs[1])
                     elif (ArgCnt == 3):
-                        Result = Obj(Args[0], Args[1], Args[2])
+                        Result = Obj(aArgs[0], aArgs[1], aArgs[2])
                     else:
                         Result = Obj()
                 else:
                     Result = Obj()
             else:
-                Result = 'Error: Unknown Func ' + Func
+                Result = 'Error: Unknown Func ' + aFunc
                 print(Result) 
         else:
             Result = self.DefHandler(aData)
-        return {"Func": Func, "Args": Args, "Result": Result}
+        return {"Func": aFunc, "Args": aArgs, "Result": Result}
 
     def HandlerJson(self, aCaller, aData):
         self.CntPacket += 1;

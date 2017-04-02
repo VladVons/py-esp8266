@@ -12,6 +12,12 @@ import gc
 #import webrepl
 #webrepl.start()
 
+#import machine
+#import gc
+#import time
+#import os
+#import sys
+
 gc.collect()
 print("MemFree", gc.mem_free(), "MemAlloc", gc.mem_alloc())
 print("Hello from ESP8266 MicroPython")

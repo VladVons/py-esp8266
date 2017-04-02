@@ -83,7 +83,7 @@ EspFirmware()
 
   Dir="/mnt/hdd/data1/Python/image"
   #FileName="esp8266-20170108-v1.8.7.bin"
-  FileName="esp8266-ota-20170401-v1.8.7-544-g64d0051.bin"
+  FileName="esp8266-20170402-v1.8.7-548-gbf51e2f.bin"
 
   File=$Dir/$FileName
   if [ -f $File ] ; then
@@ -183,7 +183,7 @@ clear
 case $1 in
     Install)        "$1"        ;;
     Upgrade)        "$1"        ;;
-    EspFirmware)    "$1"        ;;
+    EspFirmware|w)  EspFirmware ;;
     EspRelease)     "$1"        ;;
     EspFileList|l)  EspFileList ;;
     EspSrcDel|d)    EspSrcDel   ;;

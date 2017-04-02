@@ -8,6 +8,7 @@ import machine
 import gc
 import time
 import os
+import sys
 ##
 import log
 import wlan
@@ -29,9 +30,12 @@ ArrMotor2 = [14, 15]
 
 
 def GetInfo():
-    return {"Version":  "1.04", 
+    return {"Software":  "1.0.4", 
             "Date":     "2017.04.02", 
-            "Support" : "VladVons@gmail.com"}
+            "Support" : "VladVons@gmail.com",
+            "Python": sys.version,
+            "Firmware": "%d.%d.%d" % sys.implementation[1]
+           }
 
 def Exec(aValue = "Result = (2+3)*2"):
     Result = None

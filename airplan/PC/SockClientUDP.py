@@ -194,21 +194,28 @@ class TEsp():
 #-----------
 
 def TestMotor(aSpeed):
-    Esp = TEsp("192.168.2.144", 51015)
+    Esp = TEsp("192.168.2.119", 51015)
     Esp.GetInfo()
     Esp.Motor(ArrMotor1, aSpeed)
 
 def TestLamp(aCnt):
-    Esp = TEsp("192.168.2.144", 51015)
+    Esp = TEsp("192.168.2.119", 51015)
     Esp.MotorStop(ArrMotor1)
     Esp.LedFlash(aCnt)
 
 
 def TestExec():
-    Esp = TEsp("192.168.2.144", 51015)
+    Esp = TEsp("192.168.2.119", 51015)
     Esp.Exec("SetPinInv(15);Sleep(200);SetPinInv(15);Sleep(200);SetPinInv(15)", 3)
     Esp.GetInfo()
 
-TestLamp(3)
-TestMotor(-200)
-TestExec()
+def TestCall():
+    Esp = TEsp("192.168.2.119", 51015)
+    Esp.SC.Clear()
+    Esp.SC.Add({"Class": "self", "Func": "GetInfo", "Args": []})
+    Esp.SC.Send()
+
+#TestLamp(3)
+#TestMotor(-200)
+#TestExec()
+TestCall()
