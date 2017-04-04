@@ -212,10 +212,21 @@ def TestExec():
 def TestCall():
     Esp = TEsp("192.168.2.119", 51015)
     Esp.SC.Clear()
-    Esp.SC.Add({"Class": "self", "Func": "GetInfo", "Args": []})
+    Esp.SC.Add({"Func": "GetInfo", "Args": []})
     Esp.SC.Send()
 
-#TestLamp(3)
+TestLamp(3)
 #TestMotor(-200)
 #TestExec()
-TestCall()
+#TestCall()
+
+#Class = globals()["Test"]
+#Class.Print("Hello")
+#Class.Log(2, "Hello")
+#Class.CallObj("Print")
+
+#Str = 'Pink.Floyd'
+#StrA = Str.split(',')
+#print(len(Str), len(StrA))
+
+

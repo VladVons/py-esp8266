@@ -7,15 +7,14 @@ import log
 import wlan
 import api
 import config
+import serial
 from server_udp import TServerUdpJson
 
 
 class TApp:
     def __init__(self):
-        self.CntCall    = 0
-        self.CntPacket  = 0
-        self.LastPacket = 0
-
+        self.Serial = serial.TSerial()
+        
         Config = config.TConfig()
         Config.FileLoad('config.json')
         self.Conf = Config.GetItems()
@@ -26,11 +25,6 @@ class TApp:
 
         #api.WatchDog(5000)
         #api.TimerCallback(3000, self.OnTimer)
-
-    def GetInfo(self):
-        Result = "CntPacket %d, CntCall %d" % (self.CntPacket, self.CntCall)
-        print(Result)
-        return Result
 
     def OnButtonPush(self, aObj):
         log.Log(2, 'TApp.OnButtonPush', aObj);
@@ -47,57 +41,8 @@ class TApp:
         log.Log(1, "DefHandler()", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
         return None
 
-    def Parse(self, aData):
-        aClass = aData.get('Class', None)
-        aFunc  = aData.get('Func',  None)
-        aArgs  = aData.get('Args',  None)
-
-        self.CntCall += 1 
-        log.Log(2, 'Parse()', 'CntCall', self.CntCall, 'Func', aFunc, 'Args', aArgs)
-
-        if (aFunc):
-            try:
-                if (aClass):
-                    Class = globals()[aClass]()
-                else:
-                    Class = api
-                Obj = getattr(Class, aFunc)
-            except:
-                Obj = None
-
-            if (Obj):
-                if (aArgs):
-                    ArgCnt = len(aArgs)
-                    if   (ArgCnt == 1):
-                        Result = Obj(aArgs[0])
-                    elif (ArgCnt == 2):
-                        Result = Obj(aArgs[0], aArgs[1])
-                    elif (ArgCnt == 3):
-                        Result = Obj(aArgs[0], aArgs[1], aArgs[2])
-                    else:
-                        Result = Obj()
-                else:
-                    Result = Obj()
-            else:
-                Result = 'Error: Unknown Func ' + aFunc
-                print(Result) 
-        else:
-            Result = self.DefHandler(aData)
-        return {"Func": aFunc, "Args": aArgs, "Result": Result}
-
     def HandlerJson(self, aCaller, aData):
-        self.CntPacket += 1;
-        self.LastPacket = api.GetTicks()
-        log.Log(1, "HandlerJson()", "CntPacket", self.CntPacket,  'LastPacket', self.LastPacket)
-
-        # array of requests
-        if (isinstance(aData, list)):
-            Result = []
-            for Data in aData:
-                Result.append(self.Parse(Data))
-        else:
-            Result = self.Parse(aData)
-        return Result
+        return self.Serial.Parse(aData)
 
     def PinsInit(self):
         api.SetPinArr(api.ArrLed , 0)

@@ -154,41 +154,15 @@ def GetAdc(aPin = 0):
     Obj = machine.ADC(aPin)
     return Obj.read()
 
-#--- Pin array support
-
-def CallArr(aFunc, aItems, aArgs = []):
-    Result = []
-    for Item in aItems:
-        ArgCnt = len(aArgs)
-        if (ArgCnt == 1):
-            Result.append(aFunc(Item, aArgs[0]))
-        elif (ArgCnt == 2):
-            Result.append(aFunc(Item, aArgs[0], aArgs[1]))
-        else:
-            Result.append(aFunc(Item))
+#--- pin array function
+def SetPinArr(aPins, aValue):
+    Result = []    
+    for Pin in aPins:
+        Result.append(SetPin(Pin, aValue))    
     return Result
 
-def GetPinArr(aPins):
-    return CallArr(GetPin, aPins)
-
-def GetPwmDutyArr(aPins):
-    return CallArr(GetPwmDuty, aPins)
-
-def GetPwmFreqArr(aPins):
-    return CallArr(GetPwmFreq, aPins)
-
-def SetPinInvArr(aPins):
-    return CallArr(SetPinInv, aPins)
-
 def SetPwmOffArr(aPins):
-    return CallArr(SetPwmOff, aPins)
-
-
-def SetPinArr(aPins, aValue):
-    return CallArr(SetPin, aPins, [aValue])
-
-def SetPwmFreqArr(aPins, aValue):
-    return CallArr(SetPwmFreq, aPins, [aValue])
-
-def SetPwmDutyArr(aPins, aValue):
-    return CallArr(SetPwmDuty, aPins, [aValue])
+    Result = []    
+    for Pin in aPins:
+        Result.append(SetPwmOff(Pin))    
+    return Result
