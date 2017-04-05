@@ -151,7 +151,7 @@ class TEsp():
         self.Serial = TSerial()
 
     def Send(self, aTimeOut = 0.2):
-        self.Serial.Print("---")
+        self.Serial.Print("--- " + str(self.Sock.SendCnt))
         self.Sock.Send(self.Serial.GetData(), aTimeOut)
         self.Serial.Clear()
 
@@ -171,7 +171,7 @@ class TEsp():
 
     def LedFlash(self, aCnt):
         for i in range(aCnt):
-            #self.Serial.SetPinInvArr([cLed_Red, cLed_Green, cLed_Blue])
+            self.Serial.SetPinArr([cLed_Red, cLed_Green, cLed_Blue], i % 2)
             #self.Serial.AddFunc("Sleep", [50])
             self.Send(0.2)
 
@@ -230,11 +230,11 @@ def TestPinInfo():
     Esp.GetPinImfo(ArrLed)
 
 
-#TestLamp(3)
+TestLamp(1000)
 #TestMotor(-200)
 #TestExec()
 #TestCall()
-TestPinInfo()
+#TestPinInfo()
 
 #Class = globals()["Test"]
 #Class.Print("Hello")

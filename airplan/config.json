@@ -3,7 +3,7 @@
         "LogLevel":2
     },
     "WLan":{
-        "Connect":true,
+        "Connect":false,
         "ESSID":"R3-0976646510",
         "Password":"197119822007"
     },

@@ -42,6 +42,7 @@ class TApp:
         return None
 
     def HandlerJson(self, aCaller, aData):
+        api.SetPin(api.cPinLedSys, self.Serial.CntPacket % 2)
         return self.Serial.Parse(aData)
 
     def PinsInit(self):
