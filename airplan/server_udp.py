@@ -67,14 +67,15 @@ class TServerUdpJson(TServerUdpBase):
             try:
                 Result = ujson.loads(Data.decode("utf-8"))
             except:
-                Data = '{"exception":"json"}'
+                Data = '{"exception": "Receive() json"}'
 
         return Result
 
     def Send(self, aData):
         try:
+            aData['IP'] = self.Addr
             Data = ujson.dumps(aData)
         except:
-            Data = '{"exception":"json"}'
+            Data = '{"exception": "Send() json"}'
 
         self._Send(Data)

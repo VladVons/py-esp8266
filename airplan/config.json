@@ -1,6 +1,6 @@
 {
     "App":{
-        "LogLevel":2
+        "LogLevel":0
     },
     "WLan":{
         "Connect":false,

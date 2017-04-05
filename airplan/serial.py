@@ -13,6 +13,7 @@ class TSerial:
         self.CntPacket  = 0
         self.LastPacket = 0
         self.DefUnit    = api
+        self.DefHandler = None
 
     def SetDefUnit(self, aName):
         self.DefUnit  = __import__(aName)
@@ -44,6 +45,7 @@ class TSerial:
         self.CntCall += 1 
         log.Log(2, 'ParseRaw()', 'CntCall', self.CntCall, 'Func', aFunc, 'Args', aArgs)
 
+        Result = None
         if (aFunc):
             FuncSplit = aFunc.split('.')
             try:
@@ -60,19 +62,28 @@ class TSerial:
                 Result = 'Error: Unknown Func ' + aFunc
                 log.Log(0, 'Parse()', Result)
         else:
-            Result = self.DefHandler(aData)
-        return {"Func": aFunc, "Args": aArgs, "Result": Result}
+            if (self.DefHandler):
+                Result = self.DefHandler(aData)
+        aData['Result'] = Result
+        return aData
 
-    def Parse(self, aData):
+    def Parse(self, aJson):
         self.CntPacket += 1;
         self.LastPacket = api.GetTicks()
-        log.Log(1, "Parse()", "CntPacket", self.CntPacket,  'LastPacket', self.LastPacket)
+        log.Log(1, 'Parse()', 'CntPacket', self.CntPacket,  'LastPacket', self.LastPacket)
 
-        # array of requests
-        if (isinstance(aData, list)):
-            Result = []
-            for Data in aData:
-                Result.append(self.ParseRaw(Data))
+        
+        aData  = aJson.get('Data', None)
+        if (aData):
+            # array of requests
+            if (isinstance(aData, list)):
+                Result = []
+                for Data in aData:
+                    Result.append(self.ParseRaw(Data))
+            else:
+                Result = self.ParseRaw(aData)
         else:
-            Result = self.ParseRaw(aData)
-        return Result
+            Result = 'Empty Data' 
+
+        aJson['Data'] = Result
+        return aJson

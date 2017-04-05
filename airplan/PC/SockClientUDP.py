@@ -30,19 +30,19 @@ class TSerial():
         self.Clear()
 
     def Clear(self):
-        self.Data = []
+        self.Data = {'Data': []}
 
     def GetData(self):
         return self.Data
 
     def Add(self, aData):
-        self.Data.append(aData)
+        self.Data['Data'].append(aData)
 
     def Show(self):
         print(self.Data)
 
     def AddFunc(self, aName, aArgs = []):
-        self.Add({"Func": aName, "Args": aArgs})
+        self.Add({"ID": "myTSerial", "Func": aName, "Args": aArgs})
 
     def Print(self, aValue):
         self.AddFunc("Print", [aValue])
@@ -230,7 +230,7 @@ def TestPinInfo():
     Esp.GetPinImfo(ArrLed)
 
 
-TestLamp(1000)
+TestLamp(100)
 #TestMotor(-200)
 #TestExec()
 #TestCall()
