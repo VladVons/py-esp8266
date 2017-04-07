@@ -1,4 +1,4 @@
-#---VladVons@gmail.com
+#---VladVons@gmail.com  
 # 05.02.17
 # micropython ESP8266
 #---
@@ -17,6 +17,7 @@ class TServerUdpBase():
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         if (aTimeOut != -1):
             self.Sock.settimeout(aTimeOut)
+            #self.Sock.setblocking(False)
         self.Sock.bind( (aBind, aPort) )
 
     def __del__(self):
@@ -67,7 +68,7 @@ class TServerUdpJson(TServerUdpBase):
             try:
                 Result = ujson.loads(Data.decode("utf-8"))
             except:
-                Data = '{"exception": "Receive() json"}'
+                Result = {"exception": "Receive() json"}
 
         return Result
 

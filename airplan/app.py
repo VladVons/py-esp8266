@@ -8,12 +8,13 @@ import wlan
 import api
 import config
 import serial
-from server_udp import TServerUdpJson
+import serverudp
 
 
 class TApp:
     def __init__(self):
         self.Serial = serial.TSerial()
+        self.Serial.DefHandler = self.DefHandler
         
         Config = config.TConfig()
         Config.FileLoad('config.json')
@@ -37,8 +38,8 @@ class TApp:
             api.SetPinInv(api.cPinLedSys)
             self.DefHandler("OnTimer")
 
-    def DefHandler(self, aData):
-        log.Log(1, "DefHandler()", "CntCall", self.CntCall, "MemFree", api.GetMemFree())
+    def DefHandler(self):
+        log.Log(1, "DefHandler()", "MemFree", api.GetMemFree())
         return None
 
     def HandlerJson(self, aCaller, aData):
@@ -74,7 +75,7 @@ class TApp:
             ConfPort    = self.Conf.get('/Server/Port', 51015)
             ConfTimeOut = self.Conf.get('/Server/TimeOut', -1)
 
-            Server = TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
+            Server = serverudp.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
             Server.BufSize = self.Conf.get('/Server/BufSize', 512)
             Server.Handler = self.HandlerJson
             Server.Run()

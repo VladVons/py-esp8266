@@ -70,8 +70,7 @@ class TSerial:
     def Parse(self, aJson):
         self.CntPacket += 1;
         self.LastPacket = api.GetTicks()
-        log.Log(1, 'Parse()', 'CntPacket', self.CntPacket,  'LastPacket', self.LastPacket)
-
+        log.Log(1, 'Parse()', 'CntPacket', self.CntPacket,  'LastPacket', self.LastPacket, aJson)
         
         aData  = aJson.get('Data', None)
         if (aData):
@@ -83,7 +82,10 @@ class TSerial:
             else:
                 Result = self.ParseRaw(aData)
         else:
-            Result = 'Empty Data' 
+            if (self.DefHandler):
+                Result = self.DefHandler()
+            else:
+                Result = 'Empty Data' 
 
         aJson['Data'] = Result
         return aJson

@@ -109,8 +109,10 @@ class TSockClientUDP():
     def __del__(self):
         TotalSec = round(time.time() - self.Start, 2)
         if (self.SendCnt > 0):
+            Avg = TotalSec /  self.SendCnt
             print("TotalSec", TotalSec, 
-              "Avg", round(TotalSec /  self.SendCnt, 3),
+              "Avg", round(Avg, 3),
+              "PerSec", round(1 / Avg, 3),
               "SendCnt", self.SendCnt, 
               "TimeOut", self.TimeOut)
 
@@ -230,7 +232,7 @@ def TestPinInfo():
     Esp.GetPinImfo(ArrLed)
 
 
-#TestLamp(300)
+TestLamp(1000)
 #TestMotor(-200)
 #TestExec()
 #TestCall()

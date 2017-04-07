@@ -24,7 +24,7 @@ ExecM()
 
 GetSrc()
 {
-  ls -p | egrep -v "/|_script.sh" | sort
+  ls -p | egrep -v "/|_" | sort
 }
 
 
@@ -83,7 +83,7 @@ EspFirmware()
 
   Dir="/mnt/hdd/data1/Python/image"
   #FileName="esp8266-20170108-v1.8.7.bin"
-  FileName="esp8266-20170407-v1.8.7-588-g3e1310d.bin"
+  FileName="esp8266-20170407-v1.8.7-590-ge5278b9.bin"
 
   File=$Dir/$FileName
   if [ -f $File ] ; then
