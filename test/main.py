@@ -3,22 +3,17 @@
 # micropython ESP8266
 #---
 
-#from wlan2 import TWLan
-#import wlan
-import wlan
-#from server_udp import TServerUdpJson
-from server_tcp import TServerTcpHttp
-
-#import net
-
-#from app import TApp
+import time
+import machine
 #
 #import urequests
 #import urllib
 #import micropython
+#
+#from wlan2 import TWLan
+#import wlan
 
-
-def Main():
+def Main1():
     #time.sleep_ms(3000)
 
     #gc.collect()
@@ -29,28 +24,14 @@ def Main():
     #print("urllib", dir(urllib))
     #print("urequests", dir(urequests))
 
-    #App = TApp()
-    #App.TestLeds(1*4)
-    #App.TestSpeed(1000)
-    #App.Listen()
 
-    #wlan.SetEssd('PinkFloyd', '19790000')
-    print(wlan.Scan())
+def Main2():
+    for Pin in [14]:
+        print('Pin', Pin)
+        servo = machine.PWM(machine.Pin(Pin), freq = 50)
+        for Duty in [40, 115, 77]:
+            print('Pin', Pin, 'Duty', Duty)
+            servo.duty(Duty)
+            time.sleep_ms(1000) 
 
-    Con = wlan.Connect('R3-0976646510', '19710000')
-    if (Con):
-        print('Network1', wlan.GetInfo())
-        #Server = TServerUdpJson('0.0.0.0', 80)
-        Server = TServerTcpHttp('0.0.0.0', 80)
-        Server.Handler = Http
-        Server.Run()
-        #print('Network', net.TWLan.GetInfo())
-        ##App.Leds.GetObj('green').Set(1)
-        #net.ServerRun('0.0.0.0', 80)
-    else:
-        print("cant connect Wi-Fi")
-
-    print("Mem free", gc.mem_free())
-
-
-Main()
+Main2()

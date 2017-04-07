@@ -230,7 +230,7 @@ def TestPinInfo():
     Esp.GetPinImfo(ArrLed)
 
 
-TestLamp(100)
+#TestLamp(300)
 #TestMotor(-200)
 #TestExec()
 #TestCall()
@@ -245,4 +245,4 @@ TestLamp(100)
 #StrA = Str.split(',')
 #print(len(Str), len(StrA))
 
-
+#print(('x' * 10))
