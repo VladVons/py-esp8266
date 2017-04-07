@@ -11,11 +11,11 @@ import ubinascii
 
 class TServerUdpBase():
     def __init__(self, aBind, aPort, aTimeOut = -1):
-        self.Handler = None
-        self.BufSize = 512
+        self.BufSize    = 512
+        self.Handler    = None
 
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        if (aTimeOut != -1):
+        if (aTimeOut >= 0):
             self.Sock.settimeout(aTimeOut)
             #self.Sock.setblocking(False)
         self.Sock.bind( (aBind, aPort) )
@@ -69,7 +69,6 @@ class TServerUdpJson(TServerUdpBase):
                 Result = ujson.loads(Data.decode("utf-8"))
             except:
                 Result = {"exception": "Receive() json"}
-
         return Result
 
     def Send(self, aData):

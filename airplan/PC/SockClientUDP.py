@@ -232,7 +232,7 @@ def TestPinInfo():
     Esp.GetPinImfo(ArrLed)
 
 
-TestLamp(1000)
+TestLamp(10)
 #TestMotor(-200)
 #TestExec()
 #TestCall()

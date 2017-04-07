@@ -13,7 +13,6 @@ class TSerial:
         self.CntPacket  = 0
         self.LastPacket = 0
         self.DefUnit    = api
-        self.DefHandler = None
 
     def SetDefUnit(self, aName):
         self.DefUnit  = __import__(aName)
@@ -61,9 +60,6 @@ class TSerial:
             else:
                 Result = 'Error: Unknown Func ' + aFunc
                 log.Log(0, 'Parse()', Result)
-        else:
-            if (self.DefHandler):
-                Result = self.DefHandler(aData)
         aData['Result'] = Result
         return aData
 
@@ -82,10 +78,7 @@ class TSerial:
             else:
                 Result = self.ParseRaw(aData)
         else:
-            if (self.DefHandler):
-                Result = self.DefHandler()
-            else:
-                Result = 'Empty Data' 
+            Result = 'Empty Data' 
 
         aJson['Data'] = Result
         return aJson

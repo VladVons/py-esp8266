@@ -9,12 +9,12 @@ import api
 import config
 import serial
 import serverudp
+import common
 
 
 class TApp:
     def __init__(self):
         self.Serial = serial.TSerial()
-        self.Serial.DefHandler = self.DefHandler
         
         Config = config.TConfig()
         Config.FileLoad('config.json')
@@ -24,27 +24,34 @@ class TApp:
 
         api.SetButton(api.cPinBtnPush,  self.OnButtonPush)
 
+        self.TimerSock = common.TTimer(3000, self.OnSockTimeOut)
+
         #api.WatchDog(5000)
         #api.TimerCallback(3000, self.OnTimer)
 
     def OnButtonPush(self, aObj):
-        log.Log(2, 'TApp.OnButtonPush', aObj);
-        api.SetPin(api.cPinLedSys, not api.GetPin(api.cPinLedSys))
+        log.Log(1, 'TApp.OnButtonPush', aObj);
+        api.SetPinInv(api.cPinLedSys)
 
     def OnTimer(self, aObj):
-        Ticks = api.GetTicks()
-        if (Ticks - self.LastPacket > 10000):
-            self.LastPacket = Ticks 
-            api.SetPinInv(api.cPinLedSys)
-            self.DefHandler("OnTimer")
-
-    def DefHandler(self):
-        log.Log(1, "DefHandler()", "MemFree", api.GetMemFree())
         return None
 
+    def OnSockTimeOut(self):
+        log.Log(1, "OnSockTimeOut()", self.TimerSock.Cnt, "MemFree", api.GetMemFree())
+        api.SetPinInv(api.cPinLedSys)
+        return None
+
+    def DefHandler(self):
+        return self.TimerSock.Handle()
+
     def HandlerJson(self, aCaller, aData):
-        api.SetPin(api.cPinLedSys, self.Serial.CntPacket % 2)
-        return self.Serial.Parse(aData)
+        if (aData):
+            self.TimerSock.Update()
+            api.SetPin(api.cPinLedSys, self.Serial.CntPacket % 2)
+            Result = self.Serial.Parse(aData)
+        else:
+            Result = self.DefHandler()
+        return Result 
 
     def PinsInit(self):
         api.SetPinArr(api.ArrLed , 0)

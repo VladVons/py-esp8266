@@ -1,6 +1,6 @@
 {
     "App":{
-        "LogLevel":2
+        "LogLevel":1
     },
     "WLan":{
         "Connect":true,
@@ -11,6 +11,6 @@
         "Port":51015,
         "Bind":"0.0.0.0",
         "BufSize":1024,
-        "TimeOut":3
+        "TimeOut":0
     }
 }
