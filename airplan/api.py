@@ -30,7 +30,7 @@ ArrMotor2 = [14, 15]
 
 
 def GetInfo():
-    return {"Software":  "1.0.6", 
+    return {"Software":  "1.0.7", 
             "Date":     "2017.04.08", 
             "Support" : "VladVons@gmail.com",
             "Python": sys.version,
