@@ -14,6 +14,9 @@ https://github.com/fadushin/esp8266/blob/0.2/micropython/uhttpd/uhttpd.py#L406
 UDP
 https://github.com/micropython/micropython/issues/2198
 
+PWM servo
+https://bitbucket.org/thesheep/micropython-servo/src/f562a6abeaf0e83b752838df7cd31d88ea10b2c7/servo.py
+
 .
 ('R3-0976646510', '19710000')
 ('L90_VladVons', '19710000')
