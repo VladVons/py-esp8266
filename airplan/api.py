@@ -89,6 +89,7 @@ def TimerCallback(aTimeOut, aHandler):
     obj.init(period = aTimeOut, mode = machine.Timer.PERIODIC, callback = aHandler)
 
 def SetButton(aPin, aHandler):
+    #http://docs.micropython.org/en/v1.8.6/wipy/library/machine.Pin.html
     Obj = machine.Pin(aPin, machine.Pin.IN)
     Obj.irq(trigger = machine.Pin.IRQ_FALLING, handler = aHandler)
 

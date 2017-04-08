@@ -19,24 +19,43 @@ class TApp:
 
         api.SetButton(api.cPinBtnPush, self.OnButtonPush)
 
-        self.TimerSock = common.TTimer(3000, self.OnSockTimeOut)
+        self.TimerSock   = common.TTimer(3000, self.OnSockTimeOut)
+        self.TimerButton = common.TTimer(1000, self.OnButtonTimeOut)
 
         #api.WatchDog(5000)
         #api.TimerCallback(3000, self.OnTimer)
 
     def OnButtonPush(self, aObj):
         log.Log(1, 'TApp.OnButtonPush', aObj);
-        api.SetPinInv(api.cPinLedSys)
+  
+        #common.DebouncePin(aObj)
+        self.TimerButton.IncTag(1, 200) 
+        self.TimerButton.Update()  
+
+        #api.SetPinInv(api.cPinLedSys)
 
     def OnTimer(self, aObj):
         return None
 
+    def OnButtonTimeOut(self):
+        if (self.TimerButton.Tag > 0):
+            Tag = self.TimerButton.Tag 
+            log.Log(1, 'OnButtonTimeOut()', Tag, 'MemFree', api.GetMemFree())
+
+            if   (Tag == 1):
+               self.PinsInit()
+            elif (Tag == 2):
+                api.SetPin(api.cPinLedRed, 1) 
+            elif (Tag == 3):
+                api.SetPin(api.cPinLedGreen, 1) 
+            self.TimerButton.Tag = 0  
+
     def OnSockTimeOut(self):
-        log.Log(1, 'OnSockTimeOut()', self.TimerSock.Cnt, 'MemFree', api.GetMemFree())
+        #log.Log(1, 'OnSockTimeOut()', self.TimerSock.CntCheck, 'MemFree', api.GetMemFree())
         api.SetPinInv(api.cPinLedSys)
-        return None
 
     def HandlerDef(self):
+        self.TimerButton.Handle()
         return self.TimerSock.Handle()
 
     def HandlerJson(self, aCaller, aData):
