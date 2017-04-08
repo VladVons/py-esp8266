@@ -4,25 +4,20 @@
 #---
 
 import log
-import wlan
 import api
-import config
 import serial
 import serverudp
 import common
-
+import wlan
 
 class TApp:
-    def __init__(self):
+    def __init__(self, aConf):
+        self.Conf = aConf
         self.Serial = serial.TSerial()
-        
-        Config = config.TConfig()
-        Config.FileLoad('config.json')
-        self.Conf = Config.GetItems()
 
         log.LogLevel = self.Conf.get('/App/LogLevel', 1);
 
-        api.SetButton(api.cPinBtnPush,  self.OnButtonPush)
+        api.SetButton(api.cPinBtnPush, self.OnButtonPush)
 
         self.TimerSock = common.TTimer(3000, self.OnSockTimeOut)
 
@@ -37,11 +32,11 @@ class TApp:
         return None
 
     def OnSockTimeOut(self):
-        log.Log(1, "OnSockTimeOut()", self.TimerSock.Cnt, "MemFree", api.GetMemFree())
+        log.Log(1, 'OnSockTimeOut()', self.TimerSock.Cnt, 'MemFree', api.GetMemFree())
         api.SetPinInv(api.cPinLedSys)
         return None
 
-    def DefHandler(self):
+    def HandlerDef(self):
         return self.TimerSock.Handle()
 
     def HandlerJson(self, aCaller, aData):
@@ -50,7 +45,7 @@ class TApp:
             api.SetPin(api.cPinLedSys, self.Serial.CntPacket % 2)
             Result = self.Serial.Parse(aData)
         else:
-            Result = self.DefHandler()
+            Result = self.HandlerDef()
         return Result 
 
     def PinsInit(self):
@@ -63,26 +58,25 @@ class TApp:
         if (Result):
             ESSID  = self.Conf.get('/WLan/ESSID')
             Paswd  = self.Conf.get('/WLan/Password')
-            print("ConnectWlan", ESSID, Paswd)
-            Result = wlan.Connect(ESSID,  Paswd)
+            log.Log(1, 'ConnectWlan()', ESSID, Paswd)
+            Result = api.Connect(ESSID,  Paswd)
             if (Result):
-                print('Network', wlan.GetInfo())
+                log.Log(1, 'Network', wlan.GetInfo())
             else:
-                print('Cant connect WiFi')
+                log.Log(1, 'Cant connect WiFi')
         else:
-            print('connect AP. Password: micropythoN')
+            log.Log(1, 'connect AP. Password: micropythoN')
             Result = True
         return Result
 
     def Listen(self):
-        if (self.ConnectWlan()):
-            self.PinsInit()
+        self.PinsInit()
 
-            ConfBind    = self.Conf.get('/Server/Bind', '0.0.0.0')
-            ConfPort    = self.Conf.get('/Server/Port', 51015)
-            ConfTimeOut = self.Conf.get('/Server/TimeOut', -1)
+        ConfBind    = self.Conf.get('/Server/Bind', '0.0.0.0')
+        ConfPort    = self.Conf.get('/Server/Port', 51015)
+        ConfTimeOut = self.Conf.get('/Server/TimeOut', -1)
 
-            Server = serverudp.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
-            Server.BufSize = self.Conf.get('/Server/BufSize', 512)
-            Server.Handler = self.HandlerJson
-            Server.Run()
+        Server = serverudp.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
+        Server.BufSize = self.Conf.get('/Server/BufSize', 512)
+        Server.Handler = self.HandlerJson
+        Server.Run()

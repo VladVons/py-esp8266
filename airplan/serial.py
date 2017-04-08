@@ -18,7 +18,7 @@ class TSerial:
         self.DefUnit  = __import__(aName)
 
     def GetInfo(self):
-        Result = "CntPacket %d, CntCall %d" % (self.CntPacket, self.CntCall)
+        Result = 'CntPacket %d, CntCall %d' % (self.CntPacket, self.CntCall)
         print(Result)
         return Result
 

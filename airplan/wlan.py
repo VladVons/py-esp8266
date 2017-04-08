@@ -14,17 +14,17 @@ def Scan():
     Obj = network.WLAN(network.STA_IF)
     nets = Obj.scan()
     for net in nets:
-        Result.append(net[0].decode("utf-8"))
+        Result.append(net[0].decode('utf-8'))
 
     return Result
 
 def GetMac():
     Obj = network.WLAN(network.AP_IF)
     mac = Obj.config("mac")
-    return ubinascii.hexlify(mac).decode("utf-8")
+    return ubinascii.hexlify(mac).decode('utf-8')
 
-def SetEssd(aName, aPassw):
-    essid = "%s-%s" % (aName, GetMac()[-4:])
+def SetEssId(aName, aPassw):
+    essid = '%s-%s' % (aName, GetMac()[-4:])
     Obj = network.WLAN(network.AP_IF)
     Obj.config(essid = essid, authmode = network.AUTH_WPA_WPA2_PSK, password = aPassw)
 

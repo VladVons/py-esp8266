@@ -30,14 +30,15 @@ ArrMotor2 = [14, 15]
 
 
 def GetInfo():
-    return {"Software":  "1.0.7", 
+    return {"Software": "1.0.7", 
             "Date":     "2017.04.08", 
             "Support" : "VladVons@gmail.com",
-            "Python": sys.version,
+            "Python":   sys.version,
+            "Mac":      GetMac(),
             "Firmware": "%d.%d.%d" % sys.implementation[1]
            }
 
-def Exec(aValue = "Result = (2+3)*2"):
+def Exec(aValue = 'Result = (2+3)*2'):
     Result = None
     Vars   = {}
     try:
@@ -58,10 +59,13 @@ def FileList():
     return '\n'.join(fs.FileList())
 
 def SetEssd(aName, aPassw):
-    wlan.SetEssd('vando-' + aName, aPassw)
+    wlan.SetEssId('vando-' + aName, aPassw)
 
 def GetMac():
     return wlan.GetMac()
+
+def Connect(aEssId, aPassw):
+    return wlan.Connect(aEssId, aPassw)
 
 def GetMemFree():
     gc.collect()
@@ -94,7 +98,7 @@ def Reset():
 #--- Pin support
 
 def SetPin(aPin, aValue):
-    log.Log(3, "SetPin", "Pin", aPin, 'Value', aValue)
+    log.Log(3, 'SetPin', 'Pin', aPin, 'Value', aValue)
 
     Obj = machine.Pin(aPin, machine.Pin.OUT)
     Obj.value(aValue)
@@ -114,21 +118,21 @@ def GetPin(aPin):
     return Result
 
 def SetPwmFreq(aPin, aValue):
-    log.Log(3, "SetPwmFreq", "Pin", aPin, 'Value', aValue)
+    log.Log(3, 'SetPwmFreq', 'Pin', aPin, 'Value', aValue)
 
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.freq(aValue)
     return Obj.freq()
 
 def SetPwmDuty(aPin, aValue):
-    log.Log(3, "SetPwmDuty", "Pin", aPin, 'Value', aValue)
+    log.Log(3, 'SetPwmDuty', 'Pin', aPin, 'Value', aValue)
 
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.duty(aValue)
     return Obj.duty()
 
 def SetPwmOff(aPin):
-    log.Log(3, "SetPwmOff", "Pin", aPin)
+    log.Log(3, 'SetPwmOff', 'Pin', aPin)
 
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.deinit()

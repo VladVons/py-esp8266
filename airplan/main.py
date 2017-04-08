@@ -4,22 +4,27 @@
 #---
 
 import api
-from app import TApp
-#import ntptime
+import config
+import app
 
+def GetConfig():
+    Config = config.TConfig()
+    Config.FileLoad('config.json')
+    return Config.GetItems()
+   
 def Main():
     #https://github.com/micropython/micropython/blob/master/esp8266/scripts/ntptime.py
+    #import ntptime
     #ntptime.settime()
  
-    App = TApp()
-    print("GetInfo", api.GetInfo())
-    print("Mem free", api.GetMemFree(), "Ticks", api.GetTicks())
-    print("Mac", api.GetMac(), "ID")
-    App.Listen()
+    App = app.TApp(GetConfig())
+    print('GetInfo', api.GetInfo())
+    print('Mem free', api.GetMemFree())
 
+    App.ConnectWlan()
+    App.Listen()
 
 Main()
 
 #import os, sys
 #print('uname', os.uname())
-#print('version', sys.version())
