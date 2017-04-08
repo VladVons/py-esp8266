@@ -17,16 +17,16 @@ class TApp:
 
         log.LogLevel = self.Conf.get('/App/LogLevel', 1);
 
-        api.SetButton(api.cPinBtnPush, self.OnButtonPush)
+        api.SetButton(api.cPinBtnPush, self.IrqOnButtonPush)
 
-        self.TimerSock   = common.TTimer(3000, self.OnSockTimeOut)
+        self.TimerSock   = common.TTimer(2000, self.OnSockTimeOut)
         self.TimerButton = common.TTimer(1000, self.OnButtonTimeOut)
 
         #api.WatchDog(5000)
-        #api.TimerCallback(3000, self.OnTimer)
+        #api.TimerCallback(3000, self.IrqOnTimer)
 
-    def OnButtonPush(self, aObj):
-        log.Log(1, 'TApp.OnButtonPush', aObj);
+    def IrqOnButtonPush(self, aObj):
+        log.Log(1, 'OnButtonPush', aObj);
   
         #common.DebouncePin(aObj)
         self.TimerButton.IncTagDebounce(1, 200) 
@@ -34,7 +34,7 @@ class TApp:
 
         #api.SetPinInv(api.cPinLedSys)
 
-    def OnTimer(self, aObj):
+    def IrqOnTimer(self, aObj):
         return None
 
     def OnButtonTimeOut(self):
@@ -56,7 +56,8 @@ class TApp:
 
     def HandlerDef(self):
         self.TimerButton.Handle()
-        return self.TimerSock.Handle()
+        self.TimerSock.Handle()
+        return None
 
     def HandlerJson(self, aCaller, aData):
         if (aData):
