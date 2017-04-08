@@ -29,7 +29,7 @@ class TApp:
         log.Log(1, 'TApp.OnButtonPush', aObj);
   
         #common.DebouncePin(aObj)
-        self.TimerButton.IncTag(1, 200) 
+        self.TimerButton.IncTagDebounce(1, 200) 
         self.TimerButton.Update()  
 
         #api.SetPinInv(api.cPinLedSys)

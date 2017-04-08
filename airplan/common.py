@@ -29,7 +29,7 @@ class TTimer:
                 Result = self.Handler()
         return Result
 
-    def IncTag(self, aInc = 1, aTimeOut = 250):
+    def IncTagDebounce(self, aInc = 1, aTimeOut = 250):
         Ticks = api.GetTicks()
         Dif   = Ticks - self.LastTag
         if (Dif > aTimeOut):
