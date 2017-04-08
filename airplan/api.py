@@ -35,6 +35,7 @@ def GetInfo():
             "Support" : "VladVons@gmail.com",
             "Python":   sys.version,
             "Mac":      GetMac(),
+            "MemFree":  GetMemFree(),
             "Firmware": "%d.%d.%d" % sys.implementation[1]
            }
 

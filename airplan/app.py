@@ -51,7 +51,7 @@ class TApp:
             self.TimerButton.Tag = 0  
 
     def OnSockTimeOut(self):
-        #log.Log(1, 'OnSockTimeOut()', self.TimerSock.CntCheck, 'MemFree', api.GetMemFree())
+        #log.Log(2, 'OnSockTimeOut()', self.TimerSock.CntCheck, 'MemFree', api.GetMemFree())
         api.SetPinInv(api.cPinLedSys)
 
     def HandlerDef(self):
