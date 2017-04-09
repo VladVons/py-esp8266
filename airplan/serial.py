@@ -11,7 +11,6 @@ class TSerial:
     def __init__(self):
         self.CntCall    = 0
         self.CntPacket  = 0
-        self.LastPacket = 0
         self.DefUnit    = api
 
     def SetDefUnit(self, aName):
@@ -65,8 +64,7 @@ class TSerial:
 
     def Parse(self, aJson):
         self.CntPacket += 1;
-        self.LastPacket = api.GetTicks()
-        log.Log(1, 'Parse()', 'CntPacket', self.CntPacket,  'LastPacket', self.LastPacket, aJson)
+        log.Log(1, 'Parse()', 'CntPacket', self.CntPacket, aJson)
         
         aData  = aJson.get('Data', None)
         if (aData):

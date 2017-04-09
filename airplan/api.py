@@ -30,11 +30,11 @@ ArrMotor2 = [14, 15]
 
 
 def GetInfo():
-    return {"Software": "1.0.7", 
-            "Date":     "2017.04.08", 
-            "Support" : "VladVons@gmail.com",
+    return {"Software": "1.0.8", 
+            "Date":     "2017.04.09", 
+            "Support":  "VladVons@gmail.com",
             "Python":   sys.version,
-            "Mac":      GetMac(),
+            "MacAddr":  GetMac(),
             "MemFree":  GetMemFree(),
             "Firmware": "%d.%d.%d" % sys.implementation[1]
            }
@@ -53,8 +53,16 @@ def Exec(aValue = 'Result = (2+3)*2'):
 def Print(aValue = ''):
     print(aValue)
 
-def FileLoad(aName):
-    return fs.FileLoad(aName)
+def SetLogLevel(aValue):
+    log.LogLevel = aValue
+
+def FileRead(aName):
+    return fs.FileRead(aName)
+
+def FileWrite(aName, aData):
+    #log.Log(1, 'FileWrite()', aName, aData)
+    fs.FileWrite(aName, aData)
+    return "OK"
 
 def FileList():
     return '\n'.join(fs.FileList())

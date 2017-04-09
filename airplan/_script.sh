@@ -83,7 +83,7 @@ EspFirmware()
 
   Dir="/mnt/hdd/data1/Python/image"
   #FileName="esp8266-20170108-v1.8.7.bin"
-  FileName="esp8266-20170407-v1.8.7-590-ge5278b9.bin"
+  FileName="esp8266-20170409-v1.8.7-602-gb87432b.bin"
 
   File=$Dir/$FileName
   if [ -f $File ] ; then
@@ -111,7 +111,7 @@ EspFileList()
 }
 
 
-EspSrcFile()
+EspSrcPut()
 {
   aFile="$1"
 
@@ -141,12 +141,24 @@ EspSrcDel()
 
   echo "Delete files in ESP"
 
-  _EspFileList | grep -v "boot.py" |\
+ _EspFileList | grep -v "boot.py" |\
   while read File; do
     ExecM "ampy --port $Dev --baud $Speed rm $File"
   done
 
   EspFileList  
+}
+
+
+EspSrcGet()
+{
+  echo "$0->$FUNCNAME"
+
+ _EspFileList |\
+  while read File; do
+    ExecM "ampy --port $Dev --baud $Speed get $File"
+    break
+  done
 }
 
 
@@ -186,7 +198,8 @@ case $1 in
     EspFirmware|w)  EspFirmware ;;
     EspRelease)     "$1"        ;;
     EspFileList|l)  EspFileList ;;
+    EspSrcGet)      "$1"        ;;
     EspSrcDel|d)    EspSrcDel   ;;
-    EspSrcFile|f)   EspSrcFile  $2 ;;
+    EspSrcPut|f)    EspSrcPut   $2 ;;
     EspSrcCopy|c)   EspSrcCopy  ;;
 esac

@@ -1,4 +1,4 @@
-OC#---VladVons@gmail.com  
+#---VladVons@gmail.com  
 # 05.02.17
 # micropython ESP8266
 #---
@@ -7,7 +7,8 @@ import socket
 import ujson
 import ubinascii
 #
-#from common import Log
+import log
+
 
 class TServerUdpBase():
     def __init__(self, aBind, aPort, aTimeOut = -1):
@@ -53,7 +54,8 @@ class TServerUdpBase():
                 Data = self.Receive()
                 if (self.Handler):
                     Data = self.Handler(self, Data)
-                self.Send(Data)
+                if (Data):
+                    self.Send(Data)
 
 
 class TServerUdpJson(TServerUdpBase):
@@ -68,7 +70,10 @@ class TServerUdpJson(TServerUdpBase):
             try:
                 Result = ujson.loads(Data.decode("utf-8"))
             except:
-                Result = {"exception": "Receive() json"}
+                Error = "Error: Receive() json"
+                log.Log(0, Error)
+
+                Result = {"exception": Error}
         return Result
 
     def Send(self, aData):
@@ -76,6 +81,7 @@ class TServerUdpJson(TServerUdpBase):
             aData['IP'] = self.Addr
             Data = ujson.dumps(aData)
         except:
-            Data = '{"exception": "Send() json"}'
+            Data = '{"exception": "Error: Send() json"}'
+            log.Log(0, Data)
 
         self._Send(Data)

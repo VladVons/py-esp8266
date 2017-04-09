@@ -29,26 +29,34 @@ class TSerial():
     def __init__(self):
         self.Clear()
 
-    def Clear(self):
-        self.Data = {'Data': []}
-
-    def GetData(self):
-        return self.Data
-
-    def Add(self, aData):
-        self.Data['Data'].append(aData)
-
     def Show(self):
         print(self.Data)
 
+    def Clear(self):
+        self.Data = {}
+        self.AddKey('Data', [])
+
+    def GetDic(self):
+        return self.Data
+
+    def AddData(self, aData):
+        self.Data['Data'].append(aData)
+
+    def AddKey(self, aKey, aValue):
+        self.Data[aKey] = aValue
+
     def AddFunc(self, aName, aArgs = []):
-        self.Add({"ID": "myTSerial", "Func": aName, "Args": aArgs})
+        self.AddData({"Func": aName, "Args": aArgs})
 
     def Print(self, aValue):
+        #return
         self.AddFunc("Print", [aValue])
 
     def Exec(self, aValue):
         self.AddFunc("Exec", ["Result = " + aValue])
+
+    def SetLogLevel(self, aValue):
+        self.AddFunc("SetLogLevel", [aValue])
 
     #--- Pin functions
 
@@ -152,9 +160,12 @@ class TEsp():
         self.Sock   = TSockClientUDP(aHost, aPort)
         self.Serial = TSerial()
 
+    def SetLogLevel(self, aValue):
+        self.Serial.SetLogLevel(aValue)
+
     def Send(self, aTimeOut = 0.2):
         self.Serial.Print("--- " + str(self.Sock.SendCnt))
-        self.Sock.Send(self.Serial.GetData(), aTimeOut)
+        self.Sock.Send(self.Serial.GetDic(), aTimeOut)
         self.Serial.Clear()
 
     def GetInfo(self):
@@ -165,7 +176,7 @@ class TEsp():
         #self.Serial.Show()
         self.Send()
 
-    def GetPinImfo(self, aPins) :
+    def GetPinInfo(self, aPins) :
         for Pin in aPins:
             self.Serial.GetPin(Pin)
             self.Serial.GetPwmDuty(Pin)
@@ -205,46 +216,51 @@ class TEsp():
         self.Serial.Exec(aScript)
         self.Send(aTimeOut)
 
+    def SendFile(self, aFile):
+        fh = open(aFile)
+        Data = fh.read()
+        fh.close()
+
+        self.Serial.AddFunc("FileWrite", [aFile, Data])
+        self.Send()
+
 #-----------
 
-def TestMotor(aSpeed):
+def Motor(aSpeed):
     Esp = TEsp("192.168.2.119", 51015)
     Esp.GetInfo()
     Esp.Motor(ArrMotor1, aSpeed)
 
-def TestLamp(aCnt):
+def Lamp(aCnt, aLogLevel):
     Esp = TEsp("192.168.2.119", 51015)
+    Esp.SetLogLevel(aLogLevel)
     Esp.MotorStop(ArrMotor1)
     Esp.LedFlash(aCnt)
 
-def TestExec():
+def Exec():
     Esp = TEsp("192.168.2.119", 51015)
     Esp.Exec("SetPinInv(15);Sleep(200);SetPinInv(15);Sleep(200);SetPinInv(15)", 3)
     Esp.GetInfo()
 
-def TestCall():
+def Call():
     Esp = TEsp("192.168.2.119", 51015)
     Esp.Sock.Add({"Func": "GetInfo", "Args": []})
     Esp.Sock.Send()
 
-def TestPinInfo():
+def PinInfo():
     Esp = TEsp("192.168.2.119", 51015)
-    Esp.GetPinImfo(ArrLed)
+    Esp.GetInfo()
+    #Esp.GetPinInfo(ArrLed)
+
+def SendFile(aFile):
+    Esp = TEsp("192.168.2.119", 51015)
+    #Esp.SetLogLevel()
+    Esp.SendFile(aFile)
 
 
-TestLamp(100)
-#TestMotor(-200)
-#TestExec()
-#TestCall()
-#TestPinInfo()
-
-#Class = globals()["Test"]
-#Class.Print("Hello")
-#Class.Log(2, "Hello")
-#Class.CallObj("Print")
-
-#Str = 'Pink.Floyd'
-#StrA = Str.split(',')
-#print(len(Str), len(StrA))
-
-#print(('x' * 10))
+#Lamp(11, 1)
+#Motor(-200)
+#Exec()
+#Call()
+#PinInfo()
+SendFile('Test.txt')

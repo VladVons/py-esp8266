@@ -19,8 +19,8 @@ class TApp:
 
         api.SetButton(api.cPinBtnPush, self.IrqOnButtonPush)
 
-        self.TimerSock   = common.TTimer(2000, self.OnSockTimeOut)
-        self.TimerButton = common.TTimer(1000, self.OnButtonTimeOut)
+        self.TimerSock   = common.TTimer(self.OnSockTimeOut, 2000)
+        self.TimerButton = common.TTimerDebounce(self.OnButtonTimeOut, 1000, 250)
 
         #api.WatchDog(5000)
         #api.TimerCallback(3000, self.IrqOnTimer)
@@ -29,7 +29,7 @@ class TApp:
         log.Log(1, 'OnButtonPush', aObj);
   
         #common.DebouncePin(aObj)
-        self.TimerButton.IncTagDebounce(1, 200) 
+        self.TimerButton.IncTag() 
         self.TimerButton.Update()  
 
         #api.SetPinInv(api.cPinLedSys)
@@ -38,8 +38,8 @@ class TApp:
         return None
 
     def OnButtonTimeOut(self):
-        if (self.TimerButton.Tag > 0):
-            Tag = self.TimerButton.Tag 
+        if (self.TimerButton.CntTag > 0):
+            Tag = self.TimerButton.CntTag 
             log.Log(1, 'OnButtonTimeOut()', Tag, 'MemFree', api.GetMemFree())
 
             if   (Tag == 1):
@@ -48,7 +48,7 @@ class TApp:
                 api.SetPin(api.cPinLedRed, 1) 
             elif (Tag == 3):
                 api.SetPin(api.cPinLedGreen, 1) 
-            self.TimerButton.Tag = 0  
+            self.TimerButton.CntTag = 0  
 
     def OnSockTimeOut(self):
         #log.Log(2, 'OnSockTimeOut()', self.TimerSock.CntCheck, 'MemFree', api.GetMemFree())

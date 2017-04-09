@@ -6,15 +6,13 @@
 import api
 
 class TTimer:
-    def __init__(self, aTimeOut = 1000, aHandler = None):
+    def __init__(self, aHandler, aTimeOut = 1000):
         self.TimeOut    = aTimeOut
         self.Handler    = aHandler
         self.LastUpdate = api.GetTicks()
-        self.LastTag    = api.GetTicks()
-        self.Tag        = 0
-        self.CntCheck   = 0
+        self.CntTimeOut = 0
     
-    def Check(self):
+    def IsTimeOut(self):
         return api.GetTicks() - self.LastUpdate > self.TimeOut
    
     def Update(self):
@@ -22,19 +20,29 @@ class TTimer:
 
     def Handle(self):
         Result = None
-        if self.Check():
+        if (self.IsTimeOut()):
             self.Update()
-            self.CntCheck += 1 
+            self.CntTimeOut += 1 
             if (self.Handler):
                 Result = self.Handler()
         return Result
 
-    def IncTagDebounce(self, aInc = 1, aTimeOut = 250):
+
+class TTimerDebounce(TTimer):
+    def __init__(self, aHandler, aTimeOut = 1000, aDebounce = 200):
+        TTimer.__init__(self, aHandler, aTimeOut)
+        self.LastTag  = api.GetTicks()
+        self.CntTag   = 0
+        self.Debounce = aDebounce
+
+    def IncTag(self):
         Ticks = api.GetTicks()
         Dif   = Ticks - self.LastTag
-        if (Dif > aTimeOut):
-            self.Tag += aInc
+        if (Dif > self.Debounce):
+            self.CntTag += 1
         self.LastTag = Ticks
+
+
 
 '''
 def DebouncePin(aObj):

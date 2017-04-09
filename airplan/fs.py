@@ -13,9 +13,14 @@ def FileExists(aName):
     Files = FileList()
     return (aName in Files)
 
-def FileLoad(aName):
+def FileRead(aName):
     fh = open(aName)
     Result = fh.read()
     fh.close()
     return Result
  
+def FileWrite(aName, aData):
+    fh = open(aName, 'w')
+    Result = fh.write(aData)
+    fh.close()
+    return Result
