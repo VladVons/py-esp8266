@@ -129,7 +129,7 @@ EspSrcCopy()
   # deploy
   GetSrc |\
   while read File; do
-    EspSrcFile $File
+    EspSrcPut $File
     sleep 1
   done
 }

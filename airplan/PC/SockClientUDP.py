@@ -112,23 +112,33 @@ class TSockClientUDP():
         self.Start    = time.time()
         self.SendCnt  = 0
         self.TimeOut  = 0
-        self.MaxTries = 1
+        self.MaxTries = 2
+        self.BufSize  = 1024
+
 
     def __del__(self):
         TotalSec = round(time.time() - self.Start, 2)
         if (self.SendCnt > 0 and TotalSec > 0):
             Avg = TotalSec /  self.SendCnt
+            print('')
             print("TotalSec", TotalSec, 
               "Avg", round(Avg, 3),
               "PerSec", round(1 / Avg, 3),
               "SendCnt", self.SendCnt, 
               "TimeOut", self.TimeOut)
 
+    def Print(self, aData):
+        Data = aData.get('Data')
+        for Item in Data:
+            print(Item)
+
     def Send(self, aData, aTimeOut = 0.2):
         self.SendCnt += 1
 
         DataOut = json.dumps(aData) 
-        print("DataOut Len", len(DataOut),  DataOut)
+        print('')
+        print('--- DataOut len', len(DataOut), 'SendCnt', self.SendCnt, 'TimeOut', self.TimeOut)
+        self.Print(aData)
 
         Tries  = self.MaxTries
         DataIn = None
@@ -139,17 +149,18 @@ class TSockClientUDP():
             sock.settimeout(aTimeOut)
             sock.sendto(DataOut, (self.Host, self.Port))
             try:
-                DataIn = sock.recvfrom(1024)
-                print("")
-                print("DataIn len", len(DataIn[0]), DataIn)
+                DataIn = sock.recvfrom(self.BufSize)
             except:
                 self.TimeOut += 1
                 print('Timeout', self.TimeOut, "Tries", Tries)
 
         if (DataIn):
             Result = json.loads(DataIn[0])
+            print('--- DataIn len', len(DataIn[0]))
+            self.Print(Result)
         else:
             Result = {}
+
         return Result
 
 
@@ -165,8 +176,9 @@ class TEsp():
 
     def Send(self, aTimeOut = 0.2):
         self.Serial.Print("--- " + str(self.Sock.SendCnt))
-        self.Sock.Send(self.Serial.GetDic(), aTimeOut)
+        Result = self.Sock.Send(self.Serial.GetDic(), aTimeOut)
         self.Serial.Clear()
+        return Result
 
     def GetInfo(self):
         self.Serial.AddFunc("GetInfo")
@@ -247,7 +259,7 @@ def Call():
     Esp.Sock.Add({"Func": "GetInfo", "Args": []})
     Esp.Sock.Send()
 
-def PinInfo():
+def GetInfo():
     Esp = TEsp("192.168.2.119", 51015)
     Esp.GetInfo()
     #Esp.GetPinInfo(ArrLed)
@@ -258,9 +270,9 @@ def SendFile(aFile):
     Esp.SendFile(aFile)
 
 
-#Lamp(11, 1)
+Lamp(101, 0)
 #Motor(-200)
 #Exec()
 #Call()
-#PinInfo()
-SendFile('Test.txt')
+#GetInfo()
+#SendFile('Test.txt')

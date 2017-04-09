@@ -30,12 +30,16 @@ ArrMotor2 = [14, 15]
 
 
 def GetInfo():
-    return {"Software": "1.0.8", 
+    return {
+            "Software": "1.0.8", 
             "Date":     "2017.04.09", 
-            "Support":  "VladVons@gmail.com",
+            "Hardware": "1.0.2", 
+            "Author":   "Volodymyr Vons",
+            "Support":  "http://vando.com.ua/esp",
             "Python":   sys.version,
             "MacAddr":  GetMac(),
             "MemFree":  GetMemFree(),
+            "Uptime":   int(GetTicks() / 1000),
             "Firmware": "%d.%d.%d" % sys.implementation[1]
            }
 
@@ -45,9 +49,9 @@ def Exec(aValue = 'Result = (2+3)*2'):
     try:
         exec(aValue, globals(), Vars)
         Result = Vars.get('Result')
-    except Exception as E:
-        print(E)
-        Result = E
+    except Exception as e:
+        print(e)
+        Result = e
     return Result
 
 def Print(aValue = ''):
