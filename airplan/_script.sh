@@ -154,10 +154,12 @@ EspSrcGet()
 {
   echo "$0->$FUNCNAME"
 
+  Dir="Files"
+  mkdir -p $Dir
+
  _EspFileList |\
   while read File; do
-    ExecM "ampy --port $Dev --baud $Speed get $File"
-    break
+    ExecM "ampy --port $Dev --baud $Speed get $File > $Dir/$File"
   done
 }
 
