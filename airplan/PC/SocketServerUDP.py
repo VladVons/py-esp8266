@@ -16,7 +16,13 @@ class TSocketServerUDP():
         print('Date', datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'), 'Bind', aHost, aPort)
         
     def Receive(self):
-        return self.Sock.recvfrom(self.BufSize)
+        Result = self.Sock.recvfrom(self.BufSize)
+        print('Receive()', Result) 
+        return Result
+
+    def Send(self, aData, aAddr):
+        print('Send()', aData, aAddr) 
+        return self.Sock.sendto(aData, aAddr)
             
     def Listen(self):
         while (True):
@@ -33,7 +39,7 @@ class TSocketServerUDP():
     
             DataOut = json.dumps(DataIn)
             print('DataOut', DataOut) 
-            self.Sock.sendto(DataOut, Addr)
+            self.Send(DataOut, Addr)
 
         self.Sock.close()
 
