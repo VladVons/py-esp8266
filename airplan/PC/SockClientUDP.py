@@ -112,11 +112,11 @@ class TSockClientUDP():
         self.Start    = time.time()
         self.SendCnt  = 0
         self.TimeOut  = 0
-        self.MaxTries = 3
+        self.MaxTries = 1
 
     def __del__(self):
         TotalSec = round(time.time() - self.Start, 2)
-        if (self.SendCnt > 0):
+        if (self.SendCnt > 0 and TotalSec > 0):
             Avg = TotalSec /  self.SendCnt
             print("TotalSec", TotalSec, 
               "Avg", round(Avg, 3),
@@ -222,7 +222,7 @@ class TEsp():
         fh.close()
 
         self.Serial.AddFunc("FileWrite", [aFile, Data])
-        self.Send()
+        self.Send(2)
 
 #-----------
 
@@ -253,7 +253,7 @@ def PinInfo():
     #Esp.GetPinInfo(ArrLed)
 
 def SendFile(aFile):
-    Esp = TEsp("192.168.2.119", 51015)
+    Esp = TEsp("192.168.2.12", 51015)
     #Esp.SetLogLevel()
     Esp.SendFile(aFile)
 

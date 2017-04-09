@@ -4,28 +4,38 @@ import socket
 import json
 import datetime
 
-def SocketServerUDP_1():
-    Host = '0.0.0.0'
-    Port = 51015
 
-    Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    Sock.bind( (Host, Port) )
-    print('Date', datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'), 'Bind', Host, Port, "Date")
+class TSocketServerUDP():
+    def __init__(self, aHost, aPort):
+        self.Host = aHost
+        self.Port = aPort
+        self.BufSize = 512
 
-    while (True):
-        Data, Addr = Sock.recvfrom(512)
-        print('Date', datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'), 'Data', Data, 'Addr', Addr, 'Bind', Host, Port)
+        self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.Sock.bind( (aHost, aPort) )
+        print('Date', datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'), 'Bind', aHost, aPort)
+        
+    def Receive(self):
+        return self.Sock.recvfrom(self.BufSize)
+            
+    def Listen(self):
+        while (True):
+            Data, Addr = self.Receive()
+            if (Data):
+                try:
+                    DataIn =  json.loads(Data.decode("utf-8"))
+                except:
+                    DataIn = {}
+            else:
+                DataIn = {}
 
-        if (Data):
-            DataIn =  json.loads(Data.decode("utf-8"))
-        else:
-            DataIn = {}
-
-        DataIn['Ret'] = 'Returned'
+            DataIn['Ret'] = 'Returned'
     
-        Data = json.dumps(DataIn)
-        Sock.sendto(Data, Addr)
+            DataOut = json.dumps(DataIn)
+            print('DataOut', DataOut) 
+            self.Sock.sendto(DataOut, Addr)
 
-    Sock.close()
+        self.Sock.close()
 
-SocketServerUDP_1()
+SocketServerUDP = TSocketServerUDP('0.0.0.0',  51015)
+SocketServerUDP.Listen()
