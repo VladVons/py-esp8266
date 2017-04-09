@@ -253,8 +253,8 @@ def PinInfo():
     #Esp.GetPinInfo(ArrLed)
 
 def SendFile(aFile):
-    Esp = TEsp("192.168.2.12", 51015)
-    #Esp.SetLogLevel()
+    Esp = TEsp("192.168.2.119", 51015)
+    Esp.SetLogLevel(2)
     Esp.SendFile(aFile)
 
 

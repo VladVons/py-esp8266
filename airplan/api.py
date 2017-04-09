@@ -60,10 +60,7 @@ def FileRead(aName):
     return fs.FileRead(aName)
 
 def FileWrite(aName, aData):
-    log.Log(1, 'FileWrite(1)', aName, aData)
-    fs.FileWrite(aName, aData)
-    log.Log(1, 'FileWrite(2)', aName, aData)
-    return "OK"
+    return fs.FileWrite(aName, aData)
 
 def FileList():
     return '\n'.join(fs.FileList())
