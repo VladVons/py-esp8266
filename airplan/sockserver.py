@@ -27,6 +27,7 @@ class TServerBase():
 
     def Close(self):
         if (self.Sock):
+            self.Active = False
             self.Sock.close()
             self.Sock = None
 
