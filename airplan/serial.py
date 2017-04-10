@@ -58,7 +58,7 @@ class TSerial:
                 Result = self.CallObj(Obj, aArgs)
             else:
                 Result = 'Error: Unknown Func ' + aFunc
-                log.Log(0, 'Parse()', Result)
+                log.Log(0, 'TSerial.Parse()', Result)
         aData['Result'] = Result
         return aData
 

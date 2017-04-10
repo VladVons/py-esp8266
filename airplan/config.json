@@ -1,9 +1,9 @@
 {
     "App":{
-        "LogLevel":1
+        "LogLevel":0
     },
     "WLan":{
-        "Connect":false,
+        "Connect":true,
         "ESSID":"R3-0976646510",
         "Password":"197119822007"
     },
@@ -11,6 +11,7 @@
         "Port":51015,
         "Bind":"0.0.0.0",
         "BufSize":1024,
+        "Protocol":"UDP",
         "TimeOut":0
     }
 }

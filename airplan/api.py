@@ -75,7 +75,7 @@ def SetEssd(aName, aPassw):
 def GetMac():
     return wlan.GetMac()
 
-def Connect(aEssId, aPassw):
+def ConnectWlan(aEssId, aPassw):
     return wlan.Connect(aEssId, aPassw)
 
 def GetMemFree():

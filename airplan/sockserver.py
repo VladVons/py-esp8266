@@ -27,11 +27,12 @@ class TServerBase():
 
     def Close(self):
         if (self.Sock):
-            self.Active = False
             self.Sock.close()
             self.Sock = None
 
     def Run(self):
+        log.Log(3, 'Run()')
+
         self.Active = True
         while (self.Active):
             if (self.Active):
@@ -40,8 +41,43 @@ class TServerBase():
                     Data = self.Handler(self, Data)
                 if (Data):
                     self.Send(Data)
+        self.Close()
 
-class TServerUdpBase(TServerBase):
+
+class TServerBaseJson(TServerBase):
+    def __init__(self, aBind, aPort, aTimeOut = -1):
+        TServerBase.__init__(self, aBind, aPort, aTimeOut)
+
+    def Receive(self):
+        Result = {}
+
+        Data = self._Receive()
+        if (Data):
+            try:
+                Result = ujson.loads(Data.decode("utf-8"))
+            except Exception as e:
+                Error = "TServerBaseJson.Receive() " + str(e)
+                log.Log(0, Error)
+
+                Result = {"Error": Error}
+        return Result
+
+    def Send(self, aData):
+        try:
+            aData['IP'] = self.Addr
+            Data = ujson.dumps(aData)
+        except Exception as e:
+            Data = '{"Error": "TServerBaseJson.Send() %s"}' % e
+            log.Log(0, Data)
+
+        self._Send(Data)
+
+
+class TServerUdpJson(TServerBaseJson):
+    def __init__(self, aBind, aPort, aTimeOut = -1):
+        log.Log(3, 'TServerUDPJson()', aBind, aPort)
+        TServerBase.__init__(self,  aBind, aPort, aTimeOut)
+
     def SockCreate(self):
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -56,45 +92,17 @@ class TServerUdpBase(TServerBase):
     def _Send(self, aData):
         if (self.Addr):
             self.Sock.sendto(aData, self.Addr)
-
-    def Receive(self):
-        return self._Receive()
-
-    def Send(self, aData):
-        self._Send()
+            self.Addr = None
 
 
-class TServerUdpJson(TServerUdpBase):
+class TServerTCPJson(TServerBaseJson):
     def __init__(self, aBind, aPort, aTimeOut = -1):
-        TServerUdpBase.__init__(self, aBind, aPort, aTimeOut)
+        log.Log(3, 'TServerTCPJson()', aBind, aPort)
 
-    def Receive(self):
-        Result = {}
-
-        Data = self._Receive()
-        if (Data):
-            try:
-                Result = ujson.loads(Data.decode("utf-8"))
-            except:
-                Error = "Error: Receive() json"
-                log.Log(0, Error)
-
-                Result = {"exception": Error}
-        return Result
-
-    def Send(self, aData):
-        try:
-            aData['IP'] = self.Addr
-            Data = ujson.dumps(aData)
-        except:
-            Data = '{"exception": "Error: Send() json"}'
-            log.Log(0, Data)
-
-        self._Send(Data)
-
-
-class TServerTCPBase(TServerBase):
-    def __init__(self, aBind, aPort, aTimeOut = -1):
+        # prevent hard reset on  _Receive() ???
+        if (aTimeOut == 0):
+            aTimeOut = 1  
+ 
         TServerBase.__init__(self,  aBind, aPort, aTimeOut)
         self.Sock.listen(1)
 
@@ -102,20 +110,16 @@ class TServerTCPBase(TServerBase):
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def _Receive(self):
-        self.Conn, self.Addr = self.Sock.accept()
-        return self.Conn.recv(self.BufSize)
+        try:
+            self.Conn, self.Addr = self.Sock.accept()
+            Result = self.Conn.recv(self.BufSize)
+        except: 
+            self.Conn = None
+            Result    = None
+        return Result
 
     def _Send(self, aData):
-        self.Conn.sendall(aData)
-        self.Conn.close()
-
-
-class TServerTCPJson(TServerTCPBase):
-    def __init__(self, aBind, aPort, aTimeOut = -1):
-        TServerTCPBase.__init__(self, aBind, aPort, aTimeOut)
-
-    def Receive(self):
-        return self._Receive()
-
-    def Send(self, aData):
-        self._Send(aData)
+        if (self.Conn):
+            self.Conn.sendall(aData)
+            self.Conn.close()
+            self.Conn = None

@@ -15,7 +15,7 @@ class TApp:
         self.Conf = aConf
         self.Serial = serial.TSerial()
 
-        log.LogLevel = self.Conf.get('/App/LogLevel', 1);
+        log.LogLevel = self.Conf.get('/App/LogLevel', 3);
 
         api.SetButton(api.cPinBtnPush, self.IrqOnButtonPush)
 
@@ -74,12 +74,12 @@ class TApp:
         api.SetPwmOffArr(api.ArrMotor2)
 
     def ConnectWlan(self):
-        Result = self.Conf.get('/WLan/Connect', True)
+        Result = self.Conf.get('/WLan/Connect', False)
         if (Result):
-            ESSID  = self.Conf.get('/WLan/ESSID')
-            Paswd  = self.Conf.get('/WLan/Password')
+            ESSID  = self.Conf.get('/WLan/ESSID', '')
+            Paswd  = self.Conf.get('/WLan/Password', '')
             log.Log(1, 'ConnectWlan()', ESSID, Paswd)
-            Result = api.Connect(ESSID,  Paswd)
+            Result = api.ConnectWlan(ESSID,  Paswd)
             if (Result):
                 log.Log(1, 'Network', wlan.GetInfo())
             else:
@@ -92,11 +92,16 @@ class TApp:
     def Listen(self):
         self.PinsInit()
 
-        ConfBind    = self.Conf.get('/Server/Bind', '0.0.0.0')
-        ConfPort    = self.Conf.get('/Server/Port', 51015)
-        ConfTimeOut = self.Conf.get('/Server/TimeOut', -1)
+        ConfBind     = self.Conf.get('/Server/Bind', '0.0.0.0')
+        ConfPort     = self.Conf.get('/Server/Port', 51015)
+        ConfTimeOut  = self.Conf.get('/Server/TimeOut', 0)
+        ConfProtocol = self.Conf.get('/Server/Protocol', 'UDP')
 
-        Server = sockserver.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
+        if (ConfProtocol == 'UDP'):
+            Server = sockserver.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
+        else:
+            Server = sockserver.TServerTCPJson(ConfBind, ConfPort, ConfTimeOut)
+
         Server.BufSize = self.Conf.get('/Server/BufSize', 512)
         Server.Handler = self.HandlerJson
         Server.Run()

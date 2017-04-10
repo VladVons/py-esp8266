@@ -6,6 +6,8 @@
 import ujson
 #
 import fs
+import log
+
 
 
 class TConfig():
@@ -26,7 +28,10 @@ class TConfig():
         Result = fs.FileExists(aFile)
         if (Result):
             with open(aFile) as File:
-                self.Data = ujson.load(File)
+                try:
+                    self.Data = ujson.load(File)
+                except Exception as e:
+                    log.Log(0, 'TConfig.FileLoad()', aFile, e)          
 
     def GetItem(self, aName, aDef = ''):
         Result = self.FindNode(self.Data, aName)

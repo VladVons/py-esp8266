@@ -104,7 +104,7 @@ class TSerial():
 
 
 
-class TSockClientUDP():
+class TSockClientBase():
     def __init__(self, aHost, aPort):
         self.Host  = aHost
         self.Port  = aPort
@@ -112,7 +112,7 @@ class TSockClientUDP():
         self.Start    = time.time()
         self.SendCnt  = 0
         self.TimeOut  = 0
-        self.MaxTries = 2
+        self.MaxTries = 1
         self.BufSize  = 1024
 
 
@@ -135,6 +135,7 @@ class TSockClientUDP():
     def Send(self, aData, aTimeOut = 0.2):
         self.SendCnt += 1
 
+        #print('Send()', 'aData', aData)  
         DataOut = json.dumps(aData) 
         print('')
         print('--- DataOut len', len(DataOut), 'SendCnt', self.SendCnt, 'TimeOut', self.TimeOut)
@@ -144,23 +145,43 @@ class TSockClientUDP():
         DataIn = None
         while (DataIn == None and Tries > 0):
             Tries  -= 1
-
-            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock.settimeout(aTimeOut)
-            sock.sendto(DataOut, (self.Host, self.Port))
-            try:
-                DataIn = sock.recvfrom(self.BufSize)
-            except:
-                self.TimeOut += 1
-                print('Timeout', self.TimeOut, "Tries", Tries)
+            DataIn = self.Exec(DataOut, aTimeOut)
 
         if (DataIn):
-            Result = json.loads(DataIn[0])
-            print('--- DataIn len', len(DataIn[0]))
+            #print('Send()', 'DataIn', DataIn)  
+            Result = json.loads(DataIn)
+            print('--- DataIn len', len(DataIn))
             self.Print(Result)
         else:
             Result = {}
 
+        return Result
+
+
+class TSockClientUDP(TSockClientBase):
+    def Exec(self, aData, aTimeOut):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.settimeout(aTimeOut)
+        sock.sendto(aData, (self.Host, self.Port))
+        try:
+            Data = sock.recvfrom(self.BufSize)
+            Result = Data[0]
+        except:
+            Result = None
+            self.TimeOut += 1
+            print('Timeout', self.TimeOut)
+        return Result
+
+class TSockClientTCP(TSockClientBase):
+    def Exec(self, aData, aTimeOut):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(aTimeOut)
+        try:
+            sock.connect( (self.Host, self.Port) )
+            sock.sendall(aData)
+            Result = sock.recv(self.BufSize)
+        except:
+            Result = None
         return Result
 
 
@@ -169,6 +190,8 @@ class TSockClientUDP():
 class TEsp():
     def __init__(self, aHost, aPort):
         self.Sock   = TSockClientUDP(aHost, aPort)
+        #self.Sock   = TSockClientTCP(aHost, aPort)
+
         self.Serial = TSerial()
 
     def SetLogLevel(self, aValue):
@@ -176,7 +199,8 @@ class TEsp():
 
     def Send(self, aTimeOut = 0.2):
         self.Serial.Print("--- " + str(self.Sock.SendCnt))
-        Result = self.Sock.Send(self.Serial.GetDic(), aTimeOut)
+        Data = self.Serial.GetDic()
+        Result = self.Sock.Send(Data, aTimeOut)
         self.Serial.Clear()
         return Result
 
@@ -198,7 +222,7 @@ class TEsp():
         for i in range(aCnt):
             self.Serial.SetPinArr([cLed_Red, cLed_Green, cLed_Blue], i % 2)
             #self.Serial.AddFunc("Sleep", [50])
-            self.Send(0.2)
+            self.Send(1)
 
     def MotorStop(self, aPins):
         self.Serial.SetPwmOffArr(aPins)
@@ -236,6 +260,10 @@ class TEsp():
         self.Serial.AddFunc("FileWrite", [aFile, Data])
         self.Send(2)
 
+    def ConnectWlan(self, aEssId, aPassw):
+        self.Serial.AddFunc("ConnectWlan", [aEssId, aPassw])
+        self.Send(3)
+        
 #-----------
 
 def Motor(aSpeed):
@@ -269,10 +297,15 @@ def SendFile(aFile):
     Esp.SetLogLevel(2)
     Esp.SendFile(aFile)
 
+def ConnectWlan(aEssId, aPassw):
+    Esp = TEsp("192.168.4.1", 51015)
+    Esp.ConnectWlan(aEssId, aPassw)
 
-Lamp(101, 0)
+
+Lamp(11, 0)
 #Motor(-200)
 #Exec()
 #Call()
 #GetInfo()
 #SendFile('Test.txt')
+#ConnectWlan('R3-0976646510', '197119822007')
