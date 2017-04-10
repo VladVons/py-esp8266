@@ -101,7 +101,7 @@ class TServerTCPJson(TServerBaseJson):
 
         # prevent hard reset on  _Receive() ???
         if (aTimeOut == 0):
-            aTimeOut = 1  
+            aTimeOut = -1  
  
         TServerBase.__init__(self,  aBind, aPort, aTimeOut)
         self.Sock.listen(1)

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 LogLevel= 3
 
 def Log(aLevel, *aParam):
@@ -14,3 +16,5 @@ def CallObj(aFunc):
     #Obj()
     print(aFunc)
     return eval(aFunc)
+
+print(float(7)/3)

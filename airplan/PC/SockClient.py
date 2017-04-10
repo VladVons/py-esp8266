@@ -224,18 +224,18 @@ class TEsp():
             #self.Serial.AddFunc("Sleep", [50])
             self.Send(1)
 
-    def MotorStop(self, aPins):
+    def MotorDCStop(self, aPins):
         self.Serial.SetPwmOffArr(aPins)
         self.Serial.SetPinArr(aPins, 1)
         self.Send()
 
-    def Motor(self, aPins, aSpeed):
+    def MotorDC(self, aPins, aSpeed):
         Forward = aSpeed > 0
         PinA = aPins[int(Forward)]
         PinB = aPins[int(not Forward)]
 
         if (aSpeed == 0):
-             self.MotorStop(Pins)
+             self.MotorDCStop(Pins)
              self.Send()
         else:
             Speed = abs(aSpeed)
@@ -247,6 +247,13 @@ class TEsp():
             self.Serial.SetPin(PinB, 0)
             self.Serial.SetPin(PinA, 1)
             self.Send()
+
+    def MotorServ(self, aPin, aValue, aMiddle = 68):
+        Freq  = 50
+        Value = aMiddle + aValue
+        print('MotorServ()', Value)
+        self.Serial.SetPwm(aPin, Freq, Value)
+        self.Send()
 
     def Exec(self, aScript, aTimeOut = 0.2):
         self.Serial.Exec(aScript)
@@ -266,15 +273,25 @@ class TEsp():
         
 #-----------
 
-def Motor(aSpeed):
+def MotorDC(aSpeed):
     Esp = TEsp("192.168.2.119", 51015)
-    Esp.GetInfo()
-    Esp.Motor(ArrMotor1, aSpeed)
+    Esp.MotorDC(ArrMotor1, aSpeed)
+
+def MotorServ(aPin, aValue, aMiddle):
+    MinV = 25
+    MaxV = 115
+    MinG = -10
+    MaxG = 10
+    Ratio = float(MaxV - MinV) / float(MaxG - MinG)
+    print('Ratio', Ratio, MaxV - MinV, MaxG - MinG)
+
+    Esp = TEsp("192.168.2.119", 51015)
+    Esp.MotorServ(aPin, aValue, aMiddle)
 
 def Lamp(aCnt, aLogLevel):
     Esp = TEsp("192.168.2.119", 51015)
     Esp.SetLogLevel(aLogLevel)
-    Esp.MotorStop(ArrMotor1)
+    Esp.MotorDCStop(ArrMotor1)
     Esp.LedFlash(aCnt)
 
 def Exec():
@@ -298,12 +315,13 @@ def SendFile(aFile):
     Esp.SendFile(aFile)
 
 def ConnectWlan(aEssId, aPassw):
-    Esp = TEsp("192.168.4.1", 51015)
+    Esp = TEsp("192.168.2.119", 51015)
     Esp.ConnectWlan(aEssId, aPassw)
 
 
-Lamp(11, 0)
-#Motor(-200)
+#Lamp(11, 0)
+#MotorDC(-100)
+MotorServ(5, -44, 70)    #(27-127-77-50) (25-115-70-44)
 #Exec()
 #Call()
 #GetInfo()
