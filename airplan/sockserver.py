@@ -10,12 +10,13 @@ import ubinascii
 import log
 
 
-class TServerUdpBase():
-    def __init__(self, aBind, aPort, aTimeOut = -1):
-        self.BufSize    = 512
-        self.Handler    = None
+class TServerBase():
+    def __init__(self, aBind, aPort, aTimeOut):
+        self.BufSize  = 512
+        self.Handler  = None
+        
+        self. SockCreate()
 
-        self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         if (aTimeOut >= 0):
             self.Sock.settimeout(aTimeOut)
             #self.Sock.setblocking(False)
@@ -28,6 +29,20 @@ class TServerUdpBase():
         if (self.Sock):
             self.Sock.close()
             self.Sock = None
+
+    def Run(self):
+        self.Active = True
+        while (self.Active):
+            if (self.Active):
+                Data = self.Receive()
+                if (self.Handler):
+                    Data = self.Handler(self, Data)
+                if (Data):
+                    self.Send(Data)
+
+class TServerUdpBase(TServerBase):
+    def SockCreate(self):
+        self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def _Receive(self):
         try:
@@ -46,16 +61,6 @@ class TServerUdpBase():
 
     def Send(self, aData):
         self._Send()
-
-    def Run(self):
-        self.Active = True
-        while (self.Active):
-            if (self.Active):
-                Data = self.Receive()
-                if (self.Handler):
-                    Data = self.Handler(self, Data)
-                if (Data):
-                    self.Send(Data)
 
 
 class TServerUdpJson(TServerUdpBase):
@@ -85,3 +90,31 @@ class TServerUdpJson(TServerUdpBase):
             log.Log(0, Data)
 
         self._Send(Data)
+
+
+class TServerTCPBase(TServerBase):
+    def __init__(self, aBind, aPort, aTimeOut = -1):
+        TServerBase.__init__(self,  aBind, aPort, aTimeOut)
+        self.Sock.listen(1)
+
+    def SockCreate(self):
+        self.Sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def _Receive(self):
+        self.Conn, self.Addr = self.Sock.accept()
+        return self.Conn.recv(self.BufSize)
+
+    def _Send(self, aData):
+        self.Conn.sendall(aData)
+        self.Conn.close()
+
+
+class TServerTCPJson(TServerTCPBase):
+    def __init__(self, aBind, aPort, aTimeOut = -1):
+        TServerTCPBase.__init__(self, aBind, aPort, aTimeOut)
+
+    def Receive(self):
+        return self._Receive()
+
+    def Send(self, aData):
+        self._Send(aData)

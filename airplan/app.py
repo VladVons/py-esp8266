@@ -6,7 +6,7 @@
 import log
 import api
 import serial
-import serverudp
+import sockserver
 import common
 import wlan
 
@@ -96,7 +96,7 @@ class TApp:
         ConfPort    = self.Conf.get('/Server/Port', 51015)
         ConfTimeOut = self.Conf.get('/Server/TimeOut', -1)
 
-        Server = serverudp.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
+        Server = sockserver.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
         Server.BufSize = self.Conf.get('/Server/BufSize', 512)
         Server.Handler = self.HandlerJson
         Server.Run()
