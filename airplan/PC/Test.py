@@ -17,4 +17,3 @@ def CallObj(aFunc):
     print(aFunc)
     return eval(aFunc)
 
-print(float(7)/3)

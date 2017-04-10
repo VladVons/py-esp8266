@@ -8,9 +8,8 @@
 import time
 import socket
 import json
-#
-import Test
 
+#
 
 cLed_Sys   = 2
 cLed_Red   = 15
@@ -20,8 +19,8 @@ cLed_Blue  = 13
 ArrPwm    = [0,2,4,5,12,13,14,15]
 ArrPin    = [0,1,2,3,4,5,12,13,14,15,16]
 ArrLed    = [cLed_Sys, cLed_Red, cLed_Green, cLed_Blue]
-ArrMotor1 = [13, 12]
-ArrMotor2 = [14, 16]
+ArrMotor1 = [12, 13]
+ArrMotor2 = [14, 15]
 
 #-----------
 
@@ -248,11 +247,9 @@ class TEsp():
             self.Serial.SetPin(PinA, 1)
             self.Send()
 
-    def MotorServ(self, aPin, aValue, aMiddle = 68):
-        Freq  = 50
-        Value = aMiddle + aValue
-        print('MotorServ()', Value)
-        self.Serial.SetPwm(aPin, Freq, Value)
+    def MotorServ(self, aPin, aValue):
+        print('Pin', aPin, 'Value', aValue)
+        self.Serial.SetPwm(aPin, 50, aValue)
         self.Send()
 
     def Exec(self, aScript, aTimeOut = 0.2):
@@ -276,17 +273,23 @@ class TEsp():
 def MotorDC(aSpeed):
     Esp = TEsp("192.168.2.119", 51015)
     Esp.MotorDC(ArrMotor1, aSpeed)
+    Esp.MotorDC(ArrMotor2, aSpeed)
 
-def MotorServ(aPin, aValue, aMiddle):
-    MinV = 25
-    MaxV = 115
-    MinG = -10
-    MaxG = 10
-    Ratio = float(MaxV - MinV) / float(MaxG - MinG)
-    print('Ratio', Ratio, MaxV - MinV, MaxG - MinG)
+def MotorServ(aValue):
+    #(27-127-77-50) (25-115-70-44)
+    MotorMin = 26
+    MotorMax = 114
 
+    ValueMin = -10
+    ValueMax = 10
+    aValue = min(ValueMax, max(ValueMin, aValue))
+
+    Ratio = float(MotorMax - MotorMin) / float(ValueMax - ValueMin)
+    Value = MotorMin + ((aValue - ValueMin) * Ratio)       
+
+    aPin = 5
     Esp = TEsp("192.168.2.119", 51015)
-    Esp.MotorServ(aPin, aValue, aMiddle)
+    Esp.MotorServ(aPin, int(Value))
 
 def Lamp(aCnt, aLogLevel):
     Esp = TEsp("192.168.2.119", 51015)
@@ -320,8 +323,8 @@ def ConnectWlan(aEssId, aPassw):
 
 
 #Lamp(11, 0)
-#MotorDC(-100)
-MotorServ(5, -44, 70)    #(27-127-77-50) (25-115-70-44)
+MotorDC(100)
+MotorServ(-9)
 #Exec()
 #Call()
 #GetInfo()
