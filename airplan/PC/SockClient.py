@@ -234,7 +234,7 @@ class TEsp():
         PinB = aPins[int(not Forward)]
 
         if (aSpeed == 0):
-             self.MotorDCStop(Pins)
+             self.MotorDCStop(aPins)
              self.Send()
         else:
             Speed = abs(aSpeed)
@@ -242,7 +242,7 @@ class TEsp():
                 Speed = 1000
 
             self.Serial.SetPwmOff(PinB)
-            self.Serial.SetPwm(PinA, 100, Speed)
+            self.Serial.SetPwm(PinA, 50, Speed)
             self.Serial.SetPin(PinB, 0)
             self.Serial.SetPin(PinA, 1)
             self.Send()
@@ -324,7 +324,7 @@ def ConnectWlan(aEssId, aPassw):
 
 #Lamp(11, 0)
 MotorDC(100)
-MotorServ(-9)
+MotorServ(-7)
 #Exec()
 #Call()
 #GetInfo()
