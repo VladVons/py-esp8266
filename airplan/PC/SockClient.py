@@ -323,9 +323,9 @@ def ConnectWlan(aEssId, aPassw):
     Esp.ConnectWlan(aEssId, aPassw)
 
 
-LedFlash(11, 0)
-#MotorDC(100)
-#MotorServ(-7)
+#LedFlash(11, 0)
+MotorDC(100)
+MotorServ(0)
 #Exec()
 #Call()
 #GetInfo()
