@@ -197,7 +197,7 @@ class TEsp():
     def SetLogLevel(self, aValue):
         self.Serial.SetLogLevel(aValue)
 
-    def Send(self, aTimeOut = 0.2):
+    def Send(self, aTimeOut = 0.25):
         self.Serial.Print("--- " + str(self.Sock.SendCnt))
         Data = self.Serial.GetDic()
         Result = self.Sock.Send(Data, aTimeOut)
@@ -323,7 +323,7 @@ def ConnectWlan(aEssId, aPassw):
     Esp.ConnectWlan(aEssId, aPassw)
 
 
-LedFlash(101, 0)
+LedFlash(11, 0)
 #MotorDC(100)
 #MotorServ(-7)
 #Exec()
