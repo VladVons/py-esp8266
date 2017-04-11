@@ -32,13 +32,15 @@ ArrMotor2 = [14, 15]
 def GetInfo():
     return {
             "Software": "1.0.8", 
-            "Date":     "2017.04.09", 
-            "Hardware": "1.0.2", 
+            "Date":     "2017.04.11", 
+            "Hardware": "1.1.2", 
             "Author":   "Volodymyr Vons",
             "Support":  "http://vando.com.ua/esp",
+            "Platform": sys.platform,
             "Python":   sys.version,
             "MacAddr":  GetMac(),
             "MemFree":  GetMemFree(),
+            "MemAlloc": GetMemAlloc(),
             "Uptime":   int(GetTicks() / 1000),
             "Firmware": "%d.%d.%d" % sys.implementation[1]
            }
@@ -56,6 +58,19 @@ def Exec(aValue = 'Result = (2+3)*2'):
 
 def Print(aValue = ''):
     print(aValue)
+
+def Log(aLevel, aValue = ''):
+    log.Log(aLevel, aValue)
+
+def Dump(aValue, aPref = ''):
+    if (isinstance(aValue, dict)):
+        for Key in aValue:
+            Dump(aValue[Key], aPref + '/' + Key)
+    elif (isinstance(aValue, list)):
+        for Value in aValue:
+            Dump(Value, aPref)
+    else:
+        print(aPref, aValue)
 
 def SetLogLevel(aValue):
     log.LogLevel = aValue
@@ -81,6 +96,10 @@ def ConnectWlan(aEssId, aPassw):
 def GetMemFree():
     gc.collect()
     return gc.mem_free()
+
+def GetMemAlloc():
+    gc.collect()
+    return gc.mem_alloc()
 
 def Sleep(aDelay):
     time.sleep_ms(aDelay)

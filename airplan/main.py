@@ -18,9 +18,7 @@ def Main():
     #ntptime.settime()
  
     App = app.TApp(GetConfig())
-    print('GetInfo', api.GetInfo())
-    print('Mem free', api.GetMemFree())
-
+    api.Dump(api.GetInfo())
     App.ConnectWlan()
     App.Listen()
 

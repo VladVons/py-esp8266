@@ -16,22 +16,10 @@ class TSerial:
     def SetDefUnit(self, aName):
         self.DefUnit  = __import__(aName)
 
-    def GetInfo(self):
-        Result = 'CntPacket %d, CntCall %d' % (self.CntPacket, self.CntCall)
-        print(Result)
-        return Result
-
     def CallObj(self, aObj, aArgs):
         if (aArgs):
-            ArgCnt = len(aArgs)
-            if   (ArgCnt == 1):
-                Result = aObj(aArgs[0])
-            elif (ArgCnt == 2):
-                Result = aObj(aArgs[0], aArgs[1])
-            elif (ArgCnt == 3):
-                Result = aObj(aArgs[0], aArgs[1], aArgs[2])
-            else:
-                Result = aObj()
+            #Obj(aArgs[0], aArgs[1], aArgs[2])
+            Result = aObj(*aArgs)  
         else:
             Result = aObj()
         return Result
@@ -57,8 +45,12 @@ class TSerial:
             if (Obj):
                 Result = self.CallObj(Obj, aArgs)
             else:
-                Result = 'Error: Unknown Func ' + aFunc
+                Result = 'Error: unknown Func ' + aFunc
                 log.Log(0, 'TSerial.Parse()', Result)
+        else:
+            Result = 'Error: empty Func'
+            log.Log(0, 'TSerial.Parse()', Result)
+
         aData['Result'] = Result
         return aData
 

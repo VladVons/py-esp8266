@@ -11,6 +11,8 @@ import json
 
 #
 
+Host = '192.168.2.119'
+
 cLed_Sys   = 2
 cLed_Red   = 15
 cLed_Green = 12
@@ -48,8 +50,7 @@ class TSerial():
         self.AddData({"Func": aName, "Args": aArgs})
 
     def Print(self, aValue):
-        #return
-        self.AddFunc("Print", [aValue])
+        self.AddFunc("Log", [1, aValue])
 
     def Exec(self, aValue):
         self.AddFunc("Exec", ["Result = " + aValue])
@@ -221,7 +222,7 @@ class TEsp():
         for i in range(aCnt):
             self.Serial.SetPinArr([cLed_Red, cLed_Green, cLed_Blue], i % 2)
             #self.Serial.AddFunc("Sleep", [50])
-            self.Send(1)
+            self.Send(0.5)
 
     def MotorDCStop(self, aPins):
         self.Serial.SetPwmOffArr(aPins)
@@ -271,7 +272,7 @@ class TEsp():
 #-----------
 
 def MotorDC(aSpeed):
-    Esp = TEsp("192.168.2.119", 51015)
+    Esp = TEsp(Host, 51015)
     Esp.MotorDC(ArrMotor1, aSpeed)
     Esp.MotorDC(ArrMotor2, aSpeed)
 
@@ -288,43 +289,43 @@ def MotorServ(aValue):
     Value = MotorMin + ((aValue - ValueMin) * Ratio)       
 
     aPin = 5
-    Esp = TEsp("192.168.2.119", 51015)
+    Esp = TEsp(Host, 51015)
     Esp.MotorServ(aPin, int(Value))
 
-def Lamp(aCnt, aLogLevel):
-    Esp = TEsp("192.168.2.119", 51015)
+def LedFlash(aCnt, aLogLevel = 1):
+    Esp = TEsp(Host, 51015)
     Esp.SetLogLevel(aLogLevel)
     Esp.MotorDCStop(ArrMotor1)
     Esp.LedFlash(aCnt)
 
 def Exec():
-    Esp = TEsp("192.168.2.119", 51015)
+    Esp = TEsp(Host, 51015)
     Esp.Exec("SetPinInv(15);Sleep(200);SetPinInv(15);Sleep(200);SetPinInv(15)", 3)
     Esp.GetInfo()
 
 def Call():
-    Esp = TEsp("192.168.2.119", 51015)
+    Esp = TEsp(Host, 51015)
     Esp.Sock.Add({"Func": "GetInfo", "Args": []})
     Esp.Sock.Send()
 
 def GetInfo():
-    Esp = TEsp("192.168.2.119", 51015)
+    Esp = TEsp(Host, 51015)
     Esp.GetInfo()
     #Esp.GetPinInfo(ArrLed)
 
 def SendFile(aFile):
-    Esp = TEsp("192.168.2.119", 51015)
+    Esp = TEsp(Host, 51015)
     Esp.SetLogLevel(2)
     Esp.SendFile(aFile)
 
 def ConnectWlan(aEssId, aPassw):
-    Esp = TEsp("192.168.2.119", 51015)
+    Esp = TEsp(Host, 51015)
     Esp.ConnectWlan(aEssId, aPassw)
 
 
-#Lamp(11, 0)
-MotorDC(100)
-MotorServ(-7)
+LedFlash(101, 0)
+#MotorDC(100)
+#MotorServ(-7)
 #Exec()
 #Call()
 #GetInfo()

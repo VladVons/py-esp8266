@@ -40,7 +40,9 @@ class TApp:
     def OnButtonTimeOut(self):
         if (self.TimerButton.CntTag > 0):
             Tag = self.TimerButton.CntTag 
-            log.Log(1, 'OnButtonTimeOut()', Tag, 'MemFree', api.GetMemFree())
+            print('')
+            log.Log(1, "Tag", Tag)
+            api.Dump(api.GetInfo())
 
             if   (Tag == 1):
                self.PinsInit()

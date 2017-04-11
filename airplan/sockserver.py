@@ -15,7 +15,7 @@ class TServerBase():
         self.BufSize  = 512
         self.Handler  = None
         
-        self. SockCreate()
+        self._SockCreate()
 
         if (aTimeOut >= 0):
             self.Sock.settimeout(aTimeOut)
@@ -75,10 +75,10 @@ class TServerBaseJson(TServerBase):
 
 class TServerUdpJson(TServerBaseJson):
     def __init__(self, aBind, aPort, aTimeOut = -1):
-        log.Log(3, 'TServerUDPJson()', aBind, aPort)
+        #log.Log(3, 'TServerUDPJson()', aBind, aPort)
         TServerBase.__init__(self,  aBind, aPort, aTimeOut)
 
-    def SockCreate(self):
+    def _SockCreate(self):
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def _Receive(self):
@@ -97,7 +97,7 @@ class TServerUdpJson(TServerBaseJson):
 
 class TServerTCPJson(TServerBaseJson):
     def __init__(self, aBind, aPort, aTimeOut = -1):
-        log.Log(3, 'TServerTCPJson()', aBind, aPort)
+        #log.Log(3, 'TServerTCPJson()', aBind, aPort)
 
         # prevent hard reset on  _Receive() ???
         if (aTimeOut == 0):
@@ -106,7 +106,7 @@ class TServerTCPJson(TServerBaseJson):
         TServerBase.__init__(self,  aBind, aPort, aTimeOut)
         self.Sock.listen(1)
 
-    def SockCreate(self):
+    def _SockCreate(self):
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def _Receive(self):

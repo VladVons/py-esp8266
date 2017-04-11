@@ -83,7 +83,7 @@ EspFirmware()
 
   Dir="/mnt/hdd/data1/Python/image"
   #FileName="esp8266-20170108-v1.8.7.bin"
-  FileName="esp8266-20170409-v1.8.7-602-gb87432b.bin"
+  FileName="esp8266-20170411-v1.8.7-605-g605ff91.bin"
 
   File=$Dir/$FileName
   if [ -f $File ] ; then
