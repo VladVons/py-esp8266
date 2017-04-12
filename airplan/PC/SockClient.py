@@ -325,7 +325,7 @@ def ConnectWlan(aEssId, aPassw):
     Esp.ConnectWlan(aEssId, aPassw)
 
 
-#LedFlash(1001, 0)
+LedFlash(101, 0)
 #MotorDC(100)
 #MotorServ(0)
 #Exec()
@@ -335,13 +335,3 @@ def ConnectWlan(aEssId, aPassw):
 #ConnectWlan('R3-0976646510', '197119822007')
 
 
-def Func1():
-    for i in range(5):
-        yield('val %d'% i)
-
-
-Res1 = Func1()
-print(Res1, Res1.next(), Res1.next(), Res1.next())
-
-for i in Res1:
-    print('i', i)

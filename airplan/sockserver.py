@@ -35,12 +35,11 @@ class TServerBase():
 
         self.Active = True
         while (self.Active):
-            if (self.Active):
-                Data = self.Receive()
-                if (self.Handler):
-                    Data = self.Handler(self, Data)
-                if (Data):
-                    self.Send(Data)
+            Data = self.Receive()
+            if (self.Handler):
+                Data = self.Handler(self, Data)
+            if (Data):
+                self.Send(Data)
         self.Close()
 
     def SetBufSize(self, aValue):

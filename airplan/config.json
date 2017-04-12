@@ -3,7 +3,7 @@
         "LogLevel":1
     },
     "STA":{
-        "Enable":true,
+        "Enable":false,
         "ESSID":"R3-0976646510",
         "Password":"197119822007"
     },
