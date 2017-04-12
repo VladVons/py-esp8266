@@ -39,6 +39,7 @@ Pure MicroPyhon 1.8.7:
 total mem: 36288, used: 7680, free: 28608
 
 Pure MicroPyhon 1.8.7 build 534:
-MemFree 29952
+MemFree 29936 MemAlloc 6352
 
-16464
+/MemFree 16464
+/MemFree 14080

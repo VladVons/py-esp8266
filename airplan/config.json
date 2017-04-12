@@ -2,10 +2,15 @@
     "App":{
         "LogLevel":1
     },
-    "WLan":{
-        "Connect":false,
+    "STA":{
+        "Enable":true,
         "ESSID":"R3-0976646510",
         "Password":"197119822007"
+    },
+    "AP":{
+        "Enable":true,
+        "ESSID":"VladVons",
+        "Password":"19710000"
     },
     "Server":{
         "Port":51015,

@@ -26,7 +26,7 @@ def GetMac():
 def SetEssId(aName, aPassw):
     essid = '%s-%s' % (aName, GetMac()[-4:])
     Obj = network.WLAN(network.AP_IF)
-    Obj.config(essid = essid, authmode = network.AUTH_WPA_WPA2_PSK, password = aPassw)
+    return Obj.config(essid = essid, authmode = network.AUTH_WPA_WPA2_PSK, password = aPassw)
 
 def GetInfo():
     Obj = network.WLAN(network.STA_IF)

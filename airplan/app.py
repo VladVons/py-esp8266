@@ -8,7 +8,7 @@ import api
 import serial
 import sockserver
 import common
-import wlan
+
 
 class TApp:
     def __init__(self, aConf):
@@ -76,24 +76,9 @@ class TApp:
         api.SetPwmOffArr(api.ArrMotor1)
         api.SetPwmOffArr(api.ArrMotor2)
 
-    def ConnectWlan(self):
-        Result = self.Conf.get('/WLan/Connect', False)
-        if (Result):
-            ESSID  = self.Conf.get('/WLan/ESSID', '')
-            Paswd  = self.Conf.get('/WLan/Password', '')
-            log.Log(1, 'ConnectWlan()', ESSID, Paswd)
-            Result = api.ConnectWlan(ESSID,  Paswd)
-            if (Result):
-                log.Log(1, 'Network', wlan.GetInfo())
-            else:
-                log.Log(1, 'Cant connect WiFi')
-        else:
-            log.Log(1, 'connect AP. Password: micropythoN')
-            Result = True
-        return Result
-
     def Listen(self):
         self.PinsInit()
+        api.Dump(api.GetInfo())
 
         ConfBind     = self.Conf.get('/Server/Bind', '0.0.0.0')
         ConfPort     = self.Conf.get('/Server/Port', 51015)
