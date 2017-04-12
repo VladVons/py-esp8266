@@ -19,10 +19,11 @@ class TSerial:
 
     def AddObj(self, aName, aObj):
         try:
+            #check if object exists in namespace
             aObj
             self.UserObj[aName] = aObj
-        except NameError as e:
-            log.Log(0, 'TSerial.SetObj()', e)
+        except Exception as e:
+            log.Log(0, 'TSerial.AddObj()', e)
 
     def CallObj(self, aObj, aArgs):
         if (aArgs):
