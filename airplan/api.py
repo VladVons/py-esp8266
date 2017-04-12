@@ -31,8 +31,8 @@ ArrMotor2 = [14, 15]
 
 def GetInfo():
     return {
-            "Software": "1.0.8", 
-            "Date":     "2017.04.11", 
+            "Software": "1.0.9", 
+            "Date":     "2017.04.12", 
             "Hardware": "1.1.2", 
             "Author":   "Volodymyr Vons",
             "Support":  "http://vando.com.ua/esp",
@@ -41,6 +41,7 @@ def GetInfo():
             "MacAddr":  GetMac(),
             "MemFree":  GetMemFree(),
             "MemAlloc": GetMemAlloc(),
+            "Freq MHz": int(machine.freq() / 1000000),
             "Uptime":   int(GetTicks() / 1000),
             "Firmware": "%d.%d.%d" % sys.implementation[1]
            }

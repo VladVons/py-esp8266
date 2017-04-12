@@ -12,9 +12,17 @@ class TSerial:
         self.CntCall    = 0
         self.CntPacket  = 0
         self.DefUnit    = api
+        self.UserObj    = {}
 
     def SetDefUnit(self, aName):
         self.DefUnit  = __import__(aName)
+
+    def AddObj(self, aName, aObj):
+        try:
+            aObj
+            self.UserObj[aName] = aObj
+        except NameError as e:
+            log.Log(0, 'TSerial.SetObj()', e)
 
     def CallObj(self, aObj, aArgs):
         if (aArgs):
@@ -38,7 +46,10 @@ class TSerial:
                 if (len(FuncSplit) == 2):
                     Obj = getattr(__import__(FuncSplit[0]), FuncSplit[1])
                 else:
-                    Obj = getattr(self.DefUnit, aFunc)
+                    if (aFunc in self.UserObj):
+                        Obj = self.UserObj[aFunc]
+                    else:
+                        Obj = getattr(self.DefUnit, aFunc)
             except:
                 Obj = None
 

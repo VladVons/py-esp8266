@@ -43,6 +43,10 @@ class TServerBase():
                     self.Send(Data)
         self.Close()
 
+    def SetBufSize(self, aValue):
+        self.BufSize = aValue
+        return aValue
+
 
 class TServerBaseJson(TServerBase):
     def __init__(self, aBind, aPort, aTimeOut = -1):
@@ -64,7 +68,7 @@ class TServerBaseJson(TServerBase):
 
     def Send(self, aData):
         try:
-            aData['IP'] = self.Addr
+            #aData['IP'] = self.Addr
             Data = ujson.dumps(aData)
         except Exception as e:
             Data = '{"Error": "TServerBaseJson.Send() %s"}' % e

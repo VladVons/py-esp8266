@@ -8,9 +8,12 @@
 
 #import esp
 #esp.osdebug(None)
+import machine
 import gc
 #import webrepl
 #webrepl.start()
+
+#machine.freq(160000000)
 
 gc.collect()
 print('MemFree', gc.mem_free(), 'MemAlloc', gc.mem_alloc())

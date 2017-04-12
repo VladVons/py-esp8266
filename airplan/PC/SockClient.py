@@ -50,6 +50,7 @@ class TSerial():
         self.AddData({"Func": aName, "Args": aArgs})
 
     def Print(self, aValue):
+        return
         self.AddFunc("Log", [1, aValue])
 
     def Exec(self, aValue):
@@ -205,9 +206,10 @@ class TEsp():
         return Result
 
     def GetInfo(self):
-        self.Serial.AddFunc("GetInfo")
-        self.Serial.AddFunc("GetTicks")
-        self.Serial.AddFunc("GetMemFree")
+        #self.Serial.AddFunc("GetInfo")
+        self.Serial.AddFunc("SetBufSize", [700])
+        #self.Serial.AddFunc("GetTicks")
+        #self.Serial.AddFunc("GetMemFree")
         #self.Serial.AddFunc("GetMachineId")
         #self.Serial.Show()
         self.Send()
@@ -323,9 +325,9 @@ def ConnectWlan(aEssId, aPassw):
     Esp.ConnectWlan(aEssId, aPassw)
 
 
-#LedFlash(11, 0)
-MotorDC(100)
-MotorServ(0)
+LedFlash(1001, 0)
+#MotorDC(100)
+#MotorServ(0)
 #Exec()
 #Call()
 #GetInfo()

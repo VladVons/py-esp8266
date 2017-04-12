@@ -13,6 +13,7 @@ import wlan
 class TApp:
     def __init__(self, aConf):
         self.Conf = aConf
+
         self.Serial = serial.TSerial()
 
         log.LogLevel = self.Conf.get('/App/LogLevel', 3);
@@ -100,10 +101,11 @@ class TApp:
         ConfProtocol = self.Conf.get('/Server/Protocol', 'UDP')
 
         if (ConfProtocol == 'UDP'):
-            Server = sockserver.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
+            SockServer = sockserver.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
         else:
-            Server = sockserver.TServerTCPJson(ConfBind, ConfPort, ConfTimeOut)
+            SockServer = sockserver.TServerTCPJson(ConfBind, ConfPort, ConfTimeOut)
+        self.Serial.AddObj("SetBufSize", SockServer.SetBufSize)
 
-        Server.BufSize = self.Conf.get('/Server/BufSize', 512)
-        Server.Handler = self.HandlerJson
-        Server.Run()
+        SockServer.BufSize = self.Conf.get('/Server/BufSize', 512)
+        SockServer.Handler = self.HandlerJson
+        SockServer.Run()
