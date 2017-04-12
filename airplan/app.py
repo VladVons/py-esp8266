@@ -86,9 +86,9 @@ class TApp:
         ConfProtocol = self.Conf.get('/Server/Protocol', 'UDP')
 
         if (ConfProtocol == 'UDP'):
-            SockServer = sockserver.TServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
+            SockServer = sockserver.TSockServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
         else:
-            SockServer = sockserver.TServerTCPJson(ConfBind, ConfPort, ConfTimeOut)
+            SockServer = sockserver.TSockServerTCPJson(ConfBind, ConfPort, ConfTimeOut)
         self.Serial.AddObj("SetBufSize", SockServer.SetBufSize)
 
         SockServer.BufSize = self.Conf.get('/Server/BufSize', 512)

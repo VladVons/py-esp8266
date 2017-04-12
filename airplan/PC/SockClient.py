@@ -47,14 +47,14 @@ class TSerial():
         self.Data[aKey] = aValue
 
     def AddFunc(self, aName, aArgs = []):
-        self.AddData({"Func": aName, "Args": aArgs})
+        self.AddData( {"Func": aName, "Args": aArgs} )
 
     def Print(self, aValue):
         return
         self.AddFunc("Log", [1, aValue])
 
     def Exec(self, aValue):
-        self.AddFunc("Exec", ["Result = " + aValue])
+        self.AddFunc("Exec", [aValue])
 
     def SetLogLevel(self, aValue):
         self.AddFunc("SetLogLevel", [aValue])
@@ -81,7 +81,7 @@ class TSerial():
         self.AddFunc("SetPwmOff", [aPin])
 
     def SetLeds(self, aValue):
-        self.SetPins([cLed_Sys, cLed_Red, cLed_Green, cLed_Blue],  aValue)
+        self.SetPinArr([cLed_Sys, cLed_Red, cLed_Green, cLed_Blue],  aValue)
 
     def GetAdc(self):
         self.AddFunc("GetAdc")
@@ -127,6 +127,9 @@ class TSockClientBase():
               "PerSec", round(1 / Avg, 3),
               "SendCnt", self.SendCnt, 
               "TimeOut", self.TimeOut)
+
+    def Exec(self, aData, aTimeOut):
+        raise NotImplementedError('abstract')
 
     def Print(self, aData):
         Data = aData.get('Data')
@@ -267,8 +270,8 @@ class TEsp():
         self.Serial.AddFunc("FileWrite", [aFile, Data])
         self.Send(2)
 
-    def ConnectWlan(self, aEssId, aPassw):
-        self.Serial.AddFunc("ConnectWlan", [aEssId, aPassw])
+    def WlanSTA(self, aEssId, aPassw):
+        self.Serial.AddFunc("WlanSTA", [aEssId, aPassw])
         self.Send(3)
         
 #-----------
@@ -302,13 +305,13 @@ def LedFlash(aCnt, aLogLevel = 1):
 
 def Exec():
     Esp = TEsp(Host, 51015)
-    Esp.Exec("SetPinInv(15);Sleep(200);SetPinInv(15);Sleep(200);SetPinInv(15)", 3)
-    Esp.GetInfo()
+    Esp.Exec("SetPinInv(15);Sleep(200);SetPinInv(15);Sleep(200);SetPinInv(15)", 1)
+    Esp.Exec("import esp; Result = dir(esp)")
 
 def Call():
     Esp = TEsp(Host, 51015)
-    Esp.Sock.Add({"Func": "GetInfo", "Args": []})
-    Esp.Sock.Send()
+    Esp.Serial.AddFunc("GetInfo", [])
+    Esp.Send()
 
 def GetInfo():
     Esp = TEsp(Host, 51015)
@@ -320,16 +323,16 @@ def SendFile(aFile):
     Esp.SetLogLevel(2)
     Esp.SendFile(aFile)
 
-def ConnectWlan(aEssId, aPassw):
+def WlanSTA(aEssId, aPassw):
     Esp = TEsp(Host, 51015)
-    Esp.ConnectWlan(aEssId, aPassw)
+    Esp.WlanSTA(aEssId, aPassw)
 
 
-LedFlash(101, 0)
+#LedFlash(1001, 0)
 #MotorDC(100)
 #MotorServ(0)
 #Exec()
-#Call()
+Call()
 #GetInfo()
 #SendFile('Test.txt')
 #ConnectWlan('R3-0976646510', '197119822007')

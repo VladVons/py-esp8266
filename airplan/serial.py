@@ -44,11 +44,11 @@ class TSerial:
         if (aFunc):
             FuncSplit = aFunc.split('.')
             try:
-                if (len(FuncSplit) == 2):
-                    Obj = getattr(__import__(FuncSplit[0]), FuncSplit[1])
+                if (aFunc in self.UserObj):
+                    Obj = self.UserObj[aFunc]
                 else:
-                    if (aFunc in self.UserObj):
-                        Obj = self.UserObj[aFunc]
+                    if (len(FuncSplit) == 2):
+                        Obj = getattr(__import__(FuncSplit[0]), FuncSplit[1])
                     else:
                         Obj = getattr(self.DefUnit, aFunc)
             except:

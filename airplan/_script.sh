@@ -53,8 +53,11 @@ Install()
 
   sudo su
 
+
   apt-get install git
   # git clone https://github.com/VladVons/py-esp8266.git
+
+  apt-get install pychecker pep8
 
   apt-get install python-pip
 

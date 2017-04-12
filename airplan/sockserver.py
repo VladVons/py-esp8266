@@ -10,7 +10,7 @@ import ubinascii
 import log
 
 
-class TServerBase():
+class TSockServer():
     def __init__(self, aBind, aPort, aTimeOut):
         self.BufSize  = 512
         self.Handler  = None
@@ -47,9 +47,12 @@ class TServerBase():
         return aValue
 
 
-class TServerBaseJson(TServerBase):
-    def __init__(self, aBind, aPort, aTimeOut = -1):
-        TServerBase.__init__(self, aBind, aPort, aTimeOut)
+class TSockJson():
+    def _Receive(self):
+        raise NotImplementedError('abstract')
+
+    def _Send(self):
+        raise NotImplementedError('abstract')
 
     def Receive(self):
         Result = {}
@@ -59,7 +62,7 @@ class TServerBaseJson(TServerBase):
             try:
                 Result = ujson.loads(Data.decode("utf-8"))
             except Exception as e:
-                Error = "TServerBaseJson.Receive() " + str(e)
+                Error = "TJson.Receive() " + str(e)
                 log.Log(0, Error)
 
                 Result = {"Error": Error}
@@ -76,10 +79,10 @@ class TServerBaseJson(TServerBase):
         self._Send(Data)
 
 
-class TServerUdpJson(TServerBaseJson):
+class TSockServerUdpJson(TSockServer, TSockJson):
     def __init__(self, aBind, aPort, aTimeOut = -1):
         #log.Log(3, 'TServerUDPJson()', aBind, aPort)
-        TServerBase.__init__(self,  aBind, aPort, aTimeOut)
+        TSockServer.__init__(self,  aBind, aPort, aTimeOut)
 
     def _SockCreate(self):
         self.Sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -98,7 +101,7 @@ class TServerUdpJson(TServerBaseJson):
             self.Addr = None
 
 
-class TServerTCPJson(TServerBaseJson):
+class TSockServerTCPJson(TSockServer, TSockJson):
     def __init__(self, aBind, aPort, aTimeOut = -1):
         #log.Log(3, 'TServerTCPJson()', aBind, aPort)
 
