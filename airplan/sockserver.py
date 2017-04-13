@@ -73,7 +73,7 @@ class TSockJson():
             #aData['IP'] = self.Addr
             Data = ujson.dumps(aData)
         except Exception as e:
-            Data = '{"Error": "TServerBaseJson.Send() %s"}' % e
+            Data = '{"Error": "TSockJson.Send() %s"}' % e
             log.Log(0, Data)
 
         self._Send(Data)
