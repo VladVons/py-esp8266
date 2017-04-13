@@ -62,7 +62,7 @@ class TSockJson():
             try:
                 Result = ujson.loads(Data.decode("utf-8"))
             except Exception as e:
-                Error = "TJson.Receive() " + str(e)
+                Error = "TSockJson.Receive() " + str(e)
                 log.Log(0, Error)
 
                 Result = {"Error": Error}
