@@ -22,7 +22,7 @@ cPinLedSys   = 02
 cPinBtnFlush = 0
 cPinBtnPush  = 4
 #
-#ArrPwm    = [0, 2, 4, 5, 12, 13, 14, 15]
+#ArrPwm    = [0,    2,    4, 5, 12, 13, 14, 15    ]
 #ArrPin    = [0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 16]
 #ArrMotor1 = [13, 12]
 #ArrMotor2 = [14, 15]
