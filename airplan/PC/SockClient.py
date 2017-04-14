@@ -26,6 +26,17 @@ ArrMotor2 = [14, 15]
 
 #-----------
 
+def Dump(aValue, aPref = ''):
+    if (isinstance(aValue, dict)):
+        for Key in aValue:
+            Dump(aValue[Key], aPref + '/' + Key)
+    elif (isinstance(aValue, list)):
+        for Value in aValue:
+            Dump(Value, aPref)
+    else:
+        print(aPref, aValue)
+
+
 class TSerial():
     def __init__(self):
         self.Clear()
@@ -141,6 +152,7 @@ class TSockClientBase():
         else:
             Result = {}
 
+        #Dump(Result)
         return Result
 
 
@@ -191,12 +203,17 @@ class TEsp():
         return Result
 
     def GetInfo(self):
-        #self.Serial.AddFunc("GetInfo")
-        self.Serial.AddFunc("SetBufSize", [700])
+        self.Serial.AddFunc("GetInfo")
+        #self.Serial.AddFunc("SetBufSize", [700])
         #self.Serial.AddFunc("GetTicks")
         #self.Serial.AddFunc("GetMemFree")
         #self.Serial.AddFunc("GetMachineId")
         #self.Serial.Show()
+
+        #self.Serial.AddFunc('GetMethods', ['uos'])
+        #self.Serial.AddFunc('GetMethods', ['urandom'])
+        #self.Serial.AddFunc('GetMethods', ['machine'])
+
         self.Send()
 
     def GetPinInfo(self, aPins) :
@@ -318,12 +335,12 @@ def WlanSTA(aEssId, aPassw):
     Esp.WlanSTA(aEssId, aPassw)
 
 
-LedFlash(1001, 0)
+#LedFlash(101, 1)
 #MotorDC(100)
 #MotorServ(0)
 #Exec()
 #Call()
-#GetInfo()
+GetInfo()
 #SendFile('Test.txt')
 #ConnectWlan('R3-0976646510', '197119822007')
 

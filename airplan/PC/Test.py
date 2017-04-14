@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+import os
+import struct
+
 LogLevel= 3
 
 def Log(aLevel, *aParam):
@@ -39,7 +42,7 @@ def CallFuncArr(*aArgs):
 
 #CallObj(Print2, [1])
 #CallObj(CallObjArr, [Print2, [1], [2]])
-CallObj(CallFuncArr, ['Print2', [1], [2]])
+#CallObj(CallFuncArr, ['Print2', [1], [2]])
 
 #CallFuncArr('Print2', [1,2,3], ['a','b','c'], ['X', 'Y', 'Z'])
 #OBResult = CallFuncArr(['Print3', [1, 'a', 'A'], [2, 'b', 'B'], [3, 'c', 'C'], [4, 'd', 'D']])
@@ -49,3 +52,12 @@ CallObj(CallFuncArr, ['Print2', [1], [2]])
 #print(Result)
 #Result = CallFuncArr('Print1')
 #print(Result)
+
+#for i in range(30):
+    #rand = int(os.urandom(2), 16)
+    #rand = int(os.urandom(1).encode('hex'), 16)
+#    print(rand)
+
+for i in range(20):
+    Rand = struct.unpack("I", os.urandom(4))[0] % 10
+    print(Rand)

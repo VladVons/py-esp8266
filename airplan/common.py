@@ -3,7 +3,13 @@
 # micropython ESP8266
 #---
 
+import os
+import ustruct
+#
 import api
+
+def GetRand(aMax = 256):
+    return ustruct.unpack("I", os.urandom(4))[0] % aMax
 
 class TTimer:
     def __init__(self, aHandler, aTimeOut = 1000):

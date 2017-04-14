@@ -1,6 +1,7 @@
 {
     "App":{
-        "LogLevel":1
+        "LogLevel":1,
+        "Serial": 1235
     },
     "STA":{
         "Enable":false,

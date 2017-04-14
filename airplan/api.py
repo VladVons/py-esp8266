@@ -107,6 +107,9 @@ def Sleep(aDelay):
 def GetTicks():
     return time.ticks_ms()
 
+def GetMethods(aModule):
+    return dir(__import__(aModule))
+    
 #def GetMachineId():
 #    return machine.unique_id().decode("utf-8")
 

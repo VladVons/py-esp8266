@@ -26,6 +26,10 @@ class TApp:
         #api.WatchDog(5000)
         #api.TimerCallback(3000, self.IrqOnTimer)
 
+        self.SerialKeyTimer = 60 + common.GetRand(60)
+
+        #api.Dump(api.GetMethods('ubinascii'))
+
     def IrqOnButtonPush(self, aObj):
         log.Log(1, 'OnButtonPush', aObj);
   
@@ -56,6 +60,13 @@ class TApp:
         #log.Log(2, 'OnSockTimeOut()', self.TimerSock.CntCheck, 'MemFree', api.GetMemFree())
         api.SetPinInv(api.cPinLedSys)
 
+    def SerialKeyOk(self):
+        #Result = (api.GetTicks() / 1000 < self.SerialKeyTimer)
+        #if (not Result):
+        #    Result = common.GetRand(10) > 5
+        Result = True
+        return Result
+
     def HandlerDef(self):
         self.TimerButton.Handle()
         self.TimerSock.Handle()
@@ -65,8 +76,12 @@ class TApp:
         #log.Log(1, 'HandlerJson()', aData)
         if (aData):
             self.TimerSock.Update()
-            api.SetPin(api.cPinLedSys, self.Serial.CntPacket % 2)
-            Result = self.Serial.Parse(aData)
+            if (self.SerialKeyOk()):
+                api.SetPin(api.cPinLedSys, self.Serial.CntPacket % 2)
+                Result = self.Serial.Parse(aData)
+            else:
+                api.SetPin(api.cPinLedRed, self.Serial.CntPacket % 2)
+                Result = 'SerialKey'
         else:
             Result = self.HandlerDef()
         return Result 
