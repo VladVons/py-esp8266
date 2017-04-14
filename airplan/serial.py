@@ -83,4 +83,5 @@ class TSerial:
             Result = 'Empty Data' 
 
         aJson['Data'] = Result
+        #log.Log(3, 'Parse()', aJson)
         return aJson

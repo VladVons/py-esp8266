@@ -24,15 +24,14 @@ cPinBtnPush  = 4
 #
 #ArrPwm    = [0, 2, 4, 5, 12, 13, 14, 15]
 #ArrPin    = [0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 16]
-ArrLed    = [cPinLedSys, cPinLedRed, cPinLedGreen, cPinLedBlue]
-ArrMotor1 = [13, 12]
-ArrMotor2 = [14, 15]
+#ArrMotor1 = [13, 12]
+#ArrMotor2 = [14, 15]
 
 
 def GetInfo():
     return {
-            "Software": "1.0.9", 
-            "Date":     "2017.04.12", 
+            "Software": "1.0.10", 
+            "Date":     "2017.04.14", 
             "Hardware": "1.1.2", 
             "Author":   "Volodymyr Vons",
             "Support":  "http://vando.com.ua/esp",
@@ -130,7 +129,7 @@ def Reset():
 #--- Pin support
 
 def SetPin(aPin, aValue):
-    log.Log(3, 'SetPin', 'Pin', aPin, 'Value', aValue)
+    #log.Log(3, 'SetPin', 'Pin', aPin, 'Value', aValue)
 
     Obj = machine.Pin(aPin, machine.Pin.OUT)
     Obj.value(aValue)
@@ -150,21 +149,21 @@ def GetPin(aPin):
     return Result
 
 def SetPwmFreq(aPin, aValue):
-    log.Log(3, 'SetPwmFreq', 'Pin', aPin, 'Value', aValue)
+    #log.Log(3, 'SetPwmFreq', 'Pin', aPin, 'Value', aValue)
 
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.freq(aValue)
     return Obj.freq()
 
 def SetPwmDuty(aPin, aValue):
-    log.Log(3, 'SetPwmDuty', 'Pin', aPin, 'Value', aValue)
+    #log.Log(3, 'SetPwmDuty', 'Pin', aPin, 'Value', aValue)
 
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.duty(aValue)
     return Obj.duty()
 
 def SetPwmOff(aPin):
-    log.Log(3, 'SetPwmOff', 'Pin', aPin)
+    #log.Log(3, 'SetPwmOff', 'Pin', aPin)
 
     Obj = machine.PWM(machine.Pin(aPin))
     Obj.deinit()
@@ -190,15 +189,14 @@ def GetAdc(aPin = 0):
     Obj = machine.ADC(aPin)
     return Obj.read()
 
-#--- pin array function
-def SetPinArr(aPins, aValue):
-    Result = []    
-    for Pin in aPins:
-        Result.append(SetPin(Pin, aValue))    
+def CallObjArr(*aArgs):
+    Result = []
+    Obj = aArgs[0]
+    for i in range(1, len(aArgs)):
+        Result.append(Obj(*aArgs[i]))
     return Result
 
-def SetPwmOffArr(aPins):
-    Result = []    
-    for Pin in aPins:
-        Result.append(SetPwmOff(Pin))    
-    return Result
+def CallFuncArr(*aArgs):
+    Args = list(aArgs)
+    Args[0] = eval(Args[0])
+    return CallObjArr(*Args)

@@ -43,3 +43,10 @@ MemFree 29936 MemAlloc 6352
 
 /MemFree 16464
 /MemFree 14080
+
+
+Speed:
+self.Serial.AddFuncArr('SetPin', [cPinLedRed, On], [cPinLedGreen, On], [cPinLedBlue, On], [cPinLedSys, On])
+NoHandler 0.016 = 62
+Handler 0.026 = 38
+

@@ -13,14 +13,14 @@ import json
 
 Host = '192.168.2.119'
 
-cLed_Sys   = 2
-cLed_Red   = 15
-cLed_Green = 12
-cLed_Blue  = 13
+cPinLedSys   = 2
+cPinLedRed   = 15
+cPinLedGreen = 12
+cPinLedBlue  = 13
 
 ArrPwm    = [0,2,4,5,12,13,14,15]
 ArrPin    = [0,1,2,3,4,5,12,13,14,15,16]
-ArrLed    = [cLed_Sys, cLed_Red, cLed_Green, cLed_Blue]
+#ArrLed    = [cLed_Sys, cLed_Red, cLed_Green, cLed_Blue]
 ArrMotor1 = [12, 13]
 ArrMotor2 = [14, 15]
 
@@ -80,29 +80,11 @@ class TSerial():
     def SetPwmOff(self, aPin):
         self.AddFunc("SetPwmOff", [aPin])
 
-    def SetLeds(self, aValue):
-        self.SetPinArr([cLed_Sys, cLed_Red, cLed_Green, cLed_Blue],  aValue)
-
     def GetAdc(self):
         self.AddFunc("GetAdc")
 
-    #--- Pin array functions
-
-    def GetPinArr(self, aPins):
-        self.AddFunc("GetPinArr", [aPins])
-
-    def SetPinArr(self, aPins, aValue):
-        self.AddFunc("SetPinArr", [aPins, aValue])
-
-    def SetPinInvArr(self, aPins):
-        self.AddFunc("SetPinInvArr", [aPins])
-
-    def GetPwmArr(self, aPins):
-        self.AddFunc("GetPwmArr", [aPins])
-
-    def SetPwmOffArr(self, aPins):
-        self.AddFunc("SetPwmOffArr", [aPins])
-
+    def AddFuncArr(self, *aArgs):
+        self.AddFunc('CallFuncArr', aArgs)
 
 
 class TSockClientBase():
@@ -224,10 +206,18 @@ class TEsp():
             self.Send()
 
     def LedFlash(self, aCnt):
-        for i in range(aCnt):
-            self.Serial.SetPinArr([cLed_Red, cLed_Green, cLed_Blue], i % 2)
+        for i in range(aCnt):   
+            On = i % 2
+            #self.Serial.SetPin(cPinLedRed, i % 2)
+
+            self.Serial.AddFuncArr('SetPin', [cPinLedRed, On], [cPinLedGreen, On], [cPinLedBlue, On], [cPinLedSys, On])
+            #self.Serial.SetPin(cPinLedRed, On)
+            #self.Serial.SetPin(cPinLedGreen, On)
+            #self.Serial.SetPin(cPinLedBlue, On)
+            #self.Serial.SetPin(cPinLedSys, On)
+
             #self.Serial.AddFunc("Sleep", [50])
-            self.Send(0.5)
+            self.Send()
 
     def MotorDCStop(self, aPins):
         self.Serial.SetPwmOffArr(aPins)
@@ -300,7 +290,7 @@ def MotorServ(aValue):
 def LedFlash(aCnt, aLogLevel = 1):
     Esp = TEsp(Host, 51015)
     Esp.SetLogLevel(aLogLevel)
-    Esp.MotorDCStop(ArrMotor1)
+    #Esp.MotorDCStop(ArrMotor1)
     Esp.LedFlash(aCnt)
 
 def Exec():
@@ -328,11 +318,11 @@ def WlanSTA(aEssId, aPassw):
     Esp.WlanSTA(aEssId, aPassw)
 
 
-#LedFlash(1001, 0)
+LedFlash(1001, 0)
 #MotorDC(100)
 #MotorServ(0)
 #Exec()
-Call()
+#Call()
 #GetInfo()
 #SendFile('Test.txt')
 #ConnectWlan('R3-0976646510', '197119822007')

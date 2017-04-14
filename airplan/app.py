@@ -41,7 +41,6 @@ class TApp:
     def OnButtonTimeOut(self):
         if (self.TimerButton.CntTag > 0):
             Tag = self.TimerButton.CntTag 
-            print('')
             log.Log(1, "Tag", Tag)
             api.Dump(api.GetInfo())
 
@@ -63,6 +62,7 @@ class TApp:
         return None
 
     def HandlerJson(self, aCaller, aData):
+        #log.Log(1, 'HandlerJson()', aData)
         if (aData):
             self.TimerSock.Update()
             api.SetPin(api.cPinLedSys, self.Serial.CntPacket % 2)
@@ -72,9 +72,8 @@ class TApp:
         return Result 
 
     def PinsInit(self):
-        api.SetPinArr(api.ArrLed , 0)
-        api.SetPwmOffArr(api.ArrMotor1)
-        api.SetPwmOffArr(api.ArrMotor2)
+        api.CallObjArr(api.SetPin, [api.cPinLedRed, 0], [api.cPinLedGreen, 0], [api.cPinLedBlue, 0])
+        api.CallObjArr(api.SetPwmOff, [12], [13], [14], [15])
 
     def Listen(self):
         self.PinsInit()

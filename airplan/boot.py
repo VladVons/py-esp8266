@@ -10,7 +10,7 @@
 #import webrepl
 #import machine
 import gc
-
+import machine
 
 #machine.freq(160000000)
 #webrepl.start()
