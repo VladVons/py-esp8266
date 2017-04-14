@@ -35,11 +35,17 @@ class TSockServer():
 
         self.Active = True
         while (self.Active):
+            # SpeedTest
+            #try:
+            #    Result, self.Addr = self.Sock.recvfrom(self.BufSize)
+            #    self.Sock.sendto(Result, self.Addr)
+            #except OSError:
+            #    pass
+ 
             Data = self.Receive()
             if (self.Handler):
                 Data = self.Handler(self, Data)
             if (Data):
-                #log.Log(3, 'Run()', Data)
                 self.Send(Data)
         self.Close()
 
