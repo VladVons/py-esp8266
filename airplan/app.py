@@ -26,7 +26,7 @@ class TApp:
         #api.WatchDog(5000)
         #api.TimerCallback(3000, self.IrqOnTimer)
 
-        self.SerialKeyTimer = common.GetRand(60 * 2, 60 * 3)
+        self.SerialKeyTimer = common.GetRand(60 * 5, 60 * 3)
         self.SerialKeyOk    = (common.GetSerial() == self.Conf.get('/App/SerialKey'))
 
         #api.Dump(api.GetMethods('ubinascii'))

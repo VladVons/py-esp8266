@@ -40,12 +40,58 @@ def CallFuncArr(*aArgs):
     Args[0] = eval(Args[0])
     return CallObjArr(*Args)
 
+def Tips():
+    #https://habrahabr.ru/post/85459/
+    #https://habrahabr.ru/post/95721/
 
-print(dir(hashlib))
+    print('\nset ')
+    arr = [1, 2, 3, 3, 4, 1, 4, 3]
+    print('arr', arr, 'uniq', list(set(arr)))
 
-h='123456789012'
-s=':'.join(h[i:i+2] for i in range(0, 12, 2))
-print(s)
+    print('\nmax')
+    arr = [1, 2, 3, 3, 4, 1]
+    print('arr', arr, 'max',  max(arr))
+
+    print('\nmin')
+    arr = ['one', 'two', 'three', 'four', 'fiwe', 'six']
+    print('arr', arr, 'min', min(arr))
+
+    print('\nzip')
+    arr1 = ['a', 'b', 'c']
+    arr2 = [1,   2,   3, 4]
+    arr3 = ['one', 'two', 'three']
+    zipped = zip(arr1, arr2, arr3)
+    print('arr1', arr1, 'arr2', arr2, 'arr3', arr3, 'zip', zipped)
+
+    print('\nall')
+    arr = [1, 2, 3, 4, 5]
+    if (all(item < 10 for item in arr)):
+        print 'all items < 10'
+
+    print('\nany')
+    arr = [1, 2, 3, 4, 5]
+    if (any(item == 3 for item in arr)):
+        print('found item is 3')
+
+    print('\nenumerate')
+    arr = ['a', 'b', 'c', 'd', 'e']
+    for i, string in enumerate(arr):
+        print ('enumerate', i, string)
+
+    print('\ndict')
+    arr = dict(a = 1, b = 2, c = dict(x = 1, y = 2))
+    print('arr', arr) 
+
+    print('\ndict to items')
+    arr = {'a': 1, 'b': 2, 'c': 3}
+    print('arr', arr, 'tuple', arr.items())
+
+Tips()
+
+#print(dir(hashlib))
+#h='123456789012'
+#s=':'.join(h[i:i+2] for i in range(0, 12, 2))
+#print(s)
 
 #Hash = hashlib.sha256('1234').hexdigest()
 #print('Hash', Hash, len(Hash))

@@ -58,9 +58,3 @@ class TConfig():
         if (aNode == None):
             aNode = self.Data
         return self._GetItemsRecurs(aNode, '')
-
-    def Filter(self, aItems):
-        Result = {}
-        for Item in aItems:
-            Result[Item] = self.GetItem(Item)
-        return Result
