@@ -26,7 +26,8 @@ class TApp:
         #api.WatchDog(5000)
         #api.TimerCallback(3000, self.IrqOnTimer)
 
-        self.SerialKeyTimer = 60 + common.GetRand(60)
+        self.SerialKeyTimer = common.GetRand(60 * 2, 60 * 3)
+        self.SerialKeyOk    = (common.GetSerial() == self.Conf.get('/App/SerialKey'))
 
         #api.Dump(api.GetMethods('ubinascii'))
 
@@ -60,11 +61,12 @@ class TApp:
         #log.Log(2, 'OnSockTimeOut()', self.TimerSock.CntCheck, 'MemFree', api.GetMemFree())
         api.SetPinInv(api.cPinLedSys)
 
-    def SerialKeyOk(self):
-        #Result = (api.GetTicks() / 1000 < self.SerialKeyTimer)
-        #if (not Result):
-        #    Result = common.GetRand(10) > 5
-        Result = True
+    def CheckSerialKey(self):
+        Result = self.SerialKeyOk
+        if (not Result):
+            Result = (api.GetTicks() / 1000 < self.SerialKeyTimer)
+            if (not Result):
+                Result = (common.GetRand(10) > 3)
         return Result
 
     def HandlerDef(self):
@@ -76,12 +78,13 @@ class TApp:
         #log.Log(1, 'HandlerJson()', aData)
         if (aData):
             self.TimerSock.Update()
-            if (self.SerialKeyOk()):
-                api.SetPin(api.cPinLedSys, self.Serial.CntPacket % 2)
+            if (self.CheckSerialKey()):
+                api.SetPinInv(api.cPinLedSys)
                 Result = self.Serial.Parse(aData)
             else:
-                api.SetPin(api.cPinLedRed, self.Serial.CntPacket % 2)
-                Result = 'SerialKey'
+                api.SetPinInv(api.cPinLedRed)
+                #aData['Data'] = 'Wrong SerialKey'
+                Result = aData
         else:
             Result = self.HandlerDef()
         return Result 

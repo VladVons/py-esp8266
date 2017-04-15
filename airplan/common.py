@@ -5,11 +5,21 @@
 
 import os
 import ustruct
+import ubinascii
+import uhashlib
 #
 import api
+import wlan
 
-def GetRand(aMax = 256):
-    return ustruct.unpack("I", os.urandom(4))[0] % aMax
+
+def GetRand(aMin = 0, aMax = 65536):
+    Rand = ustruct.unpack("I", os.urandom(4))[0]
+    return aMin + (Rand % (aMax - aMin))
+
+def GetSerial():
+    Bytes = uhashlib.sha256(wlan.GetMac()).digest()
+    Hash  = ubinascii.hexlify(Bytes).decode('utf-8')
+    return "%s-%s-%s-%s" % (Hash[8:12], Hash[16:20], Hash[24:28], Hash[32:36])
 
 class TTimer:
     def __init__(self, aHandler, aTimeOut = 1000):

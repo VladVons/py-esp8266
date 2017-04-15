@@ -2,6 +2,7 @@
 
 import os
 import struct
+import hashlib
 
 LogLevel= 3
 
@@ -40,6 +41,25 @@ def CallFuncArr(*aArgs):
     return CallObjArr(*Args)
 
 
+print(dir(hashlib))
+
+h='123456789012'
+s=':'.join(h[i:i+2] for i in range(0, 12, 2))
+print(s)
+
+#Hash = hashlib.sha256('1234').hexdigest()
+#print('Hash', Hash, len(Hash))
+#SerialKey = "%s-%s" % (Hash[8:12], Hash[16:20])
+#print(Hash, SerialKey, hash('11'))
+
+#print(cl2, len(cl2), cl2[8:12], cl2[16:20])
+
+
+#cl1 = hashlib.md5('123')
+#print(dir(cl1))
+#print(cl1.hexdigest(), cl1.digest(), cl1.name, cl1.digestsize)
+
+
 #CallObj(Print2, [1])
 #CallObj(CallObjArr, [Print2, [1], [2]])
 #CallObj(CallFuncArr, ['Print2', [1], [2]])
@@ -58,6 +78,6 @@ def CallFuncArr(*aArgs):
     #rand = int(os.urandom(1).encode('hex'), 16)
 #    print(rand)
 
-for i in range(20):
-    Rand = struct.unpack("I", os.urandom(4))[0] % 10
-    print(Rand)
+#for i in range(20):
+#    Rand = struct.unpack("I", os.urandom(4))[0] % 10
+#    print(Rand)

@@ -18,10 +18,13 @@ def Scan():
 
     return Result
 
-def GetMac():
+def GetMacByte():
     Obj = network.WLAN(network.AP_IF)
-    mac = Obj.config("mac")
-    return ubinascii.hexlify(mac).decode('utf-8')
+    return Obj.config("mac")
+
+def GetMac():
+    Mac = ubinascii.hexlify(GetMacByte()).decode('utf-8')
+    return ':'.join(Mac[i : i+2] for i in range(0, 12, 2))
 
 def SetEssId(aName, aPassw):
     essid = '%s-%s' % (aName, GetMac()[-4:])

@@ -30,8 +30,8 @@ cPinBtnPush  = 4
 
 def GetInfo():
     return {
-            "Software": "1.0.10", 
-            "Date":     "2017.04.14", 
+            "Software": "1.0.11", 
+            "Date":     "2017.04.15", 
             "Hardware": "1.1.2", 
             "Author":   "Volodymyr Vons",
             "Support":  "http://vando.com.ua/esp",
