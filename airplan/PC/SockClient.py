@@ -193,7 +193,7 @@ class TEsp():
         self.Serial = TSerial()
 
     def LedFlash(self, aCnt):
-        self.Serial.AddFunc("CpuBurst", [not True])
+        self.Serial.AddFunc("CpuBurst", [True])
         for i in range(aCnt):   
             On = i % 2
             #self.Serial.SetPin(cPinLedRed, i % 2)
@@ -336,7 +336,7 @@ def WlanSTA(aEssId, aPassw):
     Esp.WlanSTA(aEssId, aPassw)
 
 
-LedFlash(101, 0)
+LedFlash(10001, 0)
 #MotorDC(100)
 #MotorServ(0)
 #Exec()
