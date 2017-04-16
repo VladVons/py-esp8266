@@ -45,8 +45,26 @@ MemFree 29936 MemAlloc 6352
 /MemFree 14080
 
 
-Speed:
+UDP Speed:
 self.Serial.AddFuncArr('SetPin', [cPinLedRed, On], [cPinLedGreen, On], [cPinLedBlue, On], [cPinLedSys, On])
-NoJson, only Receive&Send: 0,011 = 93
-NoHandler: 0.016 = 62
-Handler: 0.026 = 38
+UDP:     0,008 = 130
+JSON:    0.011 = 90
+Handler: 0.020 = 50
+
+CPU Speed 1000 cycles:
+/SetPin 355
+/SetPwmDuty 438
+/Func 112
+/Cpu_MHz 80
+/Json 2302
+/Sum 84
+/Total 3292
+
+/SetPin 219
+/SetPwmDuty 292
+/Func 65
+/Cpu_MHz 160
+/Json 1492
+/Sum 42
+/Total 2112
+

@@ -192,6 +192,21 @@ class TEsp():
 
         self.Serial = TSerial()
 
+    def LedFlash(self, aCnt):
+        self.Serial.AddFunc("CpuBurst", [not True])
+        for i in range(aCnt):   
+            On = i % 2
+            #self.Serial.SetPin(cPinLedRed, i % 2)
+
+            self.Serial.AddFuncArr('SetPin', [cPinLedRed, On], [cPinLedGreen, On], [cPinLedBlue, On], [cPinLedSys, On])
+            #self.Serial.SetPin(cPinLedRed, On)
+            #self.Serial.SetPin(cPinLedGreen, On)
+            #self.Serial.SetPin(cPinLedBlue, On)
+            #self.Serial.SetPin(cPinLedSys, On)
+
+            #self.Serial.AddFunc("Sleep", [50])
+            self.Send()
+
     def SetLogLevel(self, aValue):
         self.Serial.SetLogLevel(aValue)
 
@@ -220,20 +235,6 @@ class TEsp():
         for Pin in aPins:
             self.Serial.GetPin(Pin)
             self.Serial.GetPwmDuty(Pin)
-            self.Send()
-
-    def LedFlash(self, aCnt):
-        for i in range(aCnt):   
-            On = i % 2
-            #self.Serial.SetPin(cPinLedRed, i % 2)
-
-            self.Serial.AddFuncArr('SetPin', [cPinLedRed, On], [cPinLedGreen, On], [cPinLedBlue, On], [cPinLedSys, On])
-            #self.Serial.SetPin(cPinLedRed, On)
-            #self.Serial.SetPin(cPinLedGreen, On)
-            #self.Serial.SetPin(cPinLedBlue, On)
-            #self.Serial.SetPin(cPinLedSys, On)
-
-            #self.Serial.AddFunc("Sleep", [50])
             self.Send()
 
     def MotorDCStop(self, aPins):
@@ -335,12 +336,12 @@ def WlanSTA(aEssId, aPassw):
     Esp.WlanSTA(aEssId, aPassw)
 
 
-#LedFlash(101, 1)
+LedFlash(101, 0)
 #MotorDC(100)
 #MotorServ(0)
 #Exec()
 #Call()
-GetInfo()
+#GetInfo()
 #SendFile('Test.txt')
 #ConnectWlan('R3-0976646510', '197119822007')
 

@@ -7,7 +7,7 @@ import log
 import api
 
 
-class TSerial:
+class TSerialize:
     def __init__(self):
         self.CntCall    = 0
         self.CntPacket  = 0
@@ -23,7 +23,7 @@ class TSerial:
             aObj
             self.UserObj[aName] = aObj
         except Exception as e:
-            log.Log(0, 'TSerial.AddObj()', e)
+            log.Log(0, 'TSerialize.AddObj()', e)
 
     def CallObj(self, aObj, aArgs):
         if (aArgs):
@@ -58,10 +58,10 @@ class TSerial:
                 Result = self.CallObj(Obj, aArgs)
             else:
                 Result = 'Error: unknown Func ' + aFunc
-                log.Log(0, 'TSerial.Parse()', Result)
+                log.Log(0, 'TSerialize.Parse()', Result)
         else:
             Result = 'Error: empty Func'
-            log.Log(0, 'TSerial.Parse()', Result)
+            log.Log(0, 'TSerialize.Parse()', Result)
 
         aData['Result'] = Result
         return aData

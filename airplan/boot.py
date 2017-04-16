@@ -12,7 +12,7 @@
 import gc
 import machine
 
-#machine.freq(160000000)
+#machine.freq(160 * 1000000)
 #webrepl.start()
 #esp.osdebug(None)
 

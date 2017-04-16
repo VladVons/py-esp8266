@@ -86,6 +86,11 @@ def Tips():
     arr = {'a': 1, 'b': 2, 'c': 3}
     print('arr', arr, 'tuple', arr.items())
 
+    print('\nfilter')
+    arr = [1, 2, 3, 4,5]
+    res = filter(lambda x: x < 4, arr)
+    print('arr', arr, 'res < 4', res)
+        
 Tips()
 
 #print(dir(hashlib))

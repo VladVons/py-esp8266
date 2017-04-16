@@ -77,7 +77,7 @@ class TSockJson():
 
     def Send(self, aData):
         try:
-            #aData['IP'] = self.Addr
+            aData['IP'] = self.Addr
             Data = ujson.dumps(aData)
         except Exception as e:
             Data = '{"Error": "TSockJson.Send() %s"}' % e

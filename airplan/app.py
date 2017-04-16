@@ -5,20 +5,22 @@
 
 import log
 import api
-import serial
+import serialize
 import sockserver
 import common
-
+import const
+#import speedtest
 
 class TApp:
     def __init__(self, aConf):
         self.Conf = aConf
 
-        self.Serial = serial.TSerial()
+        self.Serialize = serialize.TSerialize()
 
         log.LogLevel = self.Conf.get('/App/LogLevel', 3);
+        api.CpuBurst(self.Conf.get('/App/CpuBurst', False));
 
-        api.SetButton(api.cPinBtnPush, self.IrqOnButtonPush)
+        api.SetButton(const.PinBtnPush, self.IrqOnButtonPush)
 
         self.TimerSock   = common.TTimer(self.OnSockTimeOut, 2000)
         self.TimerButton = common.TTimerDebounce(self.OnButtonTimeOut, 1000, 250)
@@ -28,8 +30,11 @@ class TApp:
 
         self.SerialKeyTimer = common.GetRand(60 * 5, 60 * 3)
         self.SerialKeyOk    = (common.GetSerial() == self.Conf.get('/App/SerialKey'))
+        #print('SerialKey', self.Conf.get('/App/SerialKey'), common.GetSerial())
 
         #api.Dump(api.GetMethods('ubinascii'))
+        #api.CpuBurst(True)
+        #api.Dump(speedtest.TestAll(1 * 1000, const.PinLedSys))
 
     def IrqOnButtonPush(self, aObj):
         log.Log(1, 'OnButtonPush', aObj);
@@ -38,7 +43,7 @@ class TApp:
         self.TimerButton.IncTag() 
         self.TimerButton.Update()  
 
-        #api.SetPinInv(api.cPinLedSys)
+        #api.SetPinInv(const.PinLedSys)
 
     def IrqOnTimer(self, aObj):
         return None
@@ -52,14 +57,14 @@ class TApp:
             if   (Tag == 1):
                self.PinsInit()
             elif (Tag == 2):
-                api.SetPin(api.cPinLedRed, 1) 
+                api.SetPin(const.PinLedRed, 1) 
             elif (Tag == 3):
-                api.SetPin(api.cPinLedGreen, 1) 
+                api.SetPin(const.PinLedGreen, 1) 
             self.TimerButton.CntTag = 0  
 
     def OnSockTimeOut(self):
         #log.Log(2, 'OnSockTimeOut()', self.TimerSock.CntCheck, 'MemFree', api.GetMemFree())
-        api.SetPinInv(api.cPinLedSys)
+        api.SetPinInv(const.PinLedSys)
 
     def CheckSerialKey(self):
         Result = self.SerialKeyOk
@@ -79,10 +84,10 @@ class TApp:
         if (aData):
             self.TimerSock.Update()
             if (self.CheckSerialKey()):
-                api.SetPinInv(api.cPinLedSys)
-                Result = self.Serial.Parse(aData)
+                api.SetPinInv(const.PinLedSys)
+                Result = self.Serialize.Parse(aData)
             else:
-                api.SetPinInv(api.cPinLedRed)
+                api.SetPinInv(const.PinLedRed)
                 #aData['Data'] = 'Wrong SerialKey'
                 Result = aData
         else:
@@ -90,11 +95,13 @@ class TApp:
         return Result 
 
     def PinsInit(self):
-        api.CallObjArr(api.SetPin, [api.cPinLedRed, 0], [api.cPinLedGreen, 0], [api.cPinLedBlue, 0])
-        api.CallObjArr(api.SetPwmOff, [12], [13], [14], [15])
+        api.CallObjArr(api.SetPin, [const.PinLedRed, 0], [const.PinLedGreen, 0], [const.PinLedBlue, 0])
+        api.CallObjArr(api.SetPwmOff, [const.MotorDC1A], [const.MotorDC1B], [const.MotorDC2A], [const.MotorDC2B])
 
     def Listen(self):
         self.PinsInit()
+
+        print('')
         api.Dump(api.GetInfo())
 
         ConfBind     = self.Conf.get('/Server/Bind', '0.0.0.0')
@@ -106,7 +113,8 @@ class TApp:
             SockServer = sockserver.TSockServerUdpJson(ConfBind, ConfPort, ConfTimeOut)
         else:
             SockServer = sockserver.TSockServerTCPJson(ConfBind, ConfPort, ConfTimeOut)
-        self.Serial.AddObj("SetBufSize", SockServer.SetBufSize)
+
+        self.Serialize.AddObj("SetBufSize", SockServer.SetBufSize)
 
         SockServer.BufSize = self.Conf.get('/Server/BufSize', 512)
         SockServer.Handler = self.HandlerJson

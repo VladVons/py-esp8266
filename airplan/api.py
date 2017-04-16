@@ -9,29 +9,17 @@ import gc
 import time
 import os
 import sys
+import ujson
 ##
 import log
 import wlan
 import fs
-
-cPinLedRed   = 15
-cPinLedGreen = 12
-cPinLedBlue  = 13
-cPinLedSys   = 02
-#
-cPinBtnFlush = 0
-cPinBtnPush  = 4
-#
-#ArrPwm    = [0,    2,    4, 5, 12, 13, 14, 15    ]
-#ArrPin    = [0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 16]
-#ArrMotor1 = [13, 12]
-#ArrMotor2 = [14, 15]
-
+import const
 
 def GetInfo():
     return {
-            "Software": "1.0.11", 
-            "Date":     "2017.04.15", 
+            "Software": "1.0.12", 
+            "Date":     "2017.04.16", 
             "Hardware": "1.1.2", 
             "Author":   "Volodymyr Vons",
             "Support":  "http://vando.com.ua/esp",
@@ -128,6 +116,14 @@ def SetButton(aPin, aHandler):
 
 def Reset():
     machine.reset()
+
+def CpuBurst(aValue = True):
+    if (aValue):
+        machine.freq(160 * 1000000)
+    else:
+        machine.freq(80 * 1000000)
+    return machine.freq()
+
 
 #--- Pin support
 
