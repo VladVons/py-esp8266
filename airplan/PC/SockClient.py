@@ -336,7 +336,7 @@ def WlanSTA(aEssId, aPassw):
     Esp.WlanSTA(aEssId, aPassw)
 
 
-LedFlash(11, 1)
+LedFlash(101, 0)
 #MotorDC(100)
 #MotorServ(0)
 #Exec()
