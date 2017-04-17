@@ -4,65 +4,39 @@ VladVons@gmail.com
 micropython ESP8266
 '''
 
-import machine
-import gc
-import time
-import os
 import sys
-import ujson
-##
+import machine
+#
 import log
 import wlan
+import lib
+import libpin
+import libtime
 import fs
-import const
 
 def GetInfo():
     return {
-            "Software": "1.0.12", 
-            "Date":     "2017.04.16", 
-            "Hardware": "1.1.2", 
+            "Software": "1.0.13",
+            "Date":     "2017.04.17",
+            "Hardware": "1.1.2",
             "Author":   "Volodymyr Vons",
-            "Support":  "http://vando.com.ua/esp",
+            "EMail":    "VladVons@gmail.com",
+            "Homepage": "http://vando.com.ua/esp",
             "Platform": sys.platform,
             "Python":   sys.version,
-            "MacAddr":  GetMac(),
-            "MemFree":  GetMemFree(),
-            "MemAlloc": GetMemAlloc(),
+            "MacAddr":  wlan.GetMac(),
+            "MemFree":  lib.GetMemFree(),
+            "MemAlloc": lib.GetMemAlloc(),
             "Freq MHz": int(machine.freq() / 1000000),
-            "Uptime":   int(GetTicks() / 1000),
+            "Uptime":   int(libtime.GetTicks() / 1000),
             "Firmware": "%d.%d.%d" % sys.implementation[1]
            }
 
-def Exec(aValue = 'Result = (2+3)*2'):
-    Result = None
-    Vars   = {}
-    try:
-        exec(aValue, globals(), Vars)
-        Result = Vars.get('Result')
-    except Exception as e:
-        print(e)
-        Result = e
-    return Result
+def Exec(aValue):
+    return lib.Exec(aValue)
 
-def Print(aValue = ''):
-    print(aValue)
 
-def Log(aLevel, aValue = ''):
-    log.Log(aLevel, aValue)
-
-def Dump(aValue, aPref = ''):
-    if (isinstance(aValue, dict)):
-        for Key in aValue:
-            Dump(aValue[Key], aPref + '/' + Key)
-    elif (isinstance(aValue, list)):
-        for Value in aValue:
-            Dump(Value, aPref)
-    else:
-        print(aPref, aValue)
-
-def SetLogLevel(aValue):
-    log.LogLevel = aValue
-
+# --- File
 def FileRead(aName):
     return fs.FileRead(aName)
 
@@ -72,6 +46,16 @@ def FileWrite(aName, aData):
 def FileList():
     return '\n'.join(fs.FileList())
 
+
+# --- Log
+def Log(aLevel, aValue = ''):
+    log.Log(aLevel, aValue)
+
+def SetLogLevel(aValue):
+    log.LogLevel = aValue
+
+
+#--- Net
 def SetEssd(aName, aPassw):
     wlan.SetEssId('vando-' + aName, aPassw)
 
@@ -81,113 +65,24 @@ def GetMac():
 def WlanSTA(aEssId, aPassw):
     return wlan.Connect(aEssId, aPassw)
 
-def GetMemFree():
-    gc.collect()
-    return gc.mem_free()
 
-def GetMemAlloc():
-    gc.collect()
-    return gc.mem_alloc()
-
+# --- Timer
 def Sleep(aDelay):
-    time.sleep_ms(aDelay)
+    libtime.Sleep(aDelay)
 
 def GetTicks():
-    return time.ticks_ms()
+    return libtime.GetTicks()
 
-def GetMethods(aModule):
-    return dir(__import__(aModule))
-    
-#def GetMachineId():
-#    return machine.unique_id().decode("utf-8")
 
-#def WatchDog(aTimeOut = 0):
-#    obj = machine.WDT()
-#    obj.feed()
-
-def TimerCallback(aTimeOut, aHandler):
-    obj = machine.Timer(-1)
-    obj.init(period = aTimeOut, mode = machine.Timer.PERIODIC, callback = aHandler)
-
-def SetButton(aPin, aHandler):
-    #http://docs.micropython.org/en/v1.8.6/wipy/library/machine.Pin.html
-    Obj = machine.Pin(aPin, machine.Pin.IN)
-    Obj.irq(trigger = machine.Pin.IRQ_FALLING, handler = aHandler)
-
+# --- CPU
 def Reset():
-    machine.reset()
+    return lib.Reset()
 
-def CpuBurst(aValue = True):
-    if (aValue):
-        machine.freq(160 * 1000000)
-    else:
-        machine.freq(80 * 1000000)
-    return machine.freq()
+def CpuBurst(aValue):
+    return lib.CpuBurst(aValue)
 
 
-#--- Pin support
-
-def SetPin(aPin, aValue):
-    #log.Log(3, 'SetPin', 'Pin', aPin, 'Value', aValue)
-
-    Obj = machine.Pin(aPin, machine.Pin.OUT)
-    Obj.value(aValue)
-    return Obj.value()
-
-def SetPinInv(aPin):
-    Obj = machine.Pin(aPin, machine.Pin.OUT)
-    Obj.value(not Obj.value())
-    return Obj.value()
-
-def GetPin(aPin):
-    try:
-        Obj = machine.Pin(aPin, machine.Pin.OUT)
-        Result = Obj.value()
-    except:
-        Result = -1
-    return Result
-
-def SetPwmFreq(aPin, aValue):
-    #log.Log(3, 'SetPwmFreq', 'Pin', aPin, 'Value', aValue)
-
-    Obj = machine.PWM(machine.Pin(aPin))
-    Obj.freq(aValue)
-    return Obj.freq()
-
-def SetPwmDuty(aPin, aValue):
-    #log.Log(3, 'SetPwmDuty', 'Pin', aPin, 'Value', aValue)
-
-    Obj = machine.PWM(machine.Pin(aPin))
-    Obj.duty(aValue)
-    return Obj.duty()
-
-def SetPwmOff(aPin):
-    #log.Log(3, 'SetPwmOff', 'Pin', aPin)
-
-    Obj = machine.PWM(machine.Pin(aPin))
-    Obj.deinit()
-    return None
-
-def GetPwmDuty(aPin):
-    try:
-        Obj = machine.PWM(machine.Pin(aPin))
-        Result = (Obj.duty())
-    except:
-        Result = -1
-    return Result
-
-def GetPwmFreq(aPin):
-    try:
-        Obj = machine.PWM(machine.Pin(aPin))
-        Result = (Obj.freq())
-    except:
-        Result = -1
-    return Result
-
-def GetAdc(aPin = 0):
-    Obj = machine.ADC(aPin)
-    return Obj.read()
-
+# --- Mass caller
 def CallObjArr(*aArgs):
     Result = []
     Obj = aArgs[0]
@@ -199,3 +94,33 @@ def CallFuncArr(*aArgs):
     Args = list(aArgs)
     Args[0] = eval(Args[0])
     return CallObjArr(*Args)
+
+
+# --- Pin
+def SetPin(aPin, aValue):
+    return libpin.SetPin(aPin, aValue)
+
+def SetPinInv(aPin):
+    return libpin.SetPinInv(aPin)
+
+def GetPin(aPin):
+    return libpin.GetPin(aPin)
+
+def SetPwmFreq(aPin, aValue):
+    return libpin.SetPwmFreq(aPin, aValue)
+
+def SetPwmDuty(aPin, aValue):
+    return libpin.SetPwmDuty(aPin, aValue)
+
+def SetPwmOff(aPin):
+    return libpin.SetPwmOff(aPin)
+
+def GetPwmDuty(aPin):
+    return libpin.GetPwmDuty(aPin)
+
+def GetPwmFreq(aPin):
+    return libpin.GetPwmFreq(aPin)
+
+def GetAdc(aPin = 0):
+    return libpin.GetAdc(aPin)
+

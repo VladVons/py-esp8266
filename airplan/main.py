@@ -3,10 +3,10 @@
 # micropython ESP8266
 #---
 
+import log
 import app
 import config
 import wlan
-import log
 
 
 def GetConfig():

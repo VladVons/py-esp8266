@@ -336,13 +336,11 @@ def WlanSTA(aEssId, aPassw):
     Esp.WlanSTA(aEssId, aPassw)
 
 
-LedFlash(10001, 0)
+LedFlash(11, 1)
 #MotorDC(100)
 #MotorServ(0)
 #Exec()
 #Call()
 #GetInfo()
 #SendFile('Test.txt')
-#ConnectWlan('R3-0976646510', '197119822007')
-
-
+#WlanSTA('R3-0976646510', '197119822007')

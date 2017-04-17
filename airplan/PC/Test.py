@@ -91,7 +91,37 @@ def Tips():
     res = filter(lambda x: x < 4, arr)
     print('arr', arr, 'res < 4', res)
         
-Tips()
+#Tips()
+
+def TimerDecorator(aFunc):
+    def Wrapper(aCount):
+        TimeStart = 1
+        aFunc(aCount)
+        return 5 - TimeStart
+    return Wrapper
+
+@TimerDecorator
+def TestSum(aCount):
+    Sum = 0
+    for i in range(aCount):
+        Sum += i * 3
+
+print TestSum(10)
+
+
+
+'''
+def DebouncePin(aObj):
+    CurVal = aObj.value()
+    Active = 0
+    while (Active < 20):
+        if (aObj.value() != CurVal):
+            Active += 1
+        else:
+            Active = 0
+        api.Sleep(1)
+'''
+
 
 #print(dir(hashlib))
 #h='123456789012'

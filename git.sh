@@ -62,7 +62,7 @@ GitSyncToServ()
   #git log
 
   git add -u -v
-  git commit -a -m "just commit"
+  git commit -a -m "libs"
   git push -u origin master
 }
 

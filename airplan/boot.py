@@ -6,16 +6,14 @@
 
 # This file is executed on every boot (including wake-boot from deepsleep)
 
-#import esp
+import esp
 #import webrepl
 #import machine
 import gc
-import machine
 import micropython
-#machine.freq(160 * 1000000)
 #webrepl.start()
-#esp.osdebug(None)
 
+esp.osdebug(None)
 
 gc.collect()
 print('Pure MicroPython', 'MemFree', gc.mem_free(), 'MemAlloc', gc.mem_alloc())
