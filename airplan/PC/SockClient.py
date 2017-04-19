@@ -193,7 +193,7 @@ class TEsp():
         self.Serial = TSerial()
 
     def LedFlash(self, aCnt):
-        self.Serial.AddFunc("CpuBurst", [True])
+        self.Serial.AddFunc("CpuBurst", [not True])
         for i in range(aCnt):   
             On = i % 2
             #self.Serial.SetPin(cPinLedRed, i % 2)

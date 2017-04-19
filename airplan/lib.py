@@ -65,7 +65,7 @@ def CpuBurst(aValue = True):
     if (aValue):
         machine.freq(160 * 1000000)
     else:
-        machine.freq(80 * 1000000)
+        machine.freq(80 *  1000000)
     return machine.freq()
 
 #def GetMachineId():

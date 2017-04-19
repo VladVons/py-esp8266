@@ -22,12 +22,14 @@ def GetMacByte():
     Obj = network.WLAN(network.AP_IF)
     return Obj.config("mac")
 
-def GetMac():
-    Mac = ubinascii.hexlify(GetMacByte()).decode('utf-8')
-    return ':'.join(Mac[i : i+2] for i in range(0, 12, 2))
-
+def GetMac(aDots = True):
+    Result = ubinascii.hexlify(GetMacByte()).decode('utf-8')
+    if (aDots):
+        Result = ':'.join(Result[i : i+2] for i in range(0, 12, 2))
+    return Result
+    
 def SetEssId(aName, aPassw):
-    essid = '%s-%s' % (aName, GetMac()[-4:])
+    essid = '%s-%s' % (aName, GetMac(False)[-4:])
     Obj = network.WLAN(network.AP_IF)
     return Obj.config(essid = essid, authmode = network.AUTH_WPA_WPA2_PSK, password = aPassw)
 
@@ -35,7 +37,7 @@ def GetInfo():
     Obj = network.WLAN(network.STA_IF)
     return Obj.ifconfig()
 
-def Connect(aESSID, aPassw, aTimeOut = 10000):
+def Connect(aESSID, aPassw, aTimeOut = 5000):
     Obj = network.WLAN(network.STA_IF)
     Result = Obj.isconnected()
     if (not Result):

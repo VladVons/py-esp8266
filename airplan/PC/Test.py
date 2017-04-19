@@ -93,6 +93,11 @@ def Tips():
         
 #Tips()
 
+
+for i in range(0, 12, 2):
+    print(i)
+
+'''
 def TimerDecorator(aFunc):
     def Wrapper(aCount):
         TimeStart = 1
@@ -107,7 +112,7 @@ def TestSum(aCount):
         Sum += i * 3
 
 print TestSum(10)
-
+'''
 
 
 '''
