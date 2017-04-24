@@ -93,9 +93,14 @@ def Tips():
         
 #Tips()
 
+#print('__debug__', __debug__)
+#__debug__ = False
+#i = 2
+#assert(i > 3)
 
-for i in range(0, 12, 2):
-    print(i)
+#for i in range(0, 12, 2):
+#    print(i)
+
 
 '''
 def TimerDecorator(aFunc):
