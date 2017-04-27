@@ -18,7 +18,7 @@ def Dump(aValue, aPref = ''):
         for Value in aValue:
             Dump(Value, aPref)
     else:
-        print(aPref, aValue)
+        print(aPref, '=', aValue)
 
 def Exec(aValue = 'Result = (2+3)*2'):
     Result = None

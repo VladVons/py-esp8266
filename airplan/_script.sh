@@ -86,11 +86,11 @@ EspFirmware()
 
   Dir="/mnt/hdd/data1/Python/image"
   #FileName="esp8266-20170108-v1.8.7.bin"
-  FileName="esp8266-20170422-v1.8.7-655-g0dd6a59.bin"
+  FileName="esp8266-20170427-v1.8.7-671-g8109cd5.bin"
 
   File=$Dir/$FileName
   if [ -f $File ] ; then
-    ExecM "esptool.py --port $Dev erase_flash"
+    ExecM "esptool.py --port $Dev --baud $Speed erase_flash"
     ExecM "esptool.py --port $Dev --baud 460800 write_flash --flash_size=detect 0 $File"
 
     EspFileList
