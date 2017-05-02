@@ -1,3 +1,8 @@
+#---VladVons@gmail.com
+# 17.04.17
+# micropython ESP8266
+#---
+
 import machine
 import time
 

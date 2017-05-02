@@ -1,3 +1,8 @@
+#---VladVons@gmail.com
+# 04.05.17
+# micropython ESP8266
+#---
+
 import machine
 import ujson
 #

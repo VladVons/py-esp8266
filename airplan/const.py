@@ -1,3 +1,8 @@
+#---VladVons@gmail.com
+# 16.04.17
+# micropython ESP8266
+#---
+
 PinLedRed   = 15
 PinLedGreen = 12
 PinLedBlue  = 13
